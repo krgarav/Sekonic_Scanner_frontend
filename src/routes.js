@@ -26,6 +26,7 @@ import UserManagment from "views/UserManagment";
 import Jobs from "views/Jobs";
 import Template from "views/Template";
 import Settings from "views/Settings";
+import JobQueue from "views/JobQueue";
 
 var routes = [
   {
@@ -63,6 +64,15 @@ var routes = [
     component: <Settings />,
     layout: "/admin",
   },
+  {
+    path: "/JobQueue",
+    name: "jobQueue",
+    icon: "ni ni-settings-gear-65 text-primary",
+    component: <JobQueue />,
+    layout: "/admin",
+  },
+
+
 
   // {
   //   path: "/icons",

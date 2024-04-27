@@ -40,8 +40,16 @@ import {
 import Header from "components/Headers/Header.js";
 import NormalHeader from "components/Headers/NormalHeader";
 import { Modal } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select"
+import * as url from "../helper/url_helper"
+import { toast } from "react-toastify";
+import axios from "axios";
+import { getUserRoles } from "helper/userManagment_helper";
+import { createUser } from "helper/userManagment_helper";
+import { fetchAllUsers } from "helper/userManagment_helper";
+import { updateUser } from "helper/userManagment_helper";
+import { removeUser } from "helper/userManagment_helper";
 
 const UserManagment = () => {
 
@@ -50,45 +58,148 @@ const UserManagment = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [role, setRole] = useState({});
+    const [selectecdRole, setSelectedRole] = useState({});
+    const [roles, setRoles] = useState([]);
+    const [password, setPassword] = useState("");
+    const [ConfirmPassword, setConfirmPassword] = useState("");
     const [spanDisplay, setSpanDisplay] = useState("none");
+    const [allUsers, setAllUsers] = useState([]);
+    const [id, setId] = useState("");
 
-    const roles = [
-        { id: 1, roleName: "Admin" },
-        { id: 2, roleName: "Moderator" },
-        { id: 3, roleName: "Operator" },
-    ];
 
+
+    const fetchRoles = async () => {
+        try {
+            const data = await getUserRoles();
+            console.log(data)
+            if (data?.success) {
+                console.log(roles.result)
+                setRoles(data?.result);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong");
+        }
+
+    }
+    const fetchUsers = async () => {
+        try {
+            const data = await fetchAllUsers();
+            console.log(data)
+            if (data?.success) {
+                console.log(roles.result)
+                setAllUsers(data?.result);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong");
+        }
+    }
+    useEffect(() => {
+        fetchRoles();
+        fetchUsers();
+
+    }, []);
     const handleSelectRole = selectedValue => {
         // console.log(selectedValue);
-        setRole(selectedValue);
+        setSelectedRole(selectedValue);
     }
 
-    const handleUpdate = () => {
-        if (!name || !email || !phoneNumber || !role) {
+    const handleUpdate = async () => {
+        if (!name || !email || !phoneNumber || !selectecdRole) {
             setSpanDisplay("inline")
 
         }
         else {
-
+            try {
+                // const { data } = await axios.post("https://rb5xhrfq-5289.inc1.devtunnels.ms/UserRegistration", { name, email, phoneNumber, role, password, ConfirmPassword });
+                let role = selectecdRole.roleName;
+                const data = await updateUser({ id, name, email, phoneNumber, role })
+                if (data?.success) {
+                    console.log(data.message);
+                    toast.success(data?.message);
+                    setName("");
+                    setEmail("")
+                    setPhoneNumber("")
+                    setSelectedRole("")
+                    setCreateModalShow(false)
+                    fetchAllUsers();
+                }
+                else {
+                    toast.error(data?.message);
+                }
+            } catch (error) {
+                toast.error("Something went wrong");
+            }
         }
     };
 
 
-    const handleCreate = () => {
-        if (!name || !email || !phoneNumber || !role) {
+    const handleCreate = async () => {
+        if (!name || !email || !phoneNumber || !selectecdRole || !password || !ConfirmPassword) {
             setSpanDisplay("inline")
 
         }
         else {
+            if (password !== ConfirmPassword) {
+                toast.error("Passwod did not match");
+            }
 
+            try {
+                // const { data } = await axios.post("https://rb5xhrfq-5289.inc1.devtunnels.ms/UserRegistration", { name, email, phoneNumber, role, password, ConfirmPassword });
+                let userRole = selectecdRole.roleName
+                const data = await createUser({ name, email, phoneNumber, userRole, password, ConfirmPassword })
+                if (data?.success) {
+                    console.log(data.message);
+                    toast.success(data?.message);
+                    setName("");
+                    setEmail("")
+                    setPhoneNumber("")
+                    setSelectedRole("")
+                    setPassword("")
+                    setConfirmPassword("")
+                    setCreateModalShow(false)
+                }
+                else {
+                    console.log()
+                    toast.error(data?.message);
+                }
+            } catch (error) {
+                toast.error("Something went wrong");
+            }
         }
     };
 
-    const handleRowClick = e => {
-        e.preventDefault();
+    const deleteUser = async (d) => {
+        try {
+
+            const data = await removeUser(d.id)
+            if (data?.success) {
+                toast.success(data.message);
+                fetchUsers();
+
+            }
+            else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
+
+
+
+    const handleRowClick = d => {
+        // e.preventDefault();
+        console.log(d)
+        setName(d.name);
+        setEmail(d.email);
+        setPhoneNumber(d.phoneNumber);
+        setSelectedRole(d?.userRoleList[0]);
         setModalShow(true);
+        setId(d.id);
     }
+
     return (
         <>
             <NormalHeader />
@@ -118,95 +229,54 @@ const UserManagment = () => {
                                     </tr>
                                 </thead>
                                 <tbody style={{ minHeight: "100rem" }}>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Aman Arora</td>
-                                        <td>
-                                            amanarora2242@gmail.com
-                                        </td>
-                                        <td>
-                                            9105584794
-                                        </td>
-                                        <td>
-                                            Admin
-                                        </td>
-                                        <td className="text-right">
-                                            <UncontrolledDropdown>
-                                                <DropdownToggle
-                                                    className="btn-icon-only text-light"
-                                                    href="#pablo"
-                                                    role="button"
-                                                    size="sm"
-                                                    color=""
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    <i className="fas fa-ellipsis-v" />
-                                                </DropdownToggle>
-                                                <DropdownMenu className="dropdown-menu-arrow" right>
-                                                    <DropdownItem
-                                                        href="#pablo"
-                                                        onClick={handleRowClick}
-                                                    >
-                                                        Edit
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        href="#pablo"
-                                                        onClick={(e) => e.preventDefault()}
-                                                    >
-                                                        Delete
-                                                    </DropdownItem>
+                                    {allUsers?.map((d, i) => (
+                                        <>
+                                            <tr key={i}>
+                                                <td>{i + 1}</td>
+                                                <td>{d.name}</td>
+                                                <td>
+                                                    {d.email}
+                                                </td>
+                                                <td>
+                                                    {d.phoneNumber}
+                                                </td>
+                                                <td>
+                                                    {d?.userRoleList[0]?.roleName}
+                                                </td>
+                                                <td className="text-right">
+                                                    <UncontrolledDropdown>
+                                                        <DropdownToggle
+                                                            className="btn-icon-only text-light"
+                                                            href="#pablo"
+                                                            role="button"
+                                                            size="sm"
+                                                            color=""
+                                                            onClick={(e) => e.preventDefault()}
+                                                        >
+                                                            <i className="fas fa-ellipsis-v" />
+                                                        </DropdownToggle>
+                                                        <DropdownMenu className="dropdown-menu-arrow" right>
+                                                            <DropdownItem
+                                                                href="#pablo"
+                                                                onClick={() => handleRowClick(d)}
+                                                            >
+                                                                Edit
+                                                            </DropdownItem>
+                                                            <DropdownItem
+                                                                href="#pablo"
+                                                                onClick={(e) => deleteUser(d)}
+                                                            >
+                                                                Delete
+                                                            </DropdownItem>
 
-                                                </DropdownMenu>
-                                            </UncontrolledDropdown>
-                                        </td>
-                                    </tr>
-                                    {/* <tr>
-                                        <td>1</td>
-                                        <td>Aman Arora</td>
-                                        <td>
-                                            amanarora2242@gmail.com
-                                        </td>
-                                        <td>
-                                            9105584794
-                                        </td>
-                                        <td>
-                                            Admin
-                                        </td>
-                                        <td className="text-right">
-                                            <UncontrolledDropdown>
-                                                <DropdownToggle
-                                                    className="btn-icon-only text-light"
-                                                    href="#pablo"
-                                                    role="button"
-                                                    size="sm"
-                                                    color=""
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    <i className="fas fa-ellipsis-v" />
-                                                </DropdownToggle>
-                                                <DropdownMenu className="dropdown-menu-arrow" right>
-                                                    <DropdownItem
-                                                        href="#pablo"
-                                                        onClick={(e) => e.preventDefault()}
-                                                    >
-                                                        Action
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        href="#pablo"
-                                                        onClick={(e) => e.preventDefault()}
-                                                    >
-                                                        Another action
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        href="#pablo"
-                                                        onClick={(e) => e.preventDefault()}
-                                                    >
-                                                        Something else here
-                                                    </DropdownItem>
-                                                </DropdownMenu>
-                                            </UncontrolledDropdown>
-                                        </td>
-                                    </tr> */}
+                                                        </DropdownMenu>
+                                                    </UncontrolledDropdown>
+                                                </td>
+                                            </tr>
+                                        </>
+                                    ))}
+
+
 
                                 </tbody>
                             </Table>
@@ -324,7 +394,7 @@ const UserManagment = () => {
                             Phone Number
                         </label>
                         <div className="col-md-10">
-                            <input type="text"
+                            <input type="Number"
                                 className='form-control'
                                 placeholder="Enter Phone Number"
                                 value={phoneNumber}
@@ -345,13 +415,13 @@ const UserManagment = () => {
                         <div className="col-md-10">
 
                             <Select
-                                value={role}
+                                value={selectecdRole}
                                 onChange={handleSelectRole}
                                 options={roles}
                                 getOptionLabel={option => option?.roleName || ""}
                                 getOptionValue={option => option?.id?.toString() || ""}
                             />
-                            {!role && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
+                            {!selectecdRole && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
                         </div>
 
                     </Row>
@@ -421,7 +491,7 @@ const UserManagment = () => {
                             Phone Number
                         </label>
                         <div className="col-md-10">
-                            <input type="text"
+                            <input type="Number"
                                 className='form-control'
                                 placeholder="Enter Phone Number"
                                 value={phoneNumber}
@@ -442,15 +512,49 @@ const UserManagment = () => {
                         <div className="col-md-10">
 
                             <Select
-                                value={role}
+                                value={selectecdRole}
                                 onChange={handleSelectRole}
                                 options={roles}
                                 getOptionLabel={option => option?.roleName || ""}
                                 getOptionValue={option => option?.id?.toString() || ""}
                             />
-                            {!role && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
+                            {!selectecdRole && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
                         </div>
 
+                    </Row>
+
+                    <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                        >
+                            Password
+                        </label>
+                        <div className="col-md-10">
+                            <input type="text"
+                                className='form-control'
+                                placeholder="Enter Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)} />
+                            {!password && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
+                        </div>
+                    </Row>
+
+                    <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                        >
+                            Confirm Password
+                        </label>
+                        <div className="col-md-10">
+                            <input type="text"
+                                className='form-control'
+                                placeholder="Enter Password"
+                                value={ConfirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)} />
+                            {!ConfirmPassword && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
+                        </div>
                     </Row>
 
 
