@@ -27,6 +27,9 @@ import Jobs from "views/Jobs";
 import Template from "views/Template";
 import Settings from "views/Settings";
 import JobQueue from "views/JobQueue";
+import DesignTemplate from "views/DesignTemplate";
+import Booklet32Page from "views/Booklet32Page";
+import Booklet24Page from "views/Booklet24Page";
 
 var routes = [
   {
@@ -44,7 +47,7 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/",
+    path: "/template",
     name: "Template",
     icon: "ni ni-collection text-red",
     component: <Template />,
@@ -58,19 +61,28 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/24-page-booklet",
+    name: "24 page Booklet",
+    icon: "ni ni-book-bookmark text-orange",
+    component: <Booklet24Page />,
+    layout: "/admin",
+  },
+  {
+    path: "/32-page-booklet",
+    name: "32 page Booklet",
+    icon: "ni ni-books text-success",
+    component: <Booklet32Page />,
+    layout: "/admin",
+  },
+  {
     path: "/",
     name: "Settings",
     icon: "ni ni-settings-gear-65 text-primary",
     component: <Settings />,
     layout: "/admin",
   },
-  {
-    path: "/JobQueue",
-    name: "jobQueue",
-    icon: "ni ni-settings-gear-65 text-primary",
-    component: <JobQueue />,
-    layout: "/admin",
-  },
+
+
 
 
 

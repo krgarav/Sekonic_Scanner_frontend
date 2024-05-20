@@ -25,6 +25,7 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
+import DesignTemplate from "views/DesignTemplate";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -79,6 +80,7 @@ const Admin = (props) => {
         <Routes>
           {getRoutes(routes)}
           <Route path="*" element={<Navigate to="/admin/index" replace />} />
+          <Route path="/design-template" element={<DesignTemplate />} />
         </Routes>
         <Container fluid>
           <AdminFooter />
