@@ -49,6 +49,7 @@ const Template = () => {
   const [modalShow, setModalShow] = useState(false);
   const [activeKey, setActiveKey] = useState("general");
   const [spanDisplay, setSpanDisplay] = useState("none");
+  const [imageSrc, setImageSrc] = useState('/img.jpg');
 
   const [name, setName] = useState("");
   const [size, setSize] = useState({ id: 1, name: "A4" });
@@ -127,9 +128,22 @@ const Template = () => {
     { id: 3, name: "Check error, and not stop the OMR" },
   ];
 
-  const handleCreate = () => {};
+  const handleCreate = () => { };
 
   const [key, setKey] = useState("general");
+
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImageSrc(event.target.result);
+        
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
   return (
     <>
@@ -728,6 +742,11 @@ const Template = () => {
           </Tab.Container>
         </Modal.Body>
         <Modal.Footer>
+          {/* <Button>ggyigyjigyil</Button> */}
+          <label>
+            Upload Image:
+            <input type="file" onChange={handleImageUpload} accept="image/*" />
+          </label>
           <Button variant="secondary" onClick={() => setModalShow(false)}>
             Close
           </Button>
@@ -740,6 +759,7 @@ const Template = () => {
                 state: {
                   numberOfLines: numberOfLines,
                   numberOfFrontSideColumn: numberOfFrontSideColumn,
+                  imgsrc: imageSrc
                 },
               });
             }}

@@ -6,13 +6,13 @@ import classes from "./DesignTemplate.module.css";
 import image1 from "../assets/cropped.jpg";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from 'react-draggable';
-// import './DraggableImage.css';
 import { Rnd } from 'react-rnd';
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
     const [selection, setSelection] = useState(null);
     const [dragStart, setDragStart] = useState(null);
     const [modalShow, setModalShow] = useState(false);
+    // const [imgsrc, setImageSrc] = useState(image1)
     const imageRef = useRef(null);
     const containerRef = useRef(null);
     const [open, setOpen] = useState(false);
@@ -27,10 +27,11 @@ const DesignTemplate = () => {
     const [lineInterval, setLineinterval] = useState(0);
     const [columnInterval, setColumnInterval] = useState(0);
     const [spanDisplay, setSpanDisplay] = useState("none");
-    const { numberOfFrontSideColumn, numberOfLines } = useLocation().state;
+    const { numberOfFrontSideColumn, numberOfLines, imgsrc } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
-
+    console.log(imgsrc)
+    // const imgsrc= 
     const toggleSelection = (row, col) => {
         const key = `${row},${col}`;
         console.log("Toggling:", key);
@@ -172,7 +173,7 @@ const DesignTemplate = () => {
           </TransformWrapper> */}
                     {/* <Draggable>
                         <img
-                            src={image1}
+                            src={imgsrc}
                             className={`${classes["object-contain"]} ${classes["draggable-image"]} rounded`}
                             alt="omr sheet"
                         />
@@ -193,7 +194,7 @@ const DesignTemplate = () => {
                         style={{ border: '1px solid #ddd' }} // Optional: for visual boundary
                     >
                         <img
-                            src={image1}
+                            src={imgsrc}
                             className={`${classes["object-contain"]} ${classes["draggable-resizable-image"]} rounded`}
                             alt="omr sheet"
                         />

@@ -94,7 +94,7 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          Jobs
+                          Job
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">924</span>
                       </div>

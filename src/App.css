@@ -138,3 +138,6 @@ input[type=number] {
     background-color: blue;
     /* Change color as needed to indicate selection */
 }
+.imagegrid-container{
+    padding-left: 20px;
+}

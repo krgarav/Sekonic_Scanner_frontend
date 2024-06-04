@@ -30,6 +30,7 @@ import JobQueue from "views/JobQueue";
 import DesignTemplate from "views/DesignTemplate";
 import Booklet32Page from "views/Booklet32Page";
 import Booklet24Page from "views/Booklet24Page";
+import ImageGrid from "views/Imagegrid";
 
 var routes = [
   {
@@ -44,6 +45,13 @@ var routes = [
     name: "Jobs",
     icon: "ni ni-briefcase-24 text-yellow",
     component: <Jobs />,
+    layout: "/admin",
+  },
+  {
+    path: "/column-generation",
+    name: "Column Generation",
+    icon: "ni ni-briefcase-24 text-blue",
+    component: <ImageGrid />,
     layout: "/admin",
   },
   {
