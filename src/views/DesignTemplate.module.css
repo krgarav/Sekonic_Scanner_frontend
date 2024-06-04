@@ -1,0 +1,17 @@
+/* .main{
+    background-image: url("../assets/cropped.jpg");
+    background-size: contain;
+    background-position: center;
+} */
+
+
+
+/* .imgContainer{
+    z-index: 999;
+    position: absolute;
+} */
+
+.img{
+    position: absolute;
+    z-index: 999;
+}
