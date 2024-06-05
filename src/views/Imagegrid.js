@@ -10,6 +10,7 @@ const ImageGrid = () => {
     const [selection, setSelection] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
     const [mainCols, setMainCols] = useState(0)
+    const [pitch, setPitch] = useState(4.233)
     let maincolumns = 0;
 
     const drawGrid = () => {
@@ -21,11 +22,15 @@ const ImageGrid = () => {
         img.onload = () => {
             canvas.width = img.width;
             canvas.height = img.height;
+            const cp = document.getElementById("canvaspage");
+            console.log(cp.width, cp.height);
+            console.log(img.width, img.height)
             ctx.drawImage(img, 0, 0);
-            // console.log(img.width)
-            const imginmm = Math.ceil(+img.width * 0.2645833333)
-            const columns = imginmm / 4.233
-            const colWidth = 16.365354331;
+            console.log(img.width)
+            const imginmm = Math.floor(+img.width * 0.26458333333719);
+            console.log(imginmm)
+            const columns = Math.floor(imginmm / 4.233);
+            const colWidth = 3.7795275591 * 4.233;
             const rowHeight = img.height / rows;
             setMainCols(columns)
             ctx.strokeStyle = 'green';
@@ -118,11 +123,15 @@ const ImageGrid = () => {
                 <div>
                     <label>
                         Columns:
-                        <input type="number" value={mainCols}  onChange={(e) => setCols(parseInt(e.target.value, 10))} />
+                        <input type="number" value={mainCols} onChange={(e) => setCols(parseInt(e.target.value, 10))} />
                     </label>
                     <label>
                         Rows:
                         <input type="number" value={rows} onChange={(e) => setRows(parseInt(e.target.value, 10))} />
+                    </label>
+                    <label>
+                        Pitch:
+                        <input type="number" value={pitch} onChange={(e) => setRows(parseInt(e.target.value, 10))} />
                     </label>
                     <label>
                         Upload Image:
@@ -131,7 +140,7 @@ const ImageGrid = () => {
                 </div>
                 <br />
                 <canvas
-
+                    id="canvaspage"
                     ref={canvasRef}
                     style={{ border: '2px solid black' }}
                     onMouseDown={handleMouseDown}
