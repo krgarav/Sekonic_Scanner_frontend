@@ -131,7 +131,7 @@ const DesignTemplate = () => {
 
         // console.log("start row ---> ", selection.startRow + 1);
         // console.log("end row ---> ", selection.startRow + 1);
-        // console.log(selection.endRow + 1, " ", selection.startRow + 1, " ", selection.endCol, " ", selection.startCol);
+        console.log(selection?.endRow + 1, " ", selection?.startRow + 1, " ", selection?.endCol, " ", selection?.startCol);
     };
 
     const handleMouseUp = () => {
