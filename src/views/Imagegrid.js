@@ -12,7 +12,8 @@ const ImageGrid = () => {
     const [mainCols, setMainCols] = useState(0)
     const [pitch, setPitch] = useState(4.233)
     let maincolumns = 0;
-
+    const offsetLeft = 20.798740157;
+    const offsetRight = 36.415748031;
     const drawGrid = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -20,17 +21,17 @@ const ImageGrid = () => {
         const img = new Image();
 
         img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
+            canvas.width = img.width - 20.798740157;
+            canvas.height = img.height - 36.415748031;
             const cp = document.getElementById("canvaspage");
             console.log(cp.width, cp.height);
             console.log(img.width, img.height)
-            ctx.drawImage(img, 0, 0);
-            console.log(img.width)
-            const imginmm = Math.floor(+img.width * 0.26458333333719);
-            console.log(imginmm)
-            const columns = Math.floor(imginmm / 4.233);
+            // ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, -offsetLeft, 0, img.width, img.height);
+            const cnvinmm = +canvas.width * 0.26458333333719;
+            const columns = Math.floor(cnvinmm / 4.233)
             const colWidth = 3.7795275591 * 4.233;
+            
             const rowHeight = img.height / rows;
             setMainCols(columns)
             ctx.strokeStyle = 'green';
@@ -91,13 +92,16 @@ const ImageGrid = () => {
 
     const calculateSelection = () => {
         if (!selection) return;
-        const colWidth = canvasRef.current.width / cols;
+        console.log(selection)
+        const colWidth = canvasRef.current.width / mainCols;
+        console.log(canvasRef.current.width)
+        console.log(colWidth)
         const rowHeight = canvasRef.current.height / rows;
         const startCol = Math.floor(selection.x / colWidth) + 1;
         const startRow = Math.floor(selection.y / rowHeight) + 1;
-        const endCol = Math.floor((selection.x + selection.width) / colWidth) + 1;
+        const endCol = Math.floor((selection.x + selection.width) / colWidth) ;
         const endRow = Math.floor((selection.y + selection.height) / rowHeight) + 1;
-        console.log(`Selected from col ${startCol}, row ${startRow} to col ${endCol}, row ${endRow}`);
+        console.log(`Starting Row : ${startRow}, starting Col : ${startCol} End Row :${endRow}, End Col : ${endCol}`);
     };
 
     const handleImageUpload = (e) => {

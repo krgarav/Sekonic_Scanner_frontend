@@ -63,8 +63,7 @@ input[type=number] {
     margin-right: .06rem;
 }
 
-.top-num,
-.left-num {
+.top-num, .left-num {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,17 +82,17 @@ input[type=number] {
     display: flex;
 }
 
-.circle {
+/* .circle {
     width: 17px;
-    height: 17px;
+    height: 10px;
     border: 1px solid black;
     border-radius: 50%;
     margin: 2px;
-}
+} */
 
 .left-num {
     /* margin-bottom: 0.6rem; */
-    padding-top: 19px;
+    padding-top: 3px;
     width: 30px;
     /* Enough space to fit the timing mark and number */
     display: flex;
@@ -101,6 +100,13 @@ input[type=number] {
     justify-content: right;
     padding-right: 5px;
     /* Space before the grid starts */
+
+    
+    width: 20px;
+    height: 20px;
+    font-size: .7rem;
+    margin-left: .9rem;
+    
 }
 
 .left-nums {
@@ -119,16 +125,17 @@ input[type=number] {
 
 .timing-mark {
     width: 1.2rem;
-    height: .375rem;
+    height: .5rem;
     background-color: black;
+    align-self: start;
 }
 
 
 .circle {
     width: 17px;
-    height: 17px;
+    height: 9px;
     border: 1px solid black;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     margin: 2px;
     cursor: pointer;
     /* Indicates that the item is clickable */
@@ -137,7 +144,4 @@ input[type=number] {
 .circle.selected {
     background-color: blue;
     /* Change color as needed to indicate selection */
-}
-.imagegrid-container{
-    padding-left: 20px;
 }

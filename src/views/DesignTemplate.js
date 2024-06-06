@@ -30,7 +30,7 @@ const DesignTemplate = () => {
     const { numberOfFrontSideColumn, numberOfLines, imgsrc } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
-    console.log(imgsrc)
+    // console.log(imgsrc)
     // const imgsrc= 
     const toggleSelection = (row, col) => {
         const key = `${row},${col}`;
@@ -42,12 +42,12 @@ const DesignTemplate = () => {
         });
     };
 
-    useEffect(() => {
-        const navbarElement = document.getElementById("navbar-main");
-        if (navbarElement) {
-            navbarElement.style.display = "none";
-        }
-    }, []);
+    // useEffect(() => {
+    //     const navbarElement = document.getElementById("navbar-main");
+    //     if (navbarElement) {
+    //         navbarElement.style.display = "none";
+    //     }
+    // }, []);
 
     useEffect(() => {
         const imgDiv = document.getElementById("imagecontainer");
@@ -127,7 +127,11 @@ const DesignTemplate = () => {
 
             return newSelection;
         });
-        console.log(selection);
+        // console.log(selection.startRow)
+
+        // console.log("start row ---> ", selection.startRow + 1);
+        // console.log("end row ---> ", selection.startRow + 1);
+        // console.log(selection.endRow + 1, " ", selection.startRow + 1, " ", selection.endCol, " ", selection.startCol);
     };
 
     const handleMouseUp = () => {
@@ -150,7 +154,7 @@ const DesignTemplate = () => {
 
     return (
         <>
-            <div className={`container ${classes.main}`}>
+            <div className="container">
                 <div id="imagecontainer" className={classes.img}>
                     {/* <TransformWrapper
             defaultScale={1}
@@ -200,7 +204,6 @@ const DesignTemplate = () => {
                         />
                     </Rnd>
                 </div>
-
                 <div className="d-flex">
                     <div style={{ marginRight: "1rem" }}>
                         <div className="top"></div>
@@ -214,20 +217,11 @@ const DesignTemplate = () => {
                         <div className="top-row">
                             <div className="corner"></div>
                             {Array.from({ length: numCols }).map((_, index) => (
-                                <div key={index} className="top-num">
-                                    {index + 1}
-                                </div>
+                                <div key={index} className="top-num">{index + 1}</div>
                             ))}
                         </div>
-                        <div
-                            style={{
-                                border: "2px solid black",
-                                padding: "1rem",
-                                paddingLeft: ".5rem",
-                            }}
-                        >
-                            <div
-                                className="grid"
+                        <div style={{ border: "2px solid black", paddingTop: "1.2rem", padding: "1rem", paddingLeft: ".5rem" }}>
+                            <div className="grid"
                                 ref={imageRef}
                                 onMouseDown={handleMouseDown}
                                 onMouseUp={handleMouseUp}
@@ -235,17 +229,13 @@ const DesignTemplate = () => {
                             >
                                 {Array.from({ length: numRows }).map((_, rowIndex) => (
                                     <div key={rowIndex} className="row">
-                                        <div className="left-num">
-                                            <div className="timing-mark "></div>
+                                        <div className="left-num" sty><div className="timing-mark "></div></div>
+                                        <div className="">
                                         </div>
-                                        <div className=""></div>
                                         {Array.from({ length: numCols }).map((_, colIndex) => (
-                                            <div
-                                                key={colIndex}
-                                                className={`circle ${selected[`${rowIndex},${colIndex}`] ? "selected" : ""
-                                                    }`}
-                                            ></div>
+                                            <div key={colIndex} className={`circle ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
                                         ))}
+
                                     </div>
                                 ))}
 
@@ -256,23 +246,10 @@ const DesignTemplate = () => {
                                         style={{
                                             border: "2px solid #007bff",
                                             position: "absolute",
-                                            left: `${data.startCol *
-                                                (imageRef.current.getBoundingClientRect().width /
-                                                    numCols) -
-                                                6
-                                                }px`,
-                                            top: `${data.startRow *
-                                                (imageRef.current.getBoundingClientRect().height /
-                                                    numRows)
-                                                }px`,
-                                            width: `${(data.endCol - data.startCol + 1) *
-                                                (imageRef.current.getBoundingClientRect().width /
-                                                    numCols)
-                                                }px`,
-                                            height: `${(data.endRow - data.startRow + 1) *
-                                                (imageRef.current.getBoundingClientRect().height /
-                                                    numRows)
-                                                }px`,
+                                            left: `${(data.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 6}px`,
+                                            top: `${(data.startRow * (imageRef.current.getBoundingClientRect().height / numRows))}px`,
+                                            width: `${((data.endCol - data.startCol + 1) * (imageRef.current.getBoundingClientRect().width / numCols))}px`,
+                                            height: `${((data.endRow - data.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows))}px`
                                         }}
                                     ></div>
                                 ))}
@@ -282,23 +259,10 @@ const DesignTemplate = () => {
                                         style={{
                                             border: "2px solid green",
                                             position: "absolute",
-                                            left: `${selection.startCol *
-                                                (imageRef.current.getBoundingClientRect().width /
-                                                    numCols) -
-                                                6
-                                                }px`,
-                                            top: `${selection.startRow *
-                                                (imageRef.current.getBoundingClientRect().height /
-                                                    numRows)
-                                                }px`,
-                                            width: `${(selection.endCol - selection.startCol + 1) *
-                                                (imageRef.current.getBoundingClientRect().width /
-                                                    numCols)
-                                                }px`,
-                                            height: `${(selection.endRow - selection.startRow + 1) *
-                                                (imageRef.current.getBoundingClientRect().height /
-                                                    numRows)
-                                                }px`,
+                                            left: `${(selection.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 6}px`,
+                                            top: `${(selection.startRow * (imageRef.current.getBoundingClientRect().height / numRows))}px`,
+                                            width: `${(selection.endCol - selection.startCol + 1) * (imageRef.current.getBoundingClientRect().width / numCols)}px`,
+                                            height: `${(selection.endRow - selection.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows)}px`
                                         }}
                                     ></div>
                                 )}
@@ -308,18 +272,20 @@ const DesignTemplate = () => {
                 </div>
             </div>
 
+
             <Modal
                 show={modalShow}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
             >
-                <Modal.Header>
+                <Modal.Header >
                     <Modal.Title id="contained-modal-title-vcenter">
                         Edit User
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+
                     <Row className="mb-3">
                         <label
                             htmlFor="example-text-input"
@@ -328,38 +294,24 @@ const DesignTemplate = () => {
                             Name
                         </label>
                         <div className="col-md-10">
-                            <input
-                                type="text"
-                                className="form-control"
+                            <input type="text"
+                                className='form-control'
                                 placeholder="Enter User Name"
                                 value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            {!name && (
-                                <span style={{ color: "red", display: spanDisplay }}>
-                                    This feild is required
-                                </span>
-                            )}
+                                onChange={(e) => setName(e.target.value)} />
+                            {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
+
                         </div>
                     </Row>
+
+
+
+
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button
-                        type="button"
-                        color="primary"
-                        onClick={handleCancle}
-                        className="waves-effect waves-light"
-                    >
-                        Cancel
-                    </Button>{" "}
-                    <Button
-                        type="button"
-                        color="success"
-                        onClick={handleSave}
-                        className="waves-effect waves-light"
-                    >
-                        Save
-                    </Button>{" "}
+                    <Button type="button" color="primary" onClick={handleCancle} className="waves-effect waves-light">Cancel</Button>{" "}
+                    <Button type="button" color="success" onClick={handleSave} className="waves-effect waves-light">Save</Button>{" "}
+
                 </Modal.Footer>
             </Modal>
         </>

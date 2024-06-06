@@ -363,7 +363,7 @@ const Template = () => {
                             className="col-md-6 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Number of lines:
+                            Number of Rows:
                           </label>
                           <div className="col-md-6">
                             <input
