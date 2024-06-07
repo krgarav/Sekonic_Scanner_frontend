@@ -1,85 +1,81 @@
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Firefox */
-input[type=number] {
-    -moz-appearance: textfield;
-
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .head {
-    width: 70vw;
-    margin: auto;
-    margin-bottom: 2rem;
+  width: 70vw;
+  margin: auto;
+  margin-bottom: 2rem;
 }
 
 .table-main {
-    overflow: scroll;
-    border: 1px solid black;
-
+  overflow: scroll;
+  border: 1px solid black;
 }
 
 .JobQueueTableTr th {
-    border: 1px solid black;
-    padding: 0.5rem;
+  border: 1px solid black;
+  padding: 0.5rem;
 }
 
 .JobQueueTableTr td {
-    border: 1px solid black;
-    padding: 0.5rem;
-    width: 20vw;
+  border: 1px solid black;
+  padding: 0.5rem;
+  width: 20vw;
 }
 
-
-
 .containe {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-left: 3rem;
-    margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 3rem;
+  margin-top: 3rem;
 }
 
 .top-row {
-    display: flex;
-    margin-left: 27px;
-    /* Adjust according to the size of the timing marks */
+  display: flex;
+  margin-left: 27px;
+  /* Adjust according to the size of the timing marks */
 }
 
 .top {
-    height: 37px;
+  height: 37px;
 }
 
 .corner {
-    width: 0px;
-    /* Space for the row numbers on the left */
+  width: 0px;
+  /* Space for the row numbers on the left */
 }
 
 .top-num {
-
-    margin-right: .06rem;
+  margin-right: 0.06rem;
 }
 
-.top-num, .left-num {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    font-size: .7rem;
+.top-num,
+.left-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 0.7rem;
 }
 
 .grid {
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .row {
-    display: flex;
+  display: flex;
 }
 
 /* .circle {
@@ -91,57 +87,68 @@ input[type=number] {
 } */
 
 .left-num {
-    /* margin-bottom: 0.6rem; */
-    padding-top: 3px;
-    width: 30px;
-    /* Enough space to fit the timing mark and number */
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    padding-right: 5px;
-    /* Space before the grid starts */
+  /* margin-bottom: 0.6rem; */
+  padding-top: 3px;
+  width: 30px;
+  /* Enough space to fit the timing mark and number */
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  padding-right: 5px;
+  /* Space before the grid starts */
 
-    
-    width: 20px;
-    height: 20px;
-    font-size: .7rem;
-    margin-left: .9rem;
-    
+  width: 20px;
+  height: 20px;
+  font-size: 0.4rem;
+  margin-left: 0.9rem;
 }
 
 .left-nums {
-
-    height: 20px;
-    font-size: .7rem;
-    margin-bottom: 0.065rem;
-    width: 30px;
-    /* Enough space to fit the timing mark and number */
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    padding-right: 5px;
-    /* Space before the grid starts */
+  height: 20px;
+  font-size: 0.6rem;
+  width: 30px;
+  /* Enough space to fit the timing mark and number */
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  padding-right: 5px;
+  /* Space before the grid starts */
 }
 
 .timing-mark {
-    width: 1.2rem;
-    height: .5rem;
-    background-color: black;
-    align-self: start;
+  width: 1.2rem;
+  height: 0.5rem;
+  background-color: black;
+  align-self: start;
 }
 
-
+.rectangle {
+  width: 17px;
+  height: 9px;
+  border: 1px solid black;
+  /* border-radius: 50%; */
+  margin: 2px;
+  cursor: pointer;
+  /* Indicates that the item is clickable */
+}
+.rounded-rectangle {
+  width: 17px;
+  height: 9px;
+  border: 1px solid black;
+  border-radius: 1px;
+  margin: 2px;
+  cursor: pointer;
+  /* Indicates that the item is clickable */
+}
 .circle {
-    width: 17px;
-    height: 9px;
-    border: 1px solid black;
-    /* border-radius: 50%; */
-    margin: 2px;
-    cursor: pointer;
-    /* Indicates that the item is clickable */
+  width: 17px;
+  height: 17px;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
 }
-
 .circle.selected {
-    background-color: blue;
-    /* Change color as needed to indicate selection */
+  background-color: blue;
+  /* Change color as needed to indicate selection */
 }

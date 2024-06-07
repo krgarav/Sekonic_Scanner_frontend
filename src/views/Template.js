@@ -40,8 +40,12 @@ import {
   NavDropdown,
 } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import Select from "react-select";
+import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
+import { FaRegCircle } from "react-icons/fa";
+import { MdOutlineRectangle } from "react-icons/md";
+import { LuRectangleHorizontal } from "react-icons/lu";
+import { TbOvalVertical } from "react-icons/tb";
 
 const Template = () => {
   const [allTemplates, setAllTemplates] = useState([]);
@@ -60,6 +64,7 @@ const Template = () => {
     id: 1,
     name: "Mark to mark",
   });
+  const [selectedBubble, setSelectedBubble] = useState({})
   const [numberOfFrontSideColumn, setNumberOfFrontSideColumn] = useState("");
   const [numberOfBackSideColumn, setNumberOfBackSideColumn] = useState("");
   const [typeOfColumnDisplay, setTypeOfColumnDisplay] = useState({
@@ -102,7 +107,12 @@ const Template = () => {
     { id: 6, name: "Setting User" },
     { id: 7, name: "8.5" },
   ];
-
+  const bubbleData = [
+    { id: 1, name: "circle", icon: <FaRegCircle /> },
+    { id: 2, name: "rectangle", icon: <MdOutlineRectangle /> },
+    { id: 3, name: "rounded rectangle", icon: <LuRectangleHorizontal /> },
+    { id: 4, name: "oval", icon: <TbOvalVertical /> },
+  ];
   const timingMethodData = [
     { id: 1, name: "Mark to mark" },
     { id: 2, name: "Direct under" },
@@ -139,12 +149,28 @@ const Template = () => {
       const reader = new FileReader();
       reader.onload = (event) => {
         setImageSrc(event.target.result);
-        
+
       };
       reader.readAsDataURL(file);
     }
   }
 
+  const Option = (props) => {
+    return (
+      <components.Option {...props}>
+        {props.data.icon && <span style={{ marginRight: 8 }}>{props.data.icon}</span>}
+        {props.data.name}
+      </components.Option>
+    );
+  };
+  const SingleValue = (props) => {
+    return (
+      <components.SingleValue {...props}>
+        {props.data.icon && <span style={{ marginRight: 8 }}>{props.data.icon}</span>}
+        {props.data.name}
+      </components.SingleValue>
+    );
+  };
   return (
     <>
       <NormalHeader />
@@ -336,7 +362,7 @@ const Template = () => {
                             className="col-md-6 col-form-label"
                             style={{ fontSize: ".9rem" }}
                           >
-                            Layitude:
+                            Latitude:
                           </label>
                           <div className="col-md-6 d-flex">
                             <input
@@ -382,6 +408,34 @@ const Template = () => {
                           </div>
                         </Row>
                       </Col>
+                    </Row>
+                    <Row className="mb-3">
+                      <label
+                        htmlFor="bubble-variant-input"
+                        className="col-md-3 "
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Bubble Variant:
+                      </label>
+                      <div className="col-md-9">
+                        <Select
+                          value={selectedBubble}
+                          onChange={(selectedValue) =>
+                            setSelectedBubble(selectedValue)
+                          }
+                          options={bubbleData}
+                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                          }
+                          components={{ Option, SingleValue }}
+                        />
+                        {!selectedBubble && (
+                          <span style={{ color: "red", display: spanDisplay }}>
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
                     </Row>
                     <Row className="mb-3">
                       <label
@@ -742,7 +796,7 @@ const Template = () => {
           </Tab.Container>
         </Modal.Body>
         <Modal.Footer>
-          {/* <Button>ggyigyjigyil</Button> */}
+
           <label>
             Upload Image:
             <input type="file" onChange={handleImageUpload} accept="image/*" />
@@ -759,7 +813,8 @@ const Template = () => {
                 state: {
                   numberOfLines: numberOfLines,
                   numberOfFrontSideColumn: numberOfFrontSideColumn,
-                  imgsrc: imageSrc
+                  imgsrc: imageSrc,
+                  selectedBubble: selectedBubble.name
                 },
               });
             }}

@@ -12,7 +12,8 @@ const DesignTemplate = () => {
     const [selection, setSelection] = useState(null);
     const [dragStart, setDragStart] = useState(null);
     const [modalShow, setModalShow] = useState(false);
-    // const [imgsrc, setImageSrc] = useState(image1)
+    const [rotation, setRotation] = useState(0);
+    const [selectedClass, setSelectedClass] = useState("circle")
     const imageRef = useRef(null);
     const containerRef = useRef(null);
     const [open, setOpen] = useState(false);
@@ -27,7 +28,7 @@ const DesignTemplate = () => {
     const [lineInterval, setLineinterval] = useState(0);
     const [columnInterval, setColumnInterval] = useState(0);
     const [spanDisplay, setSpanDisplay] = useState("none");
-    const { numberOfFrontSideColumn, numberOfLines, imgsrc } = useLocation().state;
+    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
     // console.log(imgsrc)
@@ -42,20 +43,47 @@ const DesignTemplate = () => {
         });
     };
 
-    // useEffect(() => {
-    //     const navbarElement = document.getElementById("navbar-main");
-    //     if (navbarElement) {
-    //         navbarElement.style.display = "none";
-    //     }
-    // }, []);
+    useEffect(() => {
+        switch (selectedBubble) {
+            case "rounded rectangle":
+                setSelectedClass("rounded-rectangle")
+                break;
+            case "rectangle":
+                setSelectedClass("rectangle")
+                break;
 
+            case "circle":
+                setSelectedClass("circle")
+                break;
+
+            case "oval":
+                setSelectedClass("rectangle")
+                break;
+
+            default:
+                setSelectedClass("circle")
+                break;
+        }
+        // console.log(selectedBubble)
+    }, [])
+    {/* useEffect for toggling image overlapping over coordinate selection area*/ }
     useEffect(() => {
         const imgDiv = document.getElementById("imagecontainer");
-
         const handleKeyPress = (event) => {
+            console.log(event.key)
             event.preventDefault();
             if (event.altKey) {
-                imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";
+                imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";   //z index toggle
+            }
+            if (event.key === "r") {
+                const newRotation = (rotation + 15) % 360; // Rotate by 15 degrees for each click
+                setRotation((rotation) => {
+                    if (rotation === 360) {
+                        return rotation = 90
+                    } else {
+                        return rotation + 90
+                    }
+                });
             }
         };
 
@@ -66,7 +94,7 @@ const DesignTemplate = () => {
             window.removeEventListener("keydown", handleKeyPress);
         };
     }, []);
-
+    console.log(rotation)
     // const handleMouseDown = (e) => {
     //     const boundingRect = imageRef.current.getBoundingClientRect();
     //     const col = Math.floor((e.clientX - boundingRect.left) / (boundingRect.width / numCols));
@@ -155,35 +183,7 @@ const DesignTemplate = () => {
     return (
         <>
             <div className="container">
-                <div id="imagecontainer" className={classes.img}>
-                    {/* <TransformWrapper
-            defaultScale={1}
-            options={{ limitToBounds: false }}
-            pan={{
-              disabled: false,
-              velocity: false,
-              lockAxisX: false,
-              lockAxisY: false,
-              padding: false,
-            }}
-          >
-            <TransformComponent>
-              <img
-                src={image1}
-                className={`object-contain  ${classes.imgContainer} zoomable-image rounded`}
-                alt="omr sheet"
-              />
-            </TransformComponent>
-          </TransformWrapper> */}
-                    {/* <Draggable>
-                        <img
-                            src={imgsrc}
-                            className={`${classes["object-contain"]} ${classes["draggable-image"]} rounded`}
-                            alt="omr sheet"
-                        />
-
-                    </Draggable> */}
-
+                <div id="imagecontainer" className={classes.img} >
                     <Rnd
                         default={{
                             x: 0,
@@ -193,15 +193,21 @@ const DesignTemplate = () => {
                         }}
                         minWidth={100}
                         minHeight={100}
-                        bounds="parent"
-                        // lockAspectRatio
-                        style={{ border: '1px solid #ddd' }} // Optional: for visual boundary
+                        bounds={null}
+                        // lockAspectRatio  
+                        style={{
+                            border: '1px solid #ddd',
+                        }}
+
                     >
+
                         <img
                             src={imgsrc}
                             className={`${classes["object-contain"]} ${classes["draggable-resizable-image"]} rounded`}
                             alt="omr sheet"
+
                         />
+
                     </Rnd>
                 </div>
                 <div className="d-flex">
@@ -230,10 +236,8 @@ const DesignTemplate = () => {
                                 {Array.from({ length: numRows }).map((_, rowIndex) => (
                                     <div key={rowIndex} className="row">
                                         <div className="left-num" sty><div className="timing-mark "></div></div>
-                                        <div className="">
-                                        </div>
                                         {Array.from({ length: numCols }).map((_, colIndex) => (
-                                            <div key={colIndex} className={`circle ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
+                                            <div key={colIndex} className={`${selectedClass} ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
                                         ))}
 
                                     </div>
@@ -303,9 +307,6 @@ const DesignTemplate = () => {
 
                         </div>
                     </Row>
-
-
-
 
                 </Modal.Body>
                 <Modal.Footer>
