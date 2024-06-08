@@ -28,11 +28,11 @@ const DesignTemplate = () => {
     const [lineInterval, setLineinterval] = useState(0);
     const [columnInterval, setColumnInterval] = useState(0);
     const [spanDisplay, setSpanDisplay] = useState("none");
+    const [savedData, setSavedData] = useState([]);
     const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
-    // console.log(imgsrc)
-    // const imgsrc= 
+
     const toggleSelection = (row, col) => {
         const key = `${row},${col}`;
         console.log("Toggling:", key);
@@ -68,22 +68,12 @@ const DesignTemplate = () => {
     }, [])
     {/* useEffect for toggling image overlapping over coordinate selection area*/ }
     useEffect(() => {
-        const imgDiv = document.getElementById("imagecontainer");
         const handleKeyPress = (event) => {
-            console.log(event.key)
-            event.preventDefault();
-            if (event.altKey) {
-                imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";   //z index toggle
-            }
-            if (event.key === "r") {
-                const newRotation = (rotation + 15) % 360; // Rotate by 15 degrees for each click
-                setRotation((rotation) => {
-                    if (rotation === 360) {
-                        return rotation = 90
-                    } else {
-                        return rotation + 90
-                    }
-                });
+            if (modalShow) return; // Ignore keyboard events when modal is shown
+            if (event.altKey && event.shiftKey) {
+                // Toggle z-index when Alt + Enter is pressed
+                const imgDiv = document.getElementById("imagecontainer");
+                imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";
             }
         };
 
@@ -93,8 +83,7 @@ const DesignTemplate = () => {
         return () => {
             window.removeEventListener("keydown", handleKeyPress);
         };
-    }, []);
-    console.log(rotation)
+    }, [modalShow]);
     // const handleMouseDown = (e) => {
     //     const boundingRect = imageRef.current.getBoundingClientRect();
     //     const col = Math.floor((e.clientX - boundingRect.left) / (boundingRect.width / numCols));
@@ -155,10 +144,6 @@ const DesignTemplate = () => {
 
             return newSelection;
         });
-        // console.log(selection.startRow)
-
-        // console.log("start row ---> ", selection.startRow + 1);
-        // console.log("end row ---> ", selection.startRow + 1);
         console.log(selection?.endRow + 1, " ", selection?.startRow + 1, " ", selection?.endCol, " ", selection?.startCol);
     };
 
@@ -169,7 +154,7 @@ const DesignTemplate = () => {
         }
     };
 
-    const handleCancle = () => {
+    const handleCancel = () => {
         setDragStart(null);
         setSelection(null);
         setModalShow(false);
@@ -178,6 +163,22 @@ const DesignTemplate = () => {
         setSelectedCoordinates((prev) => [...prev, selection]);
         setSelection(null);
         setModalShow(false);
+        setSavedData((prev) => {
+            const newData = {
+                "Region name": name,
+                "Coordinate": {
+                    "Start Row": selection?.startRow + 1,
+                    "Start Col": selection?.startCol,
+                    "End Row": selection?.endRow + 1,
+                    "End Col": selection?.endCol
+                }
+            };
+            // Making a deep copy of the previous state
+            const prevCopy = JSON.parse(JSON.stringify(prev));
+            prevCopy.push(newData);
+            return prevCopy;
+        });
+
     };
 
     return (
@@ -300,17 +301,42 @@ const DesignTemplate = () => {
                         <div className="col-md-10">
                             <input type="text"
                                 className='form-control'
-                                placeholder="Enter User Name"
+                                placeholder="Enter Area Name"
                                 value={name}
-                                onChange={(e) => setName(e.target.value)} />
+                                onChange={(e) => setName(e.target.value)}
+                            />
                             {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
 
                         </div>
                     </Row>
+                    <Row className="mb-3">
+                        <label htmlFor="example-select-input" className="col-md-2 col-form-label">
+                            Skew Mark
+                        </label>
+                        <div className="col-md-4">
+                            <select
+                                className="form-control"
+                            // value={option}
+                            // onChange={handleOptionChange}
+                            >
+                                <option value="">Select an option</option>
+                                <option value="rear">Rear Skew Mark</option>
+                                <option value="front">Front Skew Mark</option>
+                            </select>
+                        </div>
+
+                        <label htmlFor="example-select-input" className="col-md-2 col-form-label">
+                            Gap between Skew Marks
+                        </label>
+                        <div className="col-md-4">
+                            <input className='form-control' placeholder="Enter the gap" />
+                        </div>
+                    </Row>
+
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button type="button" color="primary" onClick={handleCancle} className="waves-effect waves-light">Cancel</Button>{" "}
+                    <Button type="button" color="primary" onClick={handleCancel} className="waves-effect waves-light">Cancel</Button>{" "}
                     <Button type="button" color="success" onClick={handleSave} className="waves-effect waves-light">Save</Button>{" "}
 
                 </Modal.Footer>
