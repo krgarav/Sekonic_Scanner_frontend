@@ -39,13 +39,14 @@ import {
   Col,
   NavDropdown,
 } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
-import { FaRegCircle } from "react-icons/fa";
+import { FaLeaf, FaRegCircle } from "react-icons/fa";
 import { MdOutlineRectangle } from "react-icons/md";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import { TbOvalVertical } from "react-icons/tb";
+import DataContext from "store/DataContext";
 
 const Template = () => {
   const [allTemplates, setAllTemplates] = useState([]);
@@ -97,7 +98,10 @@ const Template = () => {
     editTheDataWhenMarkErrorDetected,
     setEditTheDataWhenMarkErrorDetected,
   ] = useState(false);
-
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [templateDatail, setTemplateDetail] = useState([])
+  const dataCtx = useContext(DataContext);
+  console.log(templateDatail)
   const sizeData = [
     { id: 1, name: "A4" },
     { id: 2, name: "IBM Card" },
@@ -171,6 +175,13 @@ const Template = () => {
       </components.SingleValue>
     );
   };
+
+  const showHandler = (arr) => {
+    setShowDetailModal(true);
+    setTemplateDetail(arr)
+
+  }
+  const editHandler = () => { }
   return (
     <>
       <NormalHeader />
@@ -182,8 +193,8 @@ const Template = () => {
             <Card className="shadow">
               <CardHeader className="border-0">
                 <div className="d-flex justify-content-between">
-                  <h3 className="mt-2">All Users</h3>
-                  {/* <Button className="" color="primary" type="button" onClick={() => navigate("/admin/design-template")}> */}
+                  <h3 className="mt-2">All Templates</h3>
+
                   <Button
                     className=""
                     color="primary"
@@ -198,22 +209,22 @@ const Template = () => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Sno.</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone Number</th>
-                    <th scope="col">Role</th>
-                    <th scope="col" />
+                    <th scope="col">Template Name</th>
+                    <th scope="col">Row</th>
+                    <th scope="col">Col</th>
+                    <th scope="col">Bubble Type</th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "100rem" }}>
-                  {allTemplates?.map((d, i) => (
+                  {dataCtx.allTemplates?.map((d, i) => (
                     <>
                       <tr key={i}>
                         <td>{i + 1}</td>
-                        <td>{d.name}</td>
-                        <td>{d.email}</td>
-                        <td>{d.phoneNumber}</td>
-                        <td>{d?.userRoleList[0]?.roleName}</td>
+                        <td>{d[0]["Template Name"]}</td>
+                        <td>{d[0].Rows}</td>
+                        <td>{d[0].Cols}</td>
+                        <td>{d[0]["Bubble Type"]}</td>
                         <td className="text-right">
                           <UncontrolledDropdown>
                             <DropdownToggle
@@ -227,7 +238,8 @@ const Template = () => {
                               <i className="fas fa-ellipsis-v" />
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem href="#pablo">Edit</DropdownItem>
+                              <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
+                              <DropdownItem onClick={() => editHandler(d[0])}>Edit</DropdownItem>
                               <DropdownItem href="#pablo">Delete</DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>
@@ -241,6 +253,139 @@ const Template = () => {
           </div>
         </Row>
       </Container>
+
+      {/* Template Modal*/}
+
+      {templateDatail.length !== 0 && (
+        <Modal
+          show={showDetailModal}
+          onHide={() => setShowDetailModal(false)}
+          size="lg"
+          aria-labelledby="modal-custom-navbar"
+          centered
+        >
+          <Modal.Header>
+            <Modal.Title id="modal-custom-navbar">
+              Template Name :  {templateDatail[0]["Template Name"]}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Row className="mb-3">
+              <Col xs={12} md={2}>
+                <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                  Name:
+                </label>
+              </Col>
+              <Col xs={12} md={10}>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={templateDatail[0]["Template Name"]}
+                  readOnly
+                />
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col xs={12} md={2}>
+                <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                 Total Row:
+                </label>
+              </Col>
+              <Col xs={12} md={2}>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={templateDatail[0]["Rows"]}
+                  readOnly
+                />
+              </Col>
+              <Col xs={12} md={2}>
+                <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                 Total Column:
+                </label>
+              </Col>
+              <Col xs={12} md={2}>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={templateDatail[0]["Cols"]}
+                  readOnly
+                />
+              </Col>
+              <Col xs={12} md={2}>
+                <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                  Bubble Type:
+                </label>
+              </Col>
+              <Col xs={12} md={2}>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={templateDatail[0]["Bubble Type"]}
+                  readOnly
+                />
+              </Col>
+            </Row>
+
+            {templateDatail.Regions &&
+              templateDatail.Regions.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <Row className="mb-3">
+                      <Col xs={12} md={2}>
+                        <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                          Region Name:
+                        </label>
+                      </Col>
+                      <Col xs={12} md={10}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={item["Region name"]}
+                          readOnly
+                        />
+                      </Col>
+                    </Row>
+
+                    <Row className="mb-3">
+                      <Col xs={6} md={3}>
+                        <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                          Start Row:
+                        </label>
+                        <input className="form-control" value={item["Coordinate"]["Start Row"]} readOnly />
+                      </Col>
+                      <Col xs={6} md={3}>
+                        <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                          Start Col:
+                        </label>
+                        <input className="form-control" value={item["Coordinate"]["Start Col"]} readOnly />
+                      </Col>
+                      <Col xs={6} md={3}>
+                        <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                          End Row:
+                        </label>
+                        <input className="form-control" value={item["Coordinate"]["End Row"]} readOnly />
+                      </Col>
+                      <Col xs={6} md={3}>
+                        <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
+                          End Col:
+                        </label>
+                        <input className="form-control" value={item["Coordinate"]["End Col"]} readOnly />
+                      </Col>
+                    </Row>
+                  </div>
+                );
+              })}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowDetailModal(false)}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+
+
 
       <Modal
         show={modalShow}
@@ -807,10 +952,13 @@ const Template = () => {
           <Button
             variant="success"
             onClick={() => {
-              console.log("Form Submitted"); // Implement actual form submission logic
+              const templateData = [{ "Template Name": name, "Rows": numberOfLines, "Cols": numberOfFrontSideColumn, "Bubble Type": selectedBubble.name }]
+              const index = dataCtx.setAllTemplates(templateData);
+
               setModalShow(false);
               navigate("/admin/design-template", {
                 state: {
+                  templateIndex: index,
                   numberOfLines: numberOfLines,
                   numberOfFrontSideColumn: numberOfFrontSideColumn,
                   imgsrc: imageSrc,

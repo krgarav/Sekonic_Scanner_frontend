@@ -29,18 +29,19 @@ import AuthLayout from "layouts/Auth.js";
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import DesignTemplate from "views/DesignTemplate";
+import DataProvider from "store/DataProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
-    <Routes>
-      <Route path="/admin/*" element={<AdminLayout />} />
-      <Route path="/auth/*" element={<AuthLayout />} />
-
-      <Route path="*" element={<Navigate to="/admin/index" replace />} />
-
-    </Routes>
-    <ToastContainer />
+    <DataProvider>
+      <Routes>
+        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/auth/*" element={<AuthLayout />} />
+        <Route path="*" element={<Navigate to="/admin/index" replace />} />
+      </Routes>
+      <ToastContainer />
+    </DataProvider>
   </BrowserRouter>
 );

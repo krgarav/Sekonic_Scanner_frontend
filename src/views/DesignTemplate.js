@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { Row } from "reactstrap";
 import { useLocation } from "react-router-dom";
@@ -7,6 +7,7 @@ import image1 from "../assets/cropped.jpg";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from 'react-draggable';
 import { Rnd } from 'react-rnd';
+import DataContext from "store/DataContext";
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
     const [selection, setSelection] = useState(null);
@@ -29,7 +30,9 @@ const DesignTemplate = () => {
     const [columnInterval, setColumnInterval] = useState(0);
     const [spanDisplay, setSpanDisplay] = useState("none");
     const [savedData, setSavedData] = useState([]);
-    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble } = useLocation().state;
+    const [option, setOption] = useState("none");
+    const dataCtx = useContext(DataContext);
+    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
 
@@ -42,7 +45,7 @@ const DesignTemplate = () => {
             return newState;
         });
     };
-
+    console.log(selectedClass)
     useEffect(() => {
         switch (selectedBubble) {
             case "rounded rectangle":
@@ -57,7 +60,7 @@ const DesignTemplate = () => {
                 break;
 
             case "oval":
-                setSelectedClass("rectangle")
+                setSelectedClass("oval")
                 break;
 
             default:
@@ -178,7 +181,20 @@ const DesignTemplate = () => {
             prevCopy.push(newData);
             return prevCopy;
         });
+        const newData = {
+            "Region name": name,
+            "Coordinate": {
+                "Start Row": selection?.startRow + 1,
+                "Start Col": selection?.startCol,
+                "End Row": selection?.endRow + 1,
+                "End Col": selection?.endCol
+            }
+        };
+        dataCtx.modifyAllTemplate(templateIndex, newData)
 
+    };
+    const handleOptionChange = (event) => {
+        setOption(event.target.value);
     };
 
     return (
@@ -238,7 +254,7 @@ const DesignTemplate = () => {
                                     <div key={rowIndex} className="row">
                                         <div className="left-num" sty><div className="timing-mark "></div></div>
                                         {Array.from({ length: numCols }).map((_, colIndex) => (
-                                            <div key={colIndex} className={`${selectedClass} ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
+                                            <div key={colIndex} className={`${selectedBubble} ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
                                         ))}
 
                                     </div>
@@ -316,12 +332,14 @@ const DesignTemplate = () => {
                         <div className="col-md-4">
                             <select
                                 className="form-control"
-                            // value={option}
-                            // onChange={handleOptionChange}
+                                value={option}
+                                onChange={handleOptionChange}
+                                defaultValue={"none"}
                             >
                                 <option value="">Select an option</option>
-                                <option value="rear">Rear Skew Mark</option>
-                                <option value="front">Front Skew Mark</option>
+                                <option value="none">Not a Skew Mark</option>
+                                <option value="rear">Top Skew Mark</option>
+                                <option value="front">Bottom Skew Mark</option>
                             </select>
                         </div>
 
@@ -330,6 +348,39 @@ const DesignTemplate = () => {
                         </label>
                         <div className="col-md-4">
                             <input className='form-control' placeholder="Enter the gap" />
+                        </div>
+                    </Row>
+
+                    <Row className="mb-3">
+                        <label htmlFor="example-select-input" className="col-3 col-form-label">
+                            Start Row
+                        </label>
+                        <div className="col-3 ">
+                            <input value={selection?.startRow + 1} readOnly className="form-control" />
+                        </div>
+
+                        <label htmlFor="example-select-input" className="col-3  col-form-label">
+                            Start Col
+                        </label>
+                        <div className="col-3">
+                            <input value={selection?.startCol} readOnly className="form-control" />
+                        </div>
+
+
+                    </Row>
+                    <Row className="mb-3">
+                        <label htmlFor="example-select-input" className="col-3 col-form-label">
+                            End Row
+                        </label>
+                        <div className="col-3">
+                            <input value={selection?.endRow + 1} readOnly className="form-control" />
+                        </div>
+
+                        <label htmlFor="example-select-input" className="col-3 col-form-label">
+                            End Col
+                        </label>
+                        <div className="col-3">
+                            <input value={selection?.endCol} readOnly className="form-control" />
                         </div>
                     </Row>
 
