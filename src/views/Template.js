@@ -181,7 +181,19 @@ const Template = () => {
     setTemplateDetail(arr)
 
   }
-  const editHandler = () => { }
+  const editHandler = (arr, index) => {   
+    console.log(arr[0]["Bubble Type"])
+    navigate("/admin/design-template", {
+      state: {
+        templateIndex: index,
+        numberOfLines: +arr[0].Rows,
+        numberOfFrontSideColumn: +arr[0].Cols,
+        imgsrc: arr[0].Image,
+        selectedBubble: arr[0]["Bubble Type"]
+      },
+    });
+
+  }
   return (
     <>
       <NormalHeader />
@@ -239,7 +251,7 @@ const Template = () => {
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-arrow" right>
                               <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
-                              <DropdownItem onClick={() => editHandler(d[0])}>Edit</DropdownItem>
+                              <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
                               <DropdownItem href="#pablo">Delete</DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>
@@ -288,7 +300,7 @@ const Template = () => {
             <Row className="mb-3">
               <Col xs={12} md={2}>
                 <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
-                 Total Row:
+                  Total Row:
                 </label>
               </Col>
               <Col xs={12} md={2}>
@@ -301,7 +313,7 @@ const Template = () => {
               </Col>
               <Col xs={12} md={2}>
                 <label htmlFor="example-text-input" style={{ fontSize: ".9rem" }}>
-                 Total Column:
+                  Total Column:
                 </label>
               </Col>
               <Col xs={12} md={2}>
@@ -952,7 +964,7 @@ const Template = () => {
           <Button
             variant="success"
             onClick={() => {
-              const templateData = [{ "Template Name": name, "Rows": numberOfLines, "Cols": numberOfFrontSideColumn, "Bubble Type": selectedBubble.name }]
+              const templateData = [{ "Template Name": name, "Rows": numberOfLines, "Cols": numberOfFrontSideColumn, "Bubble Type": selectedBubble.name, "Image": imageSrc }]
               const index = dataCtx.setAllTemplates(templateData);
 
               setModalShow(false);
