@@ -66,6 +66,7 @@ const Template = () => {
     name: "Mark to mark",
   });
   const [selectedBubble, setSelectedBubble] = useState({})
+  const [reject, setReject] = useState()
   const [numberOfFrontSideColumn, setNumberOfFrontSideColumn] = useState("");
   const [numberOfBackSideColumn, setNumberOfBackSideColumn] = useState("");
   const [typeOfColumnDisplay, setTypeOfColumnDisplay] = useState({
@@ -101,7 +102,10 @@ const Template = () => {
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [templateDatail, setTemplateDetail] = useState([])
   const dataCtx = useContext(DataContext);
-  console.log(templateDatail)
+  const rejectData = [
+    { id: 1, name: "0" },
+    { id: 2, name: "1" },
+  ]
   const sizeData = [
     { id: 1, name: "A4" },
     { id: 2, name: "IBM Card" },
@@ -181,7 +185,7 @@ const Template = () => {
     setTemplateDetail(arr)
 
   }
-  const editHandler = (arr, index) => {   
+  const editHandler = (arr, index) => {
     console.log(arr[0]["Bubble Type"])
     navigate("/admin/design-template", {
       state: {
@@ -448,7 +452,7 @@ const Template = () => {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Enter User Name"
+                          placeholder="Enter Template Name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                         />
@@ -586,6 +590,35 @@ const Template = () => {
                             option?.id?.toString() || ""
                           }
                           components={{ Option, SingleValue }}
+                        />
+                        {!selectedBubble && (
+                          <span style={{ color: "red", display: spanDisplay }}>
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                    </Row>
+
+                    <Row className="mb-3">
+                      <label
+                        htmlFor="bubble-variant-input"
+                        className="col-md-3 "
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Rejected:
+                      </label>
+                      <div className="col-md-9">
+                        <Select
+                          value={reject}
+                          onChange={(selectedValue) =>
+                            setReject(selectedValue)
+                          }
+                          options={rejectData}
+                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                          }
+                        // components={{ Option, SingleValue }}
                         />
                         {!selectedBubble && (
                           <span style={{ color: "red", display: spanDisplay }}>

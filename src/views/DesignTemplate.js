@@ -310,18 +310,41 @@ const DesignTemplate = () => {
                     <Row className="mb-3">
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-2 col-form-label"
+                            className="col-md-3 col-form-label"
                         >
-                            Name
+                            Window Name
                         </label>
-                        <div className="col-md-10">
+                        <div className="col-md-9">
                             <input type="text"
                                 className='form-control'
-                                placeholder="Enter Area Name"
+                                placeholder="Enter Window Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
                             {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
+
+                        </div>
+                    </Row>
+                    <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 col-form-label"
+                        >
+                            Window NG
+                        </label>
+                        <div className="col-md-9">
+                            <select
+                                className="form-control"
+                                value={option}
+                            // onChange={handleOptionChange}
+                            // defaultValue={"none"}
+                            >
+                                <option value="">Select an option</option>
+                                <option value="">SKDV_ACTION_SELECT(0x00000001)</option>
+                                <option value="none">SKDV_ACTION_STOP(0x00000002)</option>
+                                <option value="rear">SKDV_ACTION_NOPRINT (0x00000004)</option>
+
+                            </select>
 
                         </div>
                     </Row>
@@ -352,28 +375,34 @@ const DesignTemplate = () => {
                     </Row>
 
                     <Row className="mb-3">
-                        <label htmlFor="example-select-input" className="col-3 col-form-label">
+                        <label htmlFor="example-select-input" className="col-2 col-form-label">
                             Start Row
                         </label>
-                        <div className="col-3 ">
+                        <div className="col-2 ">
                             <input value={selection?.startRow + 1} readOnly className="form-control" />
                         </div>
+                        <label htmlFor="example-select-input" className="col-2 col-form-label">
+                            End Row
+                        </label>
+                        <div className="col-2">
+                            <input value={selection?.endRow + 1} readOnly className="form-control" />
+                        </div>
+                        <label htmlFor="example-select-input" className="col-2 col-form-label">
+                            Total Row
+                        </label>
+                        <div className="col-2">
+                            <input value={selection?.endRow + 1} readOnly className="form-control" />
+                        </div>
 
+
+
+                    </Row>
+                    <Row className="mb-3">
                         <label htmlFor="example-select-input" className="col-3  col-form-label">
                             Start Col
                         </label>
                         <div className="col-3">
                             <input value={selection?.startCol} readOnly className="form-control" />
-                        </div>
-
-
-                    </Row>
-                    <Row className="mb-3">
-                        <label htmlFor="example-select-input" className="col-3 col-form-label">
-                            End Row
-                        </label>
-                        <div className="col-3">
-                            <input value={selection?.endRow + 1} readOnly className="form-control" />
                         </div>
 
                         <label htmlFor="example-select-input" className="col-3 col-form-label">
@@ -383,8 +412,50 @@ const DesignTemplate = () => {
                             <input value={selection?.endCol} readOnly className="form-control" />
                         </div>
                     </Row>
+                    <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 col-form-label"
+                        >
+                            Sensitivity :
+                        </label>
+                        <div className="col-md-9">
+                            <input type="text"
+                                className='form-control'
+                                placeholder="Enter Window Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
 
-
+                        </div>
+                    </Row>
+                    <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 col-form-label"
+                        >
+                            Reading Direction :
+                        </label>
+                        <div className="col-md-9">
+                            <select
+                                className="form-control"
+                                value={option}
+                            // onChange={handleOptionChange}
+                            // defaultValue={"none"}
+                            >
+                                <option value="">Select an option</option>
+                                <option value="0">SKDV_WIN_DIR_TL_DOWN </option>
+                                <option value="1">SKDV_WIN_DIR_TR_DOWN </option>
+                                <option value="2">SKDV_WIN_DIR_BL_UP </option>
+                                <option value="3">SKDV_WIN_DIR_BR_UP</option>
+                                <option value="4">SKDV_WIN_DIR_TL_RIGHT </option>
+                                <option value="5">SKDV_WIN_DIR_TR_LEFT </option>
+                                <option value="6">SKDV_WIN_DIR_BL_RIGHT </option>
+                                <option value="7">SKDV_WIN_DIR_BR_LEFT </option>
+                            </select>
+                        </div>
+                    </Row>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button type="button" color="primary" onClick={handleCancel} className="waves-effect waves-light">Cancel</Button>{" "}
