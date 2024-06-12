@@ -44,6 +44,8 @@ import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
 import DataContext from "store/DataContext";
 import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData } from "data/helperData";
+import axios from 'axios';
+import pako from 'pako';
 const Template = () => {
   const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
@@ -154,9 +156,39 @@ const Template = () => {
     });
 
   }
-  const sendToBackendHandler = (arr, index) => {
-    console.log(arr);
-  }
+  const arrayToJsonString = (arr) => {
+    return JSON.stringify(arr);
+  };
+
+  const compressJsonString = (jsonString) => {
+    const compressed = pako.gzip(jsonString);
+    return compressed;
+  };
+  const sendToBackendHandler = async (arr, index) => {
+    try {
+      // Convert the array to a JSON string
+      const jsonString = arrayToJsonString(arr);
+
+      // Compress the JSON string
+      const compressedData = compressJsonString(jsonString);
+
+      // Convert the compressed data to a Uint8Array
+      const uint8Array = new Uint8Array(compressedData);
+
+      // Send the compressed data to the backend API using axios
+      const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/ScanFiles', uint8Array, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Encoding': 'gzip',
+        },
+        responseType: 'json'
+      });
+
+      console.log('Response from backend:', response.data);
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+    }
+  };
 
   const createTemplateHandler = () => {
     console.log(!numberOfLines)
@@ -240,7 +272,7 @@ const Template = () => {
                             <DropdownMenu className="dropdown-menu-arrow" right>
                               <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
                               <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
-                              <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data to Backend</DropdownItem>
+                              <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data</DropdownItem>
                               <DropdownItem href="#pablo">Delete</DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>

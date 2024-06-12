@@ -35,7 +35,6 @@ const DesignTemplate = () => {
     const [readingDirectionOption, setReadingDirectionOption] = useState("")
     const [minimumMark, setMinimumMark] = useState();
     const [maximumMark, setMaximumMark] = useState();
-    const [gapBetweenSkewMark, setGapBetweenSkewMark] = useState();
     const [noInRow, setNoInRow] = useState();
     const [noOfStepInRow, setNoOfStepInRow] = useState();
     const [noInCol, setNoInCol] = useState();
@@ -200,7 +199,6 @@ const DesignTemplate = () => {
             "minimumMark": minimumMark,
             "maximumMark": maximumMark,
             "skewMark": skewoption,
-            "gapBetweenSkewMark": gapBetweenSkewMark
         };
         setSelectedCoordinates((prev) => [...prev, selection]);
         setSelection(null);
@@ -394,7 +392,7 @@ const DesignTemplate = () => {
                         <label htmlFor="example-select-input" className="col-md-2 col-form-label">
                             Skew Mark
                         </label>
-                        <div className="col-md-4">
+                        <div className="col-md-10">
                             <select
                                 className="form-control"
                                 value={skewoption}
@@ -408,18 +406,7 @@ const DesignTemplate = () => {
                             </select>
                         </div>
 
-                        <label htmlFor="example-select-input" className="col-md-2 ">
-                            Gap between Skew Marks
-                        </label>
-                        <div className="col-md-4">
-                            <input
-                                type="number"
-                                className='form-control'
-                                placeholder="Enter the gap"
-                                value={gapBetweenSkewMark}
-                                onChange={(e) => setGapBetweenSkewMark(e.target.value)}
-                                required />
-                        </div>
+
                     </Row>
 
                     <Row className="mb-2">
