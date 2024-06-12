@@ -20,7 +20,7 @@ const DesignTemplate = () => {
     const [open, setOpen] = useState(false);
     const [selectedCoordinates, setSelectedCoordinates] = useState([]);
 
-    const [name, setName] = useState("");
+    const [name, setName] = useState();
     const [frameType, setFrameType] = useState({});
     const [frameUnit, setFrameUnit] = useState({});
     const [outputDataSetting, setOutputDataSetting] = useState({});
@@ -30,22 +30,30 @@ const DesignTemplate = () => {
     const [columnInterval, setColumnInterval] = useState(0);
     const [spanDisplay, setSpanDisplay] = useState("none");
     const [savedData, setSavedData] = useState([]);
-    const [option, setOption] = useState("none");
+    const [skewoption, setSkewOption] = useState("none");
+    const [windowNgOption, setWindowNgOption] = useState("")
+    const [readingDirectionOption, setReadingDirectionOption] = useState("")
+    const [minimumMark, setMinimumMark] = useState();
+    const [maximumMark, setMaximumMark] = useState();
+    const [gapBetweenSkewMark, setGapBetweenSkewMark] = useState();
+    const [noInRow, setNoInRow] = useState();
+    const [noOfStepInRow, setNoOfStepInRow] = useState();
+    const [noInCol, setNoInCol] = useState();
+    const [noOfStepInCol, setNoOfStepInCol] = useState();
+
     const dataCtx = useContext(DataContext);
-    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex } = useLocation().state;
+    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex, sensitivity, difference, barCount, reject } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
 
     const toggleSelection = (row, col) => {
         const key = `${row},${col}`;
-        console.log("Toggling:", key);
         setSelected((prev) => {
             const newState = { ...prev, [key]: !prev[key] };
-            console.log(newState);
+
             return newState;
         });
-    };
-    console.log(selectedClass)
+    }
     useEffect(() => {
         switch (selectedBubble) {
             case "rounded rectangle":
@@ -67,7 +75,6 @@ const DesignTemplate = () => {
                 setSelectedClass("circle")
                 break;
         }
-        // console.log(selectedBubble)
     }, [])
     {/* useEffect for toggling image overlapping over coordinate selection area*/ }
     useEffect(() => {
@@ -163,39 +170,56 @@ const DesignTemplate = () => {
         setModalShow(false);
     };
     const handleSave = () => {
-        setSelectedCoordinates((prev) => [...prev, selection]);
-        setSelection(null);
-        setModalShow(false);
-        setSavedData((prev) => {
-            const newData = {
-                "Region name": name,
-                "Coordinate": {
-                    "Start Row": selection?.startRow + 1,
-                    "Start Col": selection?.startCol,
-                    "End Row": selection?.endRow + 1,
-                    "End Col": selection?.endCol
-                }
-            };
-            // Making a deep copy of the previous state
-            const prevCopy = JSON.parse(JSON.stringify(prev));
-            prevCopy.push(newData);
-            return prevCopy;
-        });
+
+        if (!name || !windowNgOption || !noInRow || !noOfStepInRow || !noInCol || !noOfStepInCol || !minimumMark) {
+            // setSpanDisplay("block")
+            return
+        }
+
         const newData = {
-            "Region name": name,
+            "sensitivity": sensitivity,
+            "difference": difference,
+            "barcodeCount": barCount,
+            "isReject": reject.name,
+            "windowName": name,
             "Coordinate": {
                 "Start Row": selection?.startRow + 1,
                 "Start Col": selection?.startCol,
                 "End Row": selection?.endRow + 1,
                 "End Col": selection?.endCol
-            }
+            },
+            "readingDirection": readingDirectionOption,
+            "rowStart": selection?.startRow + 1,
+            "timingMarks": numRows,
+            "windowNG": windowNgOption,
+            "totalNoInRow": noInRow,
+            "totalStepInRow": noOfStepInRow,
+            "columnStart": selection?.startCol,
+            "totalNoInColumn": noInCol,
+            "totalStepInColumn": noOfStepInCol,
+            "minimumMark": minimumMark,
+            "maximumMark": maximumMark,
+            "skewMark": skewoption,
+            "gapBetweenSkewMark": gapBetweenSkewMark
         };
-        dataCtx.modifyAllTemplate(templateIndex, newData)
+        setSelectedCoordinates((prev) => [...prev, selection]);
+        setSelection(null);
+        setModalShow(false);
+        setSavedData((prev) => {
+            // Making a deep copy of the previous state
+            const prevCopy = JSON.parse(JSON.stringify(prev));
+            prevCopy.push(newData);
+            return prevCopy;
+        });
 
+        dataCtx.modifyAllTemplate(templateIndex, newData);
     };
-    const handleOptionChange = (event) => {
-        setOption(event.target.value);
+    const handleSkewMarkOptionChange = (event) => {
+        setSkewOption(event.target.value);
     };
+    const handleWindowNgOptionChange = (event) => {
+        setWindowNgOption(event.target.value)
+    }
 
     return (
         <>
@@ -224,7 +248,6 @@ const DesignTemplate = () => {
                             alt="omr sheet"
 
                         />
-
                     </Rnd>
                 </div>
                 <div className="d-flex">
@@ -301,62 +324,81 @@ const DesignTemplate = () => {
                 centered
             >
                 <Modal.Header >
-                    <Modal.Title id="contained-modal-title-vcenter">
-                        Edit User
+                    <Modal.Title id="contained-modal-title-vcenter" style={{ width: "100vw" }} >
+                        <h2 className="text-center">DEFINE REGION</h2>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 
-                    <Row className="mb-3">
+                    <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-3 col-form-label"
+                            className="col-md-2 "
                         >
                             Window Name
                         </label>
-                        <div className="col-md-9">
+                        <div className="col-md-10">
                             <input type="text"
                                 className='form-control'
                                 placeholder="Enter Window Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                required
                             />
                             {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
 
                         </div>
                     </Row>
-                    <Row className="mb-3">
+                    <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-3 col-form-label"
+                            className="col-md-2 col-form-label"
                         >
                             Window NG
                         </label>
-                        <div className="col-md-9">
+                        <div className="col-md-10">
                             <select
                                 className="form-control"
-                                value={option}
-                            // onChange={handleOptionChange}
-                            // defaultValue={"none"}
+                                value={windowNgOption}
+                                onChange={handleWindowNgOptionChange}
+                                defaultValue={""}
                             >
                                 <option value="">Select an option</option>
-                                <option value="">SKDV_ACTION_SELECT(0x00000001)</option>
-                                <option value="none">SKDV_ACTION_STOP(0x00000002)</option>
-                                <option value="rear">SKDV_ACTION_NOPRINT (0x00000004)</option>
+                                <option value="0x00000001">SKDV_ACTION_SELECT(0x00000001)</option>
+                                <option value="0x00000002">SKDV_ACTION_STOP(0x00000002)</option>
+                                <option value="0x00000004">SKDV_ACTION_NOPRINT (0x00000004)</option>
 
                             </select>
 
                         </div>
                     </Row>
-                    <Row className="mb-3">
+                    <Row className="mb-2">
+                        <label htmlFor="example-select-input" className="col-md-2" >
+                            Minimum Mark
+                        </label>
+                        <div className="col-md-4">
+                            <input type="number" className='form-control' placeholder="Enter the minimum mark" value={minimumMark}
+                                onChange={(e) => setMinimumMark(e.target.value)}
+                                required />
+                        </div>
+                        <label htmlFor="example-select-input" className="col-md-2 ">
+                            Maximum Mark
+                        </label>
+                        <div className="col-md-4">
+                            <input type="number" className='form-control' placeholder="Enter the maximum mark" value={maximumMark}
+                                onChange={(e) => setMaximumMark(e.target.value)}
+                                required />
+                        </div>
+                    </Row>
+                    <Row className="mb-2">
                         <label htmlFor="example-select-input" className="col-md-2 col-form-label">
                             Skew Mark
                         </label>
                         <div className="col-md-4">
                             <select
                                 className="form-control"
-                                value={option}
-                                onChange={handleOptionChange}
+                                value={skewoption}
+                                onChange={handleSkewMarkOptionChange}
                                 defaultValue={"none"}
                             >
                                 <option value="">Select an option</option>
@@ -366,15 +408,21 @@ const DesignTemplate = () => {
                             </select>
                         </div>
 
-                        <label htmlFor="example-select-input" className="col-md-2 col-form-label">
+                        <label htmlFor="example-select-input" className="col-md-2 ">
                             Gap between Skew Marks
                         </label>
                         <div className="col-md-4">
-                            <input className='form-control' placeholder="Enter the gap" />
+                            <input
+                                type="number"
+                                className='form-control'
+                                placeholder="Enter the gap"
+                                value={gapBetweenSkewMark}
+                                onChange={(e) => setGapBetweenSkewMark(e.target.value)}
+                                required />
                         </div>
                     </Row>
 
-                    <Row className="mb-3">
+                    <Row className="mb-2">
                         <label htmlFor="example-select-input" className="col-2 col-form-label">
                             Start Row
                         </label>
@@ -393,58 +441,81 @@ const DesignTemplate = () => {
                         <div className="col-2">
                             <input value={selection?.endRow + 1} readOnly className="form-control" />
                         </div>
-
-
-
                     </Row>
-                    <Row className="mb-3">
-                        <label htmlFor="example-select-input" className="col-3  col-form-label">
+                    <Row className="mb-2">
+                        <label htmlFor="example-select-input" className="col-2 ">
+                            Total No In Row
+                        </label>
+                        <div className="col-4">
+                            <input type="number" className="form-control" value={noInRow}
+                                onChange={(e) => setNoInRow(e.target.value)}
+                                required />
+                        </div>
+                        <label htmlFor="example-select-input" className="col-2 ">
+                            Total Step In A Row
+                        </label>
+                        <div className="col-4">
+                            <input type="number" className="form-control" value={noOfStepInRow}
+                                onChange={(e) => setNoOfStepInRow(e.target.value)}
+                                required />
+                        </div>
+                    </Row>
+                    <Row className="mb-2">
+                        <label htmlFor="example-select-input" className="col-2  col-form-label">
                             Start Col
                         </label>
-                        <div className="col-3">
+                        <div className="col-2">
                             <input value={selection?.startCol} readOnly className="form-control" />
                         </div>
 
-                        <label htmlFor="example-select-input" className="col-3 col-form-label">
+                        <label htmlFor="example-select-input" className="col-2 col-form-label">
                             End Col
                         </label>
-                        <div className="col-3">
+                        <div className="col-2">
                             <input value={selection?.endCol} readOnly className="form-control" />
                         </div>
-                    </Row>
-                    <Row className="mb-3">
-                        <label
-                            htmlFor="example-text-input"
-                            className="col-md-3 col-form-label"
-                        >
-                            Sensitivity :
+                        <label htmlFor="example-select-input" className="col-2 col-form-label">
+                            Total Col
                         </label>
-                        <div className="col-md-9">
-                            <input type="text"
-                                className='form-control'
-                                placeholder="Enter Window Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
-
+                        <div className="col-2">
+                            <input value={selection?.endRow + 1} readOnly className="form-control" />
                         </div>
                     </Row>
-                    <Row className="mb-3">
+                    <Row className="mb-2">
+                        <label htmlFor="example-select-input" className="col-2 ">
+                            Total No In Col
+                        </label>
+                        <div className="col-4">
+                            <input type="number" className="form-control" value={noInCol}
+                                onChange={(e) => setNoInCol(e.target.value)}
+                                required />
+                        </div>
+                        <label htmlFor="example-select-input" className="col-2 ">
+                            Total Step In A Col
+                        </label>
+                        <div className="col-4">
+                            <input type="number" className="form-control"
+                                value={noOfStepInCol}
+                                onChange={(e) => setNoOfStepInCol(e.target.value)}
+                                required />
+                        </div>
+                    </Row>
+
+                    <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-3 col-form-label"
+                            className="col-md-2 "
                         >
                             Reading Direction :
                         </label>
-                        <div className="col-md-9">
+                        <div className="col-md-10">
                             <select
                                 className="form-control"
-                                value={option}
-                            // onChange={handleOptionChange}
-                            // defaultValue={"none"}
+                                value={readingDirectionOption}
+                                onChange={(e) => { setReadingDirectionOption(e.target.value) }}
+                                defaultValue={""}
                             >
-                                <option value="">Select an option</option>
+                                <option value="">Select reading direction... </option>
                                 <option value="0">SKDV_WIN_DIR_TL_DOWN </option>
                                 <option value="1">SKDV_WIN_DIR_TR_DOWN </option>
                                 <option value="2">SKDV_WIN_DIR_BL_UP </option>

@@ -42,14 +42,9 @@ import {
 import { useContext, useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
-import { FaLeaf, FaRegCircle } from "react-icons/fa";
-import { MdOutlineRectangle } from "react-icons/md";
-import { LuRectangleHorizontal } from "react-icons/lu";
-import { TbOvalVertical } from "react-icons/tb";
 import DataContext from "store/DataContext";
-
+import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData } from "data/helperData";
 const Template = () => {
-  const [allTemplates, setAllTemplates] = useState([]);
   const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
   const [activeKey, setActiveKey] = useState("general");
@@ -65,6 +60,9 @@ const Template = () => {
     id: 1,
     name: "Mark to mark",
   });
+  const [sensitivity, setSensitivity] = useState("")
+  const [difference, setDifference] = useState("");
+  const [barCount, setBarCount] = useState("")
   const [selectedBubble, setSelectedBubble] = useState({})
   const [reject, setReject] = useState()
   const [numberOfFrontSideColumn, setNumberOfFrontSideColumn] = useState("");
@@ -102,49 +100,7 @@ const Template = () => {
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [templateDatail, setTemplateDetail] = useState([])
   const dataCtx = useContext(DataContext);
-  const rejectData = [
-    { id: 1, name: "0" },
-    { id: 2, name: "1" },
-  ]
-  const sizeData = [
-    { id: 1, name: "A4" },
-    { id: 2, name: "IBM Card" },
-    { id: 3, name: "WIDE Card" },
-    { id: 4, name: "B5" },
-    { id: 5, name: "POST Card" },
-    { id: 6, name: "Setting User" },
-    { id: 7, name: "8.5" },
-  ];
-  const bubbleData = [
-    { id: 1, name: "circle", icon: <FaRegCircle /> },
-    { id: 2, name: "rectangle", icon: <MdOutlineRectangle /> },
-    { id: 3, name: "rounded rectangle", icon: <LuRectangleHorizontal /> },
-    { id: 4, name: "oval", icon: <TbOvalVertical /> },
-  ];
-  const timingMethodData = [
-    { id: 1, name: "Mark to mark" },
-    { id: 2, name: "Direct under" },
-    { id: 3, name: "Timing control(Standard : 3 times)" },
-    { id: 4, name: "Timing control(Reduction : 2 times)" },
-    { id: 5, name: "Timing control(Extension : 4 times)" },
-  ];
 
-  const typeOfColumnDisplayData = [
-    { id: 1, name: "Type1" },
-    { id: 2, name: "Type2" },
-    { id: 3, name: "Type3" },
-    { id: 4, name: "Type4" },
-  ];
-
-  const sensivityDensivityDifferenceData = [
-    { id: 1, name: "Effictive the sensitivity of software setup" },
-    { id: 2, name: "Effictive the sensitivity of OMR setup" },
-  ];
-  const errorOfTheNumberOfTimingMarksData = [
-    { id: 1, name: "Not check error" },
-    { id: 2, name: "Check error, and stop the OMR" },
-    { id: 3, name: "Check error, and not stop the OMR" },
-  ];
 
   const handleCreate = () => { };
 
@@ -197,6 +153,34 @@ const Template = () => {
       },
     });
 
+  }
+  const sendToBackendHandler = (arr, index) => {
+    console.log(arr);
+  }
+
+  const createTemplateHandler = () => {
+    console.log(!numberOfLines)
+    if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
+      return
+    }
+
+    const templateData = [{ "Template Name": name, "Rows": numberOfLines, "Cols": numberOfFrontSideColumn, "Bubble Type": selectedBubble.name, "Image": imageSrc }]
+    const index = dataCtx.setAllTemplates(templateData);
+
+    setModalShow(false);
+    navigate("/admin/design-template", {
+      state: {
+        templateIndex: index,
+        numberOfLines: numberOfLines,
+        numberOfFrontSideColumn: numberOfFrontSideColumn,
+        imgsrc: imageSrc,
+        selectedBubble: selectedBubble.name,
+        sensitivity: sensitivity,
+        difference: difference,
+        barCount: barCount,
+        reject: reject
+      },
+    });
   }
   return (
     <>
@@ -256,6 +240,7 @@ const Template = () => {
                             <DropdownMenu className="dropdown-menu-arrow" right>
                               <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
                               <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
+                              <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data to Backend</DropdownItem>
                               <DropdownItem href="#pablo">Delete</DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>
@@ -627,7 +612,7 @@ const Template = () => {
                         )}
                       </div>
                     </Row>
-                    <Row className="mb-3">
+                    {/* <Row className="mb-3">
                       <label
                         htmlFor="example-text-input"
                         className="col-md-3 "
@@ -649,6 +634,55 @@ const Template = () => {
                         />
                         {!timingMethod && (
                           <span style={{ color: "red", display: spanDisplay }}>
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                    </Row> */}
+
+                    <Row className="mb-3">
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 "
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Barcode Count :
+                      </label>
+                      <div className="col-md-9">
+                        <input
+                          type="number"
+                          className="form-control"
+                          value={barCount}
+                          onChange={(e) => setBarCount(e.target.value)}
+                        />
+                        {!numberOfLines && (
+                          <span
+                            style={{ color: "red", display: spanDisplay }}
+                          >
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                    </Row>
+                    <Row className="mb-3">
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 "
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Timing mark:
+                      </label>
+                      <div className="col-md-9">
+                        <input
+                          type="number"
+                          className="form-control"
+                          value={numberOfLines}
+                          onChange={(e) => setNumberOfLines(e.target.value)}
+                        />
+                        {!numberOfLines && (
+                          <span
+                            style={{ color: "red", display: spanDisplay }}
+                          >
                             This feild is required
                           </span>
                         )}
@@ -749,21 +783,44 @@ const Template = () => {
                           className="col-md-3 "
                           style={{ fontSize: ".9rem" }}
                         >
-                          Sensitivity, Density Difference:
+                          Sensitivity
                         </label>
-                        <div className="col-md-9">
-                          <Select
-                            value={sensivityDensivityDifference}
-                            onChange={(selectedValue) =>
-                              setSensivityDensivityDifference(selectedValue)
-                            }
-                            options={sensivityDensivityDifferenceData}
-                            getOptionLabel={(option) => option?.name || ""}
-                            getOptionValue={(option) =>
-                              option?.id?.toString() || ""
+                        <div className="col-md-6">
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={sensitivity}
+                            onChange={(e) =>
+                              setSensitivity(e.target.value)
                             }
                           />
-                          {!sensivityDensivityDifferenceData && (
+                          {!sensitivity && (
+                            <span
+                              style={{ color: "red", display: spanDisplay }}
+                            >
+                              This feild is required
+                            </span>
+                          )}
+                        </div>
+                      </Row>
+                      <Row>
+                        <label
+                          htmlFor="example-text-input"
+                          className="col-md-3 "
+                          style={{ fontSize: ".9rem" }}
+                        >
+                          Difference
+                        </label>
+                        <div className="col-md-6">
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={difference}
+                            onChange={(e) =>
+                              setDifference(e.target.value)
+                            }
+                          />
+                          {!difference && (
                             <span
                               style={{ color: "red", display: spanDisplay }}
                             >
@@ -996,21 +1053,10 @@ const Template = () => {
           </Button>
           <Button
             variant="success"
-            onClick={() => {
-              const templateData = [{ "Template Name": name, "Rows": numberOfLines, "Cols": numberOfFrontSideColumn, "Bubble Type": selectedBubble.name, "Image": imageSrc }]
-              const index = dataCtx.setAllTemplates(templateData);
+            onClick={createTemplateHandler}
+          // onClick={() => {
 
-              setModalShow(false);
-              navigate("/admin/design-template", {
-                state: {
-                  templateIndex: index,
-                  numberOfLines: numberOfLines,
-                  numberOfFrontSideColumn: numberOfFrontSideColumn,
-                  imgsrc: imageSrc,
-                  selectedBubble: selectedBubble.name
-                },
-              });
-            }}
+          // }}
           >
             Create Template
           </Button>
