@@ -43,7 +43,7 @@ import { useContext, useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
 import DataContext from "store/DataContext";
-import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData } from "data/helperData";
+import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData, windowNgData, faceData } from "data/helperData";
 import axios from 'axios';
 import pako from 'pako';
 const Template = () => {
@@ -101,6 +101,9 @@ const Template = () => {
   ] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [templateDatail, setTemplateDetail] = useState([])
+  const [windowNgOption, setWindowNgOption] = useState("");
+  const [timingMark, setTimingMark] = useState();
+  const [face, setFace] = useState();
   const dataCtx = useContext(DataContext);
 
 
@@ -165,38 +168,86 @@ const Template = () => {
     return compressed;
   };
   const sendToBackendHandler = async (arr, index) => {
-    try {
-      // Convert the array to a JSON string
-      const jsonString = arrayToJsonString(arr);
+    console.log(arr);
+    const obj = {
+      "layoutParameters": {
+        "layoutName": "string",
+        "timingMarks": 0,
+        "barcodeCount": 0,
+        "iFace": 0,
+        "columnStart": 0,
+        "columnNumber": 0,
+        "columnStep": 0,
+        "rowStart": 0,
+        "rowNumber": 0,
+        "rowStep": 0,
+        "iDirection": 0,
+        "iSensitivity": 0,
+        "iDifference": 0,
+        "ngAction": "string",
+        "iReject": 0
+      },
+      "layoutWindowParameters": [
+        {
+          "iFace": 0,
+          "columnStart": 0,
+          "columnNumber": 0,
+          "columnStep": 0,
+          "rowStart": 0,
+          "rowNumber": 0,
+          "rowStep": 0,
+          "iDirection": 0,
+          "iSensitivity": 0,
+          "iDifference": 0,
+          "iOption": 0,
+          "iMinimumMarks": 0,
+          "iMaximumMarks": 0,
+          "iType": "string",
+          "ngAction": "string"
+        }
+      ]
 
-      // Compress the JSON string
-      const compressedData = compressJsonString(jsonString);
-
-      // Convert the compressed data to a Uint8Array
-      const uint8Array = new Uint8Array(compressedData);
-
-      // Send the compressed data to the backend API using axios
-      const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/ScanFiles', uint8Array, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Encoding': 'gzip',
-        },
-        responseType: 'json'
-      });
-
-      console.log('Response from backend:', response.data);
-    } catch (error) {
-      console.error('Error sending data to backend:', error);
     }
+
+    // try {
+    //   // Convert the array to a JSON string
+    //   const jsonString = arrayToJsonString(arr);
+
+    //   // Compress the JSON string
+    //   const compressedData = compressJsonString(jsonString);
+
+    //   // Convert the compressed data to a Uint8Array
+    //   const uint8Array = new Uint8Array(compressedData);
+
+    //   // Send the compressed data to the backend API using axios
+    //   const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', uint8Array, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Content-Encoding': 'gzip',
+    //     },
+    //     responseType: 'json'
+    //   });
+
+    //   console.log('Response from backend:', response.data);
+    // } catch (error) {
+    //   console.error('Error sending data to backend:', error);
+    // }
   };
 
   const createTemplateHandler = () => {
-    console.log(!numberOfLines)
     if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
       return
     }
 
-    const templateData = [{ "Template Name": name, "Rows": numberOfLines, "Cols": numberOfFrontSideColumn, "Bubble Type": selectedBubble.name, "Image": imageSrc }]
+    const templateData = [{
+      "Template Name": name,
+      "Rows": numberOfLines,
+      "Cols": numberOfFrontSideColumn,
+      "Bubble Type": selectedBubble.name,
+      "Image": imageSrc,
+      "Timing Mark": numberOfLines,
+      "Bar Count": barCount,
+    }]
     const index = dataCtx.setAllTemplates(templateData);
 
     setModalShow(false);
@@ -417,9 +468,6 @@ const Template = () => {
           </Modal.Footer>
         </Modal>
       )}
-
-
-
       <Modal
         show={modalShow}
         onHide={() => setModalShow(false)}
@@ -506,7 +554,7 @@ const Template = () => {
                       </div>
                     </Row>
                     <Row className="mb-3">
-                      <Col sm={4}>
+                      {/* <Col sm={4}>
                         <Row>
                           <label
                             htmlFor="example-text-input"
@@ -559,8 +607,8 @@ const Template = () => {
                             )}
                           </div>
                         </Row>
-                      </Col>
-                      <Col sm={4}>
+                      </Col> */}
+                      <Col md={6}>
                         <Row>
                           <label
                             htmlFor="example-text-input"
@@ -574,6 +622,7 @@ const Template = () => {
                               type="number"
                               className="form-control"
                               value={numberOfLines}
+                              placeholder="Enter rows"
                               onChange={(e) => setNumberOfLines(e.target.value)}
                             />
                             {!numberOfLines && (
@@ -586,11 +635,40 @@ const Template = () => {
                           </div>
                         </Row>
                       </Col>
+                      <Col md={6}>
+                        <Row>
+                          <label
+                            htmlFor="example-text-input"
+                            className="col-md-6 col-form-label "
+                            style={{ fontSize: ".9rem" }}
+                          >
+                            Number of columns:
+                          </label>
+                          <div className="col-md-6">
+                            <input
+                              placeholder="Enter columns"
+                              type="number"
+                              className="form-control"
+                              value={numberOfFrontSideColumn}
+                              onChange={(e) =>
+                                setNumberOfFrontSideColumn(e.target.value)
+                              }
+                            />
+                            {!numberOfFrontSideColumn && (
+                              <span
+                                style={{ color: "red", display: spanDisplay }}
+                              >
+                                This feild is required
+                              </span>
+                            )}
+                          </div>
+                        </Row>
+                      </Col>
                     </Row>
-                    <Row className="mb-3">
+                    <Row className="mb-2">
                       <label
                         htmlFor="bubble-variant-input"
-                        className="col-md-3 "
+                        className="col-md-3  col-form-label"
                         style={{ fontSize: ".9rem" }}
                       >
                         Bubble Variant:
@@ -615,7 +693,46 @@ const Template = () => {
                         )}
                       </div>
                     </Row>
+                    <Row className="mb-2">
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 col-form-label"
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Window NG
+                      </label>
+                      <div className="col-md-9">
+                        <Select
+                          value={windowNgOption}
+                          onChange={(selectedValue) => setWindowNgOption(selectedValue)}
+                          options={windowNgData}
+                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                          }
+                        />
+                        {!size && (
+                          <span style={{ color: "red", display: spanDisplay }}>
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                      {/* <div className="col-md-10">
+                        <select
+                          className="form-control"
+                          // value={windowNgOption}
+                          // onChange={handleWindowNgOptionChange}
+                          defaultValue={""}
+                        >
+                          <option value="">Select an option</option>
+                          <option value="0x00000001">SKDV_ACTION_SELECT(0x00000001)</option>
+                          <option value="0x00000002">SKDV_ACTION_STOP(0x00000002)</option>
+                          <option value="0x00000004">SKDV_ACTION_NOPRINT (0x00000004)</option>
 
+                        </select>
+
+                      </div> */}
+                    </Row>
                     <Row className="mb-3">
                       <label
                         htmlFor="bubble-variant-input"
@@ -635,7 +752,6 @@ const Template = () => {
                           getOptionValue={(option) =>
                             option?.id?.toString() || ""
                           }
-                        // components={{ Option, SingleValue }}
                         />
                         {!selectedBubble && (
                           <span style={{ color: "red", display: spanDisplay }}>
@@ -675,41 +791,40 @@ const Template = () => {
                     <Row className="mb-3">
                       <label
                         htmlFor="example-text-input"
-                        className="col-md-3 "
+                        className="col-md-3 col-form-label "
                         style={{ fontSize: ".9rem" }}
                       >
                         Barcode Count :
                       </label>
                       <div className="col-md-9">
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={barCount}
-                          onChange={(e) => setBarCount(e.target.value)}
-                        />
-                        {!numberOfLines && (
-                          <span
-                            style={{ color: "red", display: spanDisplay }}
-                          >
+                        <input placeholder="Enter barcode count" type="number" className="form-control" />
+                        {!selectedBubble && (
+                          <span style={{ color: "red", display: spanDisplay }}>
                             This feild is required
                           </span>
                         )}
                       </div>
                     </Row>
+
                     <Row className="mb-3">
                       <label
                         htmlFor="example-text-input"
                         className="col-md-3 "
                         style={{ fontSize: ".9rem" }}
                       >
-                        Timing mark:
+                        Face:
                       </label>
                       <div className="col-md-9">
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={numberOfLines}
-                          onChange={(e) => setNumberOfLines(e.target.value)}
+                        <Select
+                          value={face}
+                          onChange={(selectedValue) =>
+                            setFace(selectedValue)
+                          }
+                          options={faceData}
+                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                          }
                         />
                         {!numberOfLines && (
                           <span
@@ -720,7 +835,7 @@ const Template = () => {
                         )}
                       </div>
                     </Row>
-                    <Row className="mb-3">
+                    {/* <Row className="mb-3">
                       <Col sm={6}>
                         <Row>
                           <label
@@ -777,7 +892,7 @@ const Template = () => {
                           </div>
                         </Row>
                       </Col>
-                    </Row>
+                    </Row> */}
 
                     <Row className="mb-3">
                       <label
@@ -1086,9 +1201,6 @@ const Template = () => {
           <Button
             variant="success"
             onClick={createTemplateHandler}
-          // onClick={() => {
-
-          // }}
           >
             Create Template
           </Button>

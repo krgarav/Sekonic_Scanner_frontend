@@ -45,3 +45,14 @@ export const errorOfTheNumberOfTimingMarksData = [
     { id: 2, name: "Check error, and stop the OMR" },
     { id: 3, name: "Check error, and not stop the OMR" },
 ];
+
+export const windowNgData = [
+    { id: 0x00000001, name: "SKDV_ACTION_SELECT(0x00000001)" },
+    { id: 0x00000002, name: "SKDV_ACTION_STOP(0x00000002)" },
+    { id: 0x00000004, name: "SKDV_ACTION_NOPRINT (0x00000004)" },
+];
+
+export const faceData = [
+    { id: 0, name: "Front Side" },
+    { id: 1, name: "Back Side" },
+];
