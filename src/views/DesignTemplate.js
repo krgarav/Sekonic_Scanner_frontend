@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Col } from "react-bootstrap";
 import { Row } from "reactstrap";
 import { useLocation } from "react-router-dom";
 import classes from "./DesignTemplate.module.css";
@@ -39,9 +39,11 @@ const DesignTemplate = () => {
     const [noOfStepInRow, setNoOfStepInRow] = useState();
     const [noInCol, setNoInCol] = useState();
     const [noOfStepInCol, setNoOfStepInCol] = useState();
-
+    const [option, setOption] = useState("")
+    const [type, setType] = useState("")
+    const [selectedFieldType, setSelectedFieldType] = useState('');
     const dataCtx = useContext(DataContext);
-    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex, sensitivity, difference, barCount, reject } = useLocation().state;
+    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex, sensitivity, difference, barCount, reject, face } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
 
@@ -61,7 +63,6 @@ const DesignTemplate = () => {
             case "rectangle":
                 setSelectedClass("rectangle")
                 break;
-
             case "circle":
                 setSelectedClass("circle")
                 break;
@@ -179,7 +180,7 @@ const DesignTemplate = () => {
             "sensitivity": sensitivity,
             "difference": difference,
             "barcodeCount": barCount,
-            "isReject": reject.name,
+            "isReject": reject,
             "windowName": name,
             "Coordinate": {
                 "Start Row": selection?.startRow + 1,
@@ -199,6 +200,9 @@ const DesignTemplate = () => {
             "minimumMark": minimumMark,
             "maximumMark": maximumMark,
             "skewMark": skewoption,
+            "type": type,
+            "option": option,
+            "face": face
         };
         setSelectedCoordinates((prev) => [...prev, selection]);
         setSelection(null);
@@ -218,7 +222,9 @@ const DesignTemplate = () => {
     const handleWindowNgOptionChange = (event) => {
         setWindowNgOption(event.target.value)
     }
-
+    const handleRadioChange = (e) => {
+        setSelectedFieldType(e.target.value);
+    };
     return (
         <>
             <div className="container">
@@ -329,6 +335,44 @@ const DesignTemplate = () => {
                 <Modal.Body>
 
                     <Row className="mb-2">
+                        <label htmlFor="example-text-input" className="col-md-2">
+                            Select Field Type
+                        </label>
+                        <Col md={3}>
+                            <label htmlFor="formField">Form Field:</label>
+                            <input
+                                id="formField"
+                                type="radio"
+                                name="fieldType"
+                                value="formField"
+                                checked={selectedFieldType === 'formField'}
+                                onChange={handleRadioChange}
+                            />
+                        </Col>
+                        <Col md={3}>
+                            <label htmlFor="fieldType">Question Field:</label>
+                            <input
+                                id="fieldType"
+                                type="radio"
+                                name="fieldType"
+                                value="questionField"
+                                checked={selectedFieldType === 'questionField'}
+                                onChange={handleRadioChange}
+                            />
+                        </Col>
+                        <Col md={4}>
+                            <label htmlFor="skewMarkField">Skew Mark Field:</label>
+                            <input
+                                id="skewMarkField"
+                                type="radio"
+                                name="fieldType"
+                                value="skewMarkField"
+                                checked={selectedFieldType === 'skewMarkField'}
+                                onChange={handleRadioChange}
+                            />
+                        </Col>
+                    </Row>
+                    <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 "
@@ -426,7 +470,7 @@ const DesignTemplate = () => {
                             Total Row
                         </label>
                         <div className="col-2">
-                            <input value={selection?.endRow + 1} readOnly className="form-control" />
+                            <input value={numRows} readOnly className="form-control" />
                         </div>
                     </Row>
                     <Row className="mb-2">
@@ -465,7 +509,7 @@ const DesignTemplate = () => {
                             Total Col
                         </label>
                         <div className="col-2">
-                            <input value={selection?.endRow + 1} readOnly className="form-control" />
+                            <input value={numCols} readOnly className="form-control" />
                         </div>
                     </Row>
                     <Row className="mb-2">
@@ -514,11 +558,48 @@ const DesignTemplate = () => {
                             </select>
                         </div>
                     </Row>
+                    <Row>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 "
+                        >
+                            Type :
+                        </label>
+                        <div className="col-md-5">
+                            <select
+                                className="form-control"
+                                value={type}
+                                onChange={(e) => { setType(e.target.value) }}
+                                defaultValue={""}
+                            >
+                                <option value="">Select reading direction... </option>
+                                <option value="0x01">SKDV_LAYOUT_OPT_MASK </option>
+                                <option value="0x02">SKDV_LAYOUT_OPT_FIXED_COMP </option>
+                                <option value="0x03">SKDV_LAYOUT_OPT_CHECK_DIGIT </option>
+                                <option value="0x04">SKDV_LAYOUT_OPT_ASCENDING_ORDER</option>
+                                <option value="0x05">SKDV_LAYOUT_OPT_DESCENDING_ORDER </option>
+                                <option value="0x06">SKDV_LAYOUT_OPT_RANGE_CHECK </option>
+                                <option value="0x07">SKDV_LAYOUT_OPT_MASK_PART </option>
+                            </select>
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                        >
+                            Option :
+                        </label>
+                        <div className="col-3 ">
+                            <input type="number" className="form-control"
+                                value={option}
+                                onChange={(e) => setOption(e.target.value)}
+                                required />
+                        </div>
+                    </Row>
+
                 </Modal.Body>
                 <Modal.Footer>
                     <Button type="button" color="primary" onClick={handleCancel} className="waves-effect waves-light">Cancel</Button>{" "}
                     <Button type="button" color="success" onClick={handleSave} className="waves-effect waves-light">Save</Button>{" "}
-
                 </Modal.Footer>
             </Modal>
         </>

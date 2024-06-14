@@ -147,14 +147,19 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
-    console.log(arr[0]["Bubble Type"])
+    // console.log(arr.Regions)
     navigate("/admin/design-template", {
       state: {
         templateIndex: index,
         numberOfLines: +arr[0].Rows,
         numberOfFrontSideColumn: +arr[0].Cols,
         imgsrc: arr[0].Image,
-        selectedBubble: arr[0]["Bubble Type"]
+        selectedBubble: arr[0]["Bubble Type"],
+        sensitivity: arr.Regions[0]["sensitivity"],
+        difference: arr.Regions[0]["difference"],
+        barCount: arr.Regions[0]["barcodeCount"],
+        reject: arr.Regions[0]["isReject"],
+        face: arr.Regions[0]["face"]
       },
     });
 
@@ -169,6 +174,82 @@ const Template = () => {
   };
   const sendToBackendHandler = async (arr, index) => {
     console.log(arr);
+    const layoutName = arr[0]["Template Name"];
+    const timingMarks = +arr[0]["Rows"];
+    const barcodeCount = +arr.Regions[0]["barcodeCount"];
+    const iFace = arr.Regions[0]["face"];
+    const ngAction = arr.Regions[0]["windowNG"];
+    const iReject = arr.Regions[0]["isReject"];
+
+
+    const columnStart = +arr.Regions[0]["columnStart"];
+    const columnNumber = +arr.Regions[0]["columnStart"];
+    const columnStep = +arr.Regions[0]["totalStepInColumn"];
+    const rowStart = +arr.Regions[0]["rowStart"];
+    const rowStep = +arr.Regions[0]["totalStepInRow"];
+    const iSensitivity = +arr.Regions[0]["sensitivity"];
+    const iDifference = +arr.Regions[0]["difference"];
+    const iOption = +arr.Regions[0]["option"];
+    const iMaximumMarks = +arr.Regions[0]["maximumMark"];
+    const iMinimumMarks = +arr.Regions[0]["minimumMark"];
+    const iType = arr.Regions[0]["type"];
+
+
+    const templateObj = arr.map((item) => {
+
+      if (!Array.isArray(item)) {
+        const layoutName = item["Template Name"];
+        const timingMarks = +item["Rows"];
+        const barcodeCount = +item["Bar Count"];
+        const iFace = +item["iFace"].id;
+        const iReject = +item["iReject"].id;
+        const ngAction = +item["ngAction"].id;
+        const columnStart = item.Cols;
+        const rowStart = item.Rows;
+
+        return { columnStart, rowStart, layoutName, timingMarks, barcodeCount, iFace, iReject, ngAction }
+      } else {
+        return item
+      }
+    })
+    const mainObj = { "layoutParameters": templateObj[0], "layoutWindowParameters": [] };
+    const regions = arr.Regions;
+    const mappedRegion = regions.map((item) => {
+      const columnStart = +item["columnStart"];
+      const columnNumber = +item["columnStart"];
+      const columnStep = +item["totalStepInColumn"];
+      const rowStart = +item["rowStart"];
+      const rowStep = +item["totalStepInRow"];
+      const iSensitivity = +item["sensitivity"];
+      const iDifference = +item["difference"];
+      const iOption = +item["option"];
+      const iMaximumMarks = +item["maximumMark"];
+      const iMinimumMarks = +item["minimumMark"];
+      const iType = item["type"];
+      const iFace = item["face"];
+      const iDirection = item["readingDirection"];
+      const ngAction = item["windowNG"];
+      const windowName = item["windowName"]
+      return {
+        iFace,
+        columnStart,
+        columnNumber,
+        columnStep,
+        rowStart,
+        rowStep,
+        iDirection,
+        iSensitivity,
+        iDifference,
+        iOption,
+        iMinimumMarks,
+        iMaximumMarks,
+        iType,
+        ngAction,
+        windowName
+      }
+    })
+    mainObj.layoutWindowParameters = mappedRegion;
+    console.log(mainObj)
     const obj = {
       "layoutParameters": {
         "layoutName": "string",
@@ -235,6 +316,7 @@ const Template = () => {
   };
 
   const createTemplateHandler = () => {
+    console.log(barCount)
     if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
       return
     }
@@ -247,6 +329,12 @@ const Template = () => {
       "Image": imageSrc,
       "Timing Mark": numberOfLines,
       "Bar Count": barCount,
+      "ngAction": windowNgOption,
+      "iFace": face,
+      "iReject": reject,
+      "iSensitivity": sensitivity,
+      "iDifference": difference
+
     }]
     const index = dataCtx.setAllTemplates(templateData);
 
@@ -261,7 +349,8 @@ const Template = () => {
         sensitivity: sensitivity,
         difference: difference,
         barCount: barCount,
-        reject: reject
+        reject: reject.id,
+        face: face.id
       },
     });
   }
@@ -797,7 +886,7 @@ const Template = () => {
                         Barcode Count :
                       </label>
                       <div className="col-md-9">
-                        <input placeholder="Enter barcode count" type="number" className="form-control" />
+                        <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => setBarCount(e.target.value)} />
                         {!selectedBubble && (
                           <span style={{ color: "red", display: spanDisplay }}>
                             This feild is required
@@ -1190,7 +1279,6 @@ const Template = () => {
           </Tab.Container>
         </Modal.Body>
         <Modal.Footer>
-
           <label>
             Upload Image:
             <input type="file" onChange={handleImageUpload} accept="image/*" />

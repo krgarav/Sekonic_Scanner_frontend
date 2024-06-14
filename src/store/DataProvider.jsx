@@ -22,12 +22,11 @@ const DataProvider = (props) => {
       const copiedData = [...item.allTemplates];
 
       const currentTemplate = copiedData[index];
-if(currentTemplate.Regions){
-    currentTemplate.Regions = [...currentTemplate.Regions, regionData];
-}else{
-    currentTemplate.Regions = [ regionData];
-}
-     
+      if (currentTemplate.Regions) {
+        currentTemplate.Regions = [...currentTemplate.Regions, regionData];
+      } else {
+        currentTemplate.Regions = [regionData];
+      }
 
       return {
         ...item,
