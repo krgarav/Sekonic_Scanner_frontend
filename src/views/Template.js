@@ -174,6 +174,7 @@ const Template = () => {
   };
   const sendToBackendHandler = async (arr, index) => {
     console.log(arr);
+    return;
     const layoutName = arr[0]["Template Name"];
     const timingMarks = +arr[0]["Rows"];
     const barcodeCount = +arr.Regions[0]["barcodeCount"];
@@ -332,7 +333,6 @@ const Template = () => {
       "Timing Mark": numberOfLines,
       "Bar Count": barCount,
       "ngAction": windowNgOption,
-      "iFace": face,
       "iReject": reject,
       "iSensitivity": sensitivity,
       "iDifference": difference

@@ -29,7 +29,6 @@ const DesignTemplate = () => {
     const [lineInterval, setLineinterval] = useState(0);
     const [columnInterval, setColumnInterval] = useState(0);
     const [spanDisplay, setSpanDisplay] = useState("none");
-    const [savedData, setSavedData] = useState([]);
     const [skewoption, setSkewOption] = useState("none");
     const [windowNgOption, setWindowNgOption] = useState("")
     const [readingDirectionOption, setReadingDirectionOption] = useState("")
@@ -41,7 +40,9 @@ const DesignTemplate = () => {
     const [noOfStepInCol, setNoOfStepInCol] = useState();
     const [option, setOption] = useState("")
     const [type, setType] = useState("")
-    const [selectedFieldType, setSelectedFieldType] = useState('');
+    const [selectedFieldType, setSelectedFieldType] = useState('formField');
+    const [fieldType, setFieldType] = useState();
+    const [numberOfField, setNumberOfField] = useState();
     const dataCtx = useContext(DataContext);
     const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex, sensitivity, difference, barCount, reject, face } = useLocation().state;
     const numRows = numberOfLines;
@@ -172,7 +173,6 @@ const DesignTemplate = () => {
     const handleSave = () => {
 
         if (!name || !windowNgOption || !noInRow || !noOfStepInRow || !noInCol || !noOfStepInCol || !minimumMark) {
-            // setSpanDisplay("block")
             return
         }
         let newData = {}
@@ -207,7 +207,7 @@ const DesignTemplate = () => {
                 "face": face
             };
 
-        } else {
+        } else if (selectedFieldType === "skewMarkField") {
             newData = {
                 "sensitivity": sensitivity,
                 "difference": difference,
@@ -237,19 +237,44 @@ const DesignTemplate = () => {
                 "face": face
             };
 
-        }
 
+        } else {
+            newData = {
+                "sensitivity": sensitivity,
+                "difference": difference,
+                "barcodeCount": barCount,
+                "isReject": reject,
+                "windowName": name,
+                "Coordinate": {
+                    "Start Row": selection?.startRow + 1,
+                    "Start Col": selection?.startCol,
+                    "End Row": selection?.endRow + 1,
+                    "End Col": selection?.endCol
+                },
+                "readingDirection": readingDirectionOption,
+                "rowStart": selection?.startRow + 1,
+                "timingMarks": numRows,
+                "windowNG": windowNgOption,
+                "totalNoInRow": noInRow,
+                "totalStepInRow": noOfStepInRow,
+                "columnStart": selection?.startCol,
+                "totalNoInColumn": noInCol,
+                "totalStepInColumn": noOfStepInCol,
+                "minimumMark": minimumMark,
+                "maximumMark": maximumMark,
+                "skewMark": skewoption,
+                "type": type,
+                "option": option,
+                "face": face,
+                "totalNumberOfFields": numberOfField,
+                "numericOrAlphabets": fieldType
+            };
+
+        }
         setSelectedCoordinates((prev) => [...prev, selection]);
         setSelection(null);
         setModalShow(false);
-        // setSavedData((prev) => {
-        //     // Making a deep copy of the previous state
-        //     const prevCopy = JSON.parse(JSON.stringify(prev));
-        //     prevCopy.push(newData);
-        //     return prevCopy;
-        // });
-
-        dataCtx.modifyAllTemplate(templateIndex, newData);
+        dataCtx.modifyAllTemplate(templateIndex, newData, selectedFieldType);
     };
     const handleSkewMarkOptionChange = (event) => {
         setSkewOption(event.target.value);
@@ -626,7 +651,7 @@ const DesignTemplate = () => {
                             </select>
                         </div>
                     </Row>}
-                    <Row>
+                    <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 "
@@ -664,7 +689,41 @@ const DesignTemplate = () => {
                                 required />
                         </div>
                     </Row>
+                    {selectedFieldType !== "skewMarkField" && <Row>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                        >
 
+                            Total Fields :
+                        </label>
+                        <div className="col-3 ">
+                            <input type="number" className="form-control"
+                                value={numberOfField}
+                                onChange={(e) => setNumberOfField(e.target.value)}
+                                required />
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label "
+                        >
+
+                            Field Type :
+                        </label>
+                        <div className="col-3 ">
+                            <select
+                                className="form-control"
+                                value={fieldType}
+                                onChange={(e) => { setFieldType(e.target.value) }}
+                                defaultValue={""}
+                            >
+                                <option value="">Select field type... </option>
+                                <option value="numeric">Numeric </option>
+                                <option value="alphabet">Alphabet </option>
+
+                            </select>
+                        </div>
+                    </Row>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button type="button" color="primary" onClick={handleCancel} className="waves-effect waves-light">Cancel</Button>{" "}
