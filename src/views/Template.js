@@ -173,126 +173,134 @@ const Template = () => {
     return compressed;
   };
   const sendToBackendHandler = async (arr, index) => {
-    console.log(arr);
-    return;
-    const layoutName = arr[0]["Template Name"];
-    const timingMarks = +arr[0]["Rows"];
-    const barcodeCount = +arr.Regions[0]["barcodeCount"];
-    const iFace = arr.Regions[0]["face"];
-    const ngAction = arr.Regions[0]["windowNG"];
-    const iReject = arr.Regions[0]["isReject"];
+
+    const templateData = arr[0];
+    const formFieldData = arr.formFieldWindowParameters;
+    const questionField = arr.questionsWindowParameters;
+    const skewField = arr.skewMarksWindowParameters;
+    const idFeild = arr.idWindowParameters;
+    const tempdata = { ...templateData, ...idFeild[0] }
+
+    // const layoutName = arr[0]["Template Name"];
+    // const timingMarks = +arr[0]["Rows"];
+    // const barcodeCount = +arr.Regions[0]["barcodeCount"];
+    // const iFace = arr.Regions[0]["face"];
+    // const ngAction = arr.Regions[0]["windowNG"];
+    // const iReject = arr.Regions[0]["isReject"];
 
 
-    const columnStart = +arr.Regions[0]["columnStart"];
-    const columnNumber = +arr.Regions[0]["columnStart"];
-    const columnStep = +arr.Regions[0]["totalStepInColumn"];
-    const rowStart = +arr.Regions[0]["rowStart"];
-    const rowStep = +arr.Regions[0]["totalStepInRow"];
-    const iSensitivity = +arr.Regions[0]["sensitivity"];
-    const iDifference = +arr.Regions[0]["difference"];
-    const iOption = +arr.Regions[0]["option"];
-    const iMaximumMarks = +arr.Regions[0]["maximumMark"];
-    const iMinimumMarks = +arr.Regions[0]["minimumMark"];
-    const iType = arr.Regions[0]["type"];
+    // const columnStart = +arr.Regions[0]["columnStart"];
+    // const columnNumber = +arr.Regions[0]["columnStart"];
+    // const columnStep = +arr.Regions[0]["totalStepInColumn"];
+    // const rowStart = +arr.Regions[0]["rowStart"];
+    // const rowStep = +arr.Regions[0]["totalStepInRow"];
+    // const iSensitivity = +arr.Regions[0]["sensitivity"];
+    // const iDifference = +arr.Regions[0]["difference"];
+    // const iOption = +arr.Regions[0]["option"];
+    // const iMaximumMarks = +arr.Regions[0]["maximumMark"];
+    // const iMinimumMarks = +arr.Regions[0]["minimumMark"];
+    // const iType = arr.Regions[0]["type"];
 
 
-    const templateObj = arr.map((item) => {
+    // const templateObj = arr.map((item) => {
 
-      if (!Array.isArray(item)) {
-        const layoutName = item["Template Name"];
-        const timingMarks = +item["Rows"];
-        const barcodeCount = +item["Bar Count"];
-        const iFace = +item["iFace"].id;
-        const iReject = +item["iReject"].id;
-        const ngAction = +item["ngAction"].id;
-        const columnStart = item.Cols;
-        const rowStart = item.Rows;
-        const iDifference = item["iDifference"];
-        const iSensitivity = item["iSensitivity"];
-        // const 
+    //   if (!Array.isArray(item)) {
+    //     const layoutName = item["Template Name"];
+    //     const timingMarks = +item["Rows"];
+    //     const barcodeCount = +item["Bar Count"];
+    //     const iFace = +item["iFace"].id;
+    //     const iReject = +item["iReject"].id;
+    //     const ngAction = +item["ngAction"].id;
+    //     const columnStart = item.Cols;
+    //     const rowStart = item.Rows;
+    //     const iDifference = item["iDifference"];
+    //     const iSensitivity = item["iSensitivity"];
+    //     // const 
 
-        return { layoutName, timingMarks, barcodeCount, iFace, columnStart, rowStart, iReject, ngAction }
-      } else {
-        return item
-      }
-    })
-    const mainObj = { "layoutParameters": templateObj[0], "layoutWindowParameters": [] };
-    const regions = arr.Regions;
-    const mappedRegion = regions.map((item) => {
-      const columnStart = +item["columnStart"];
-      const columnNumber = +item["columnStart"];
-      const columnStep = +item["totalStepInColumn"];
-      const rowStart = +item["rowStart"];
-      const rowStep = +item["totalStepInRow"];
-      const iSensitivity = +item["sensitivity"];
-      const iDifference = +item["difference"];
-      const iOption = +item["option"];
-      const iMaximumMarks = +item["maximumMark"];
-      const iMinimumMarks = +item["minimumMark"];
-      const iType = item["type"];
-      const iFace = item["face"];
-      const iDirection = item["readingDirection"];
-      const ngAction = item["windowNG"];
-      const windowName = item["windowName"]
-      return {
-        iFace,
-        columnStart,
-        columnNumber,
-        columnStep,
-        rowStart,
-        rowStep,
-        iDirection,
-        iSensitivity,
-        iDifference,
-        iOption,
-        iMinimumMarks,
-        iMaximumMarks,
-        iType,
-        ngAction,
-        windowName
-      }
-    })
-    mainObj.layoutWindowParameters = mappedRegion;
+    //     return { layoutName, timingMarks, barcodeCount, iFace, columnStart, rowStart, iReject, ngAction }
+    //   } else {
+    //     return item
+    //   }
+    // })
+    const mainObj = { "layoutParameters": tempdata, "skewMarksWindowParameters": skewField, "formFieldWindowParameters": formFieldData, "questionsWindowParameters": questionField };
+
     console.log(mainObj)
-    const obj = {
-      "layoutParameters": {
-        "layoutName": "string",
-        "timingMarks": 0,
-        "barcodeCount": 0,
-        "iFace": 0,
-        "columnStart": 0,
-        "columnNumber": 0,
-        "columnStep": 0,
-        "rowStart": 0,
-        "rowNumber": 0,
-        "rowStep": 0,
-        "iDirection": 0,
-        "iSensitivity": 0,
-        "iDifference": 0,
-        "ngAction": "string",
-        "iReject": 0
-      },
-      "layoutWindowParameters": [
-        {
-          "iFace": 0,
-          "columnStart": 0,
-          "columnNumber": 0,
-          "columnStep": 0,
-          "rowStart": 0,
-          "rowNumber": 0,
-          "rowStep": 0,
-          "iDirection": 0,
-          "iSensitivity": 0,
-          "iDifference": 0,
-          "iOption": 0,
-          "iMinimumMarks": 0,
-          "iMaximumMarks": 0,
-          "iType": "string",
-          "ngAction": "string"
-        }
-      ]
+    // const regions = arr.Regions;
+    // const mappedRegion = regions.map((item) => {
+    //   const columnStart = +item["columnStart"];
+    //   const columnNumber = +item["columnStart"];
+    //   const columnStep = +item["totalStepInColumn"];
+    //   const rowStart = +item["rowStart"];
+    //   const rowStep = +item["totalStepInRow"];
+    //   const iSensitivity = +item["sensitivity"];
+    //   const iDifference = +item["difference"];
+    //   const iOption = +item["option"];
+    //   const iMaximumMarks = +item["maximumMark"];
+    //   const iMinimumMarks = +item["minimumMark"];
+    //   const iType = item["type"];
+    //   const iFace = item["face"];
+    //   const iDirection = item["readingDirection"];
+    //   const ngAction = item["windowNG"];
+    //   const windowName = item["windowName"]
+    //   return {
+    //     iFace,
+    //     columnStart,
+    //     columnNumber,
+    //     columnStep,
+    //     rowStart,
+    //     rowStep,
+    //     iDirection,
+    //     iSensitivity,
+    //     iDifference,
+    //     iOption,
+    //     iMinimumMarks,
+    //     iMaximumMarks,
+    //     iType,
+    //     ngAction,
+    //     windowName
+    //   }
+    // })
+    // mainObj.layoutWindowParameters = mappedRegion;
+    // console.log(mainObj)
+    // const obj = {
+    //   "layoutParameters": {
+    //     "layoutName": "string",
+    //     "timingMarks": 0,
+    //     "barcodeCount": 0,
+    //     "iFace": 0,
+    //     "columnStart": 0,
+    //     "columnNumber": 0,
+    //     "columnStep": 0,
+    //     "rowStart": 0,
+    //     "rowNumber": 0,
+    //     "rowStep": 0,
+    //     "iDirection": 0,
+    //     "iSensitivity": 0,
+    //     "iDifference": 0,
+    //     "ngAction": "string",
+    //     "iReject": 0
+    //   },
+    //   "layoutWindowParameters": [
+    //     {
+    //       "iFace": 0,
+    //       "columnStart": 0,
+    //       "columnNumber": 0,
+    //       "columnStep": 0,
+    //       "rowStart": 0,
+    //       "rowNumber": 0,
+    //       "rowStep": 0,
+    //       "iDirection": 0,
+    //       "iSensitivity": 0,
+    //       "iDifference": 0,
+    //       "iOption": 0,
+    //       "iMinimumMarks": 0,
+    //       "iMaximumMarks": 0,
+    //       "iType": "string",
+    //       "ngAction": "string"
+    //     }
+    //   ]
 
-    }
+    // }
 
     // try {
     //   // Convert the array to a JSON string
@@ -332,8 +340,8 @@ const Template = () => {
       "Image": imageSrc,
       "Timing Mark": numberOfLines,
       "Bar Count": barCount,
-      "ngAction": windowNgOption,
-      "iReject": reject,
+      "ngAction": windowNgOption.id,
+      "iReject": reject.name,
       "iSensitivity": sensitivity,
       "iDifference": difference
 
