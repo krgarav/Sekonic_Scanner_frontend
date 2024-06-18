@@ -181,6 +181,22 @@ const Template = () => {
     const idFeild = arr.idWindowParameters;
     const tempdata = { ...templateData, ...idFeild[0] }
 
+
+
+    const temstrucData = [tempdata].map((item) => {
+      const layoutName = item["Template Name"];
+      const timingMarks = +item["Rows"];
+      const barcodeCount = +item["Bar Count"];
+      const iFace = +item["iFace"].id;
+      const iReject = +item["iReject"].id;
+      const ngAction = +item["ngAction"].id;
+      const columnStart = item.Cols;
+      const rowStart = item.Rows;
+      const iDifference = item["iDifference"];
+      const iSensitivity = item["iSensitivity"];
+    })
+
+
     // const layoutName = arr[0]["Template Name"];
     // const timingMarks = +arr[0]["Rows"];
     // const barcodeCount = +arr.Regions[0]["barcodeCount"];
