@@ -3,8 +3,8 @@ import { MdOutlineRectangle } from "react-icons/md";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import { TbOvalVertical } from "react-icons/tb";
 export const rejectData = [
-    { id: 1, name: "0" },
-    { id: 2, name: "1" },
+    { id: 1, name: "0", showName: "False" },
+    { id: 2, name: "1", showName: "True" },
 ]
 export const sizeData = [
     { id: 1, name: "A4" },
@@ -47,9 +47,9 @@ export const errorOfTheNumberOfTimingMarksData = [
 ];
 
 export const windowNgData = [
-    { id: 0x00000001, name: "SKDV_ACTION_SELECT(0x00000001)" },
-    { id: 0x00000002, name: "SKDV_ACTION_STOP(0x00000002)" },
-    { id: 0x00000004, name: "SKDV_ACTION_NOPRINT (0x00000004)" },
+    { id: 0x00000001, name: "SKDV_ACTION_SELECT(0x00000001)", showName: "Paper ejection to select stacker" },
+    { id: 0x00000002, name: "SKDV_ACTION_STOP(0x00000002)", showName: "Stop reading" },
+    { id: 0x00000004, name: "SKDV_ACTION_NOPRINT (0x00000004)", showName: "Do not print" },
 ];
 
 export const faceData = [

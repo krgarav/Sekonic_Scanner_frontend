@@ -175,44 +175,79 @@ const DesignTemplate = () => {
             // setSpanDisplay("block")
             return
         }
+        let newData = {}
 
-        const newData = {
-            "sensitivity": sensitivity,
-            "difference": difference,
-            "barcodeCount": barCount,
-            "isReject": reject,
-            "windowName": name,
-            "Coordinate": {
-                "Start Row": selection?.startRow + 1,
-                "Start Col": selection?.startCol,
-                "End Row": selection?.endRow + 1,
-                "End Col": selection?.endCol
-            },
-            "readingDirection": readingDirectionOption,
-            "rowStart": selection?.startRow + 1,
-            "timingMarks": numRows,
-            "windowNG": windowNgOption,
-            "totalNoInRow": noInRow,
-            "totalStepInRow": noOfStepInRow,
-            "columnStart": selection?.startCol,
-            "totalNoInColumn": noInCol,
-            "totalStepInColumn": noOfStepInCol,
-            "minimumMark": minimumMark,
-            "maximumMark": maximumMark,
-            "skewMark": skewoption,
-            "type": type,
-            "option": option,
-            "face": face
-        };
+        if (selectedFieldType === "idField") {
+            newData = {
+                "sensitivity": sensitivity,
+                "difference": difference,
+                "barcodeCount": barCount,
+                "isReject": reject,
+                "windowName": name,
+                "Coordinate": {
+                    "Start Row": selection?.startRow + 1,
+                    "Start Col": selection?.startCol,
+                    "End Row": selection?.endRow + 1,
+                    "End Col": selection?.endCol
+                },
+                "dataReadDirection": readingDirectionOption,
+                "rowStart": selection?.startRow + 1,
+                "timingMarks": numRows,
+                "windowNG": windowNgOption,
+                "totalNoInRow": noInRow,
+                "totalStepInRow": noOfStepInRow,
+                "columnStart": selection?.startCol,
+                "totalNoInColumn": noInCol,
+                "totalStepInColumn": noOfStepInCol,
+                "minimumMark": minimumMark,
+                "maximumMark": maximumMark,
+                "skewMark": skewoption,
+                "type": type,
+                "option": option,
+                "face": face
+            };
+
+        } else {
+            newData = {
+                "sensitivity": sensitivity,
+                "difference": difference,
+                "barcodeCount": barCount,
+                "isReject": reject,
+                "windowName": name,
+                "Coordinate": {
+                    "Start Row": selection?.startRow + 1,
+                    "Start Col": selection?.startCol,
+                    "End Row": selection?.endRow + 1,
+                    "End Col": selection?.endCol
+                },
+                "readingDirection": readingDirectionOption,
+                "rowStart": selection?.startRow + 1,
+                "timingMarks": numRows,
+                "windowNG": windowNgOption,
+                "totalNoInRow": noInRow,
+                "totalStepInRow": noOfStepInRow,
+                "columnStart": selection?.startCol,
+                "totalNoInColumn": noInCol,
+                "totalStepInColumn": noOfStepInCol,
+                "minimumMark": minimumMark,
+                "maximumMark": maximumMark,
+                "skewMark": skewoption,
+                "type": type,
+                "option": option,
+                "face": face
+            };
+
+        }
+
         setSelectedCoordinates((prev) => [...prev, selection]);
         setSelection(null);
         setModalShow(false);
-        setSavedData((prev) => {
-            // Making a deep copy of the previous state
-            const prevCopy = JSON.parse(JSON.stringify(prev));
-            prevCopy.push(newData);
-            return prevCopy;
-        });
+        // setSavedData((prev) => {
+        //     // Making a deep copy of the previous state
+        //     const prevCopy = JSON.parse(JSON.stringify(prev));
+        //     prevCopy.push(newData);
+        //     return prevCopy;
+        // });
 
         dataCtx.modifyAllTemplate(templateIndex, newData);
     };
@@ -245,7 +280,6 @@ const DesignTemplate = () => {
                         }}
 
                     >
-
                         <img
                             src={imgsrc}
                             className={`${classes["object-contain"]} ${classes["draggable-resizable-image"]} rounded`}
@@ -383,7 +417,7 @@ const DesignTemplate = () => {
                             />
                         </Col>
                     </Row>
-                    <Row >
+                    {selectedFieldType !== 'idField' && <Row >
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 "
@@ -401,7 +435,7 @@ const DesignTemplate = () => {
                             {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
 
                         </div>
-                    </Row>
+                    </Row>}
                     <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
@@ -417,9 +451,9 @@ const DesignTemplate = () => {
                                 defaultValue={""}
                             >
                                 <option value="">Select an option</option>
-                                <option value="0x00000001">SKDV_ACTION_SELECT(0x00000001)</option>
-                                <option value="0x00000002">SKDV_ACTION_STOP(0x00000002)</option>
-                                <option value="0x00000004">SKDV_ACTION_NOPRINT (0x00000004)</option>
+                                <option value="0x00000001">Paper ejection to select stacker</option>
+                                <option value="0x00000002">Stop reading</option>
+                                <option value="0x00000004">Do not print</option>
 
                             </select>
 
@@ -543,7 +577,7 @@ const DesignTemplate = () => {
                         </div>
                     </Row>
 
-                    <Row className="mb-2">
+                    {selectedFieldType !== 'idField' && <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 "
@@ -558,17 +592,40 @@ const DesignTemplate = () => {
                                 defaultValue={""}
                             >
                                 <option value="">Select reading direction... </option>
-                                <option value="0">SKDV_WIN_DIR_TL_DOWN </option>
-                                <option value="1">SKDV_WIN_DIR_TR_DOWN </option>
-                                <option value="2">SKDV_WIN_DIR_BL_UP </option>
-                                <option value="3">SKDV_WIN_DIR_BR_UP</option>
-                                <option value="4">SKDV_WIN_DIR_TL_RIGHT </option>
-                                <option value="5">SKDV_WIN_DIR_TR_LEFT </option>
-                                <option value="6">SKDV_WIN_DIR_BL_RIGHT </option>
-                                <option value="7">SKDV_WIN_DIR_BR_LEFT </option>
+                                <option value="0">From the upper left to the bottom</option>
+                                <option value="1">From the upper right to the bottom </option>
+                                <option value="2">From the lower left to a top
+                                </option>
+                                <option value="3">From the lower right to a top
+                                </option>
+                                <option value="4">From the upper left to right
+                                </option>
+                                <option value="5">From the upper right to the left
+                                </option>
+                                <option value="6">From the lower left to right
+                                </option>
+                                <option value="7">From the lower right to the left  </option>
                             </select>
                         </div>
-                    </Row>
+                    </Row>}
+                    {selectedFieldType === 'idField' && <Row>
+                        <label htmlFor="example-text-input"
+                            className="col-md-2 ">
+                            Page Position :
+                        </label>
+                        <div className="col-md-10">
+                            <select
+                                className="form-control"
+                                value={readingDirectionOption}
+                                onChange={(e) => { setReadingDirectionOption(e.target.value) }}
+                                defaultValue={""}
+                            >
+                                <option value="">Select reading direction... </option>
+                                <option value="Top To Bottom ">Top To Bottom </option>
+                                <option value="Bottom To Top">Bottom To Top </option>
+                            </select>
+                        </div>
+                    </Row>}
                     <Row>
                         <label
                             htmlFor="example-text-input"
@@ -584,13 +641,14 @@ const DesignTemplate = () => {
                                 defaultValue={""}
                             >
                                 <option value="">Select reading direction... </option>
-                                <option value="0x01">SKDV_LAYOUT_OPT_MASK </option>
-                                <option value="0x02">SKDV_LAYOUT_OPT_FIXED_COMP </option>
-                                <option value="0x03">SKDV_LAYOUT_OPT_CHECK_DIGIT </option>
-                                <option value="0x04">SKDV_LAYOUT_OPT_ASCENDING_ORDER</option>
-                                <option value="0x05">SKDV_LAYOUT_OPT_DESCENDING_ORDER </option>
-                                <option value="0x06">SKDV_LAYOUT_OPT_RANGE_CHECK </option>
-                                <option value="0x07">SKDV_LAYOUT_OPT_MASK_PART </option>
+                                <option value="0x01">Mask (at the time set window) about a mark </option>
+                                <option value="0x02">Fixed mark </option>
+                                <option value="0x03">Checkdigits </option>
+                                <option value="0x04">Range checking (ascending order)</option>
+                                <option value="0x05">Range checking (descending order)</option>
+                                <option value="0x06">Range checking (not order) </option>
+                                <option value="0x07">Mask setting(common to partition)
+                                </option>
                             </select>
                         </div>
                         <label
@@ -612,7 +670,7 @@ const DesignTemplate = () => {
                     <Button type="button" color="primary" onClick={handleCancel} className="waves-effect waves-light">Cancel</Button>{" "}
                     <Button type="button" color="success" onClick={handleSave} className="waves-effect waves-light">Save</Button>{" "}
                 </Modal.Footer>
-            </Modal>
+            </Modal >
         </>
     );
 };

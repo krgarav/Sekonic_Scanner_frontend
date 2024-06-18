@@ -17,22 +17,84 @@ const DataProvider = (props) => {
     return newIndex; // Return the new index
   };
 
-  const modifyTemplateHandler = (index, regionData) => {
-    setDataState((item) => {
-      const copiedData = [...item.allTemplates];
+  const modifyTemplateHandler = (index, regionData, fieldType) => {
+    if (fieldType === "skewMarkField") {
+      setDataState((item) => {
+        const copiedData = [...item.allTemplates];
 
-      const currentTemplate = copiedData[index];
-      if (currentTemplate.Regions) {
-        currentTemplate.Regions = [...currentTemplate.Regions, regionData];
-      } else {
-        currentTemplate.Regions = [regionData];
-      }
+        const currentTemplate = copiedData[index];
+        if (currentTemplate.skewMarksWindowParameters) {
+          currentTemplate.skewMarksWindowParameters = [
+            ...currentTemplate.skewMarksWindowParameters,
+            regionData,
+          ];
+        } else {
+          currentTemplate.skewMarksWindowParameters = [regionData];
+        }
 
-      return {
-        ...item,
-        allTemplates: copiedData,
-      };
-    });
+        return {
+          ...item,
+          allTemplates: copiedData,
+        };
+      });
+    } else if (fieldType === "formField") {
+      setDataState((item) => {
+        const copiedData = [...item.allTemplates];
+
+        const currentTemplate = copiedData[index];
+        if (currentTemplate.formFieldWindowParameters) {
+          currentTemplate.formFieldWindowParameters = [
+            ...currentTemplate.formFieldWindowParameters,
+            regionData,
+          ];
+        } else {
+          currentTemplate.formFieldWindowParameters = [regionData];
+        }
+
+        return {
+          ...item,
+          allTemplates: copiedData,
+        };
+      });
+    } else if (fieldType === "questionField") {
+      setDataState((item) => {
+        const copiedData = [...item.allTemplates];
+
+        const currentTemplate = copiedData[index];
+        if (currentTemplate.questionsWindowParameters) {
+          currentTemplate.questionsWindowParameters = [
+            ...currentTemplate.questionsWindowParameters,
+            regionData,
+          ];
+        } else {
+          currentTemplate.questionsWindowParameters = [regionData];
+        }
+
+        return {
+          ...item,
+          allTemplates: copiedData,
+        };
+      });
+    } else {
+      setDataState((item) => {
+        const copiedData = [...item.allTemplates];
+
+        const currentTemplate = copiedData[index];
+        if (currentTemplate.idWindowParameters) {
+          currentTemplate.idWindowParameters = [
+            ...currentTemplate.idWindowParameters,
+            regionData,
+          ];
+        } else {
+          currentTemplate.idWindowParameters = [regionData];
+        }
+
+        return {
+          ...item,
+          allTemplates: copiedData,
+        };
+      });
+    }
   };
   const dataContext = {
     allTemplates: dataState.allTemplates,

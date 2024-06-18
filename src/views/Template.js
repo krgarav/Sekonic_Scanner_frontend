@@ -319,7 +319,6 @@ const Template = () => {
   };
 
   const createTemplateHandler = () => {
-    console.log(barCount)
     if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
       return
     }
@@ -798,7 +797,7 @@ const Template = () => {
                           value={windowNgOption}
                           onChange={(selectedValue) => setWindowNgOption(selectedValue)}
                           options={windowNgData}
-                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionLabel={(option) => option?.showName || ""}
                           getOptionValue={(option) =>
                             option?.id?.toString() || ""
                           }
@@ -840,7 +839,7 @@ const Template = () => {
                             setReject(selectedValue)
                           }
                           options={rejectData}
-                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionLabel={(option) => option?.showName || ""}
                           getOptionValue={(option) =>
                             option?.id?.toString() || ""
                           }
