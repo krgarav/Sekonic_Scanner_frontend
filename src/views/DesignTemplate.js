@@ -335,11 +335,11 @@ const DesignTemplate = () => {
                 <Modal.Body>
 
                     <Row className="mb-2">
-                        <label htmlFor="example-text-input" className="col-md-2">
-                            Select Field Type
+                        <label htmlFor="example-text-input" className="col-md-2 col-form-label">
+                            Field Type
                         </label>
-                        <Col md={3}>
-                            <label htmlFor="formField">Form Field:</label>
+                        <Col md={2} className="d-flex align-items-center">
+                            <label htmlFor="formField" className="mr-2 mb-0" >Form : </label>
                             <input
                                 id="formField"
                                 type="radio"
@@ -349,8 +349,8 @@ const DesignTemplate = () => {
                                 onChange={handleRadioChange}
                             />
                         </Col>
-                        <Col md={3}>
-                            <label htmlFor="fieldType">Question Field:</label>
+                        <Col md={2} className="d-flex align-items-center">
+                            <label htmlFor="fieldType" className="mr-2 mb-0" >Question :</label>
                             <input
                                 id="fieldType"
                                 type="radio"
@@ -360,8 +360,8 @@ const DesignTemplate = () => {
                                 onChange={handleRadioChange}
                             />
                         </Col>
-                        <Col md={4}>
-                            <label htmlFor="skewMarkField">Skew Mark Field:</label>
+                        <Col md={3} className="d-flex align-items-center">
+                            <label htmlFor="skewMarkField" className="mr-2 mb-0">Skew Mark:</label>
                             <input
                                 id="skewMarkField"
                                 type="radio"
@@ -371,8 +371,19 @@ const DesignTemplate = () => {
                                 onChange={handleRadioChange}
                             />
                         </Col>
+                        <Col md={2} className="d-flex align-items-center">
+                            <label htmlFor="idField" className="mr-2 mb-0">ID Mark :</label>
+                            <input
+                                id="idField"
+                                type="radio"
+                                name="fieldType"
+                                value="idField"
+                                checked={selectedFieldType === 'idField'}
+                                onChange={handleRadioChange}
+                            />
+                        </Col>
                     </Row>
-                    <Row className="mb-2">
+                    <Row >
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 "
@@ -414,7 +425,7 @@ const DesignTemplate = () => {
 
                         </div>
                     </Row>
-                    <Row className="mb-2">
+                    <Row >
                         <label htmlFor="example-select-input" className="col-md-2" >
                             Minimum Mark
                         </label>
@@ -473,7 +484,7 @@ const DesignTemplate = () => {
                             <input value={numRows} readOnly className="form-control" />
                         </div>
                     </Row>
-                    <Row className="mb-2">
+                    <Row className="">
                         <label htmlFor="example-select-input" className="col-2 ">
                             Total No In Row
                         </label>

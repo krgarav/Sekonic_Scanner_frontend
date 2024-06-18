@@ -206,8 +206,11 @@ const Template = () => {
         const ngAction = +item["ngAction"].id;
         const columnStart = item.Cols;
         const rowStart = item.Rows;
+        const iDifference = item["iDifference"];
+        const iSensitivity = item["iSensitivity"];
+        // const 
 
-        return { columnStart, rowStart, layoutName, timingMarks, barcodeCount, iFace, iReject, ngAction }
+        return { layoutName, timingMarks, barcodeCount, iFace, columnStart, rowStart, iReject, ngAction }
       } else {
         return item
       }
@@ -898,12 +901,12 @@ const Template = () => {
                     <Row className="mb-3">
                       <label
                         htmlFor="example-text-input"
-                        className="col-md-3 "
+                        className="col-md-3  col-form-label "
                         style={{ fontSize: ".9rem" }}
                       >
                         Face:
                       </label>
-                      <div className="col-md-9">
+                      <div className="col-md-3">
                         <Select
                           value={face}
                           onChange={(selectedValue) =>
@@ -923,6 +926,25 @@ const Template = () => {
                           </span>
                         )}
                       </div>
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 col-form-label  "
+                        style={{ fontSize: ".9rem", textAlign: "right" }}
+                      >
+                        Direction :
+                      </label>
+                      <div className="col-md-3">
+                        <Select
+                          value={face}
+                          onChange={(selectedValue) =>
+                            setFace(selectedValue)
+                          }
+                          options={faceData}
+                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                          }
+                        /></div>
                     </Row>
                     {/* <Row className="mb-3">
                       <Col sm={6}>
@@ -983,7 +1005,7 @@ const Template = () => {
                       </Col>
                     </Row> */}
 
-                    <Row className="mb-3">
+                    {/* <Row className="mb-3">
                       <label
                         htmlFor="example-text-input"
                         className="col-md-3 "
@@ -1009,7 +1031,7 @@ const Template = () => {
                           </span>
                         )}
                       </div>
-                    </Row>
+                    </Row> */}
                   </Tab.Pane>
                   <Tab.Pane eventKey="sensitivity">
                     <Form>
