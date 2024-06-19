@@ -172,9 +172,9 @@ const DesignTemplate = () => {
     };
     const handleSave = () => {
 
-        if (!name || !windowNgOption || !noInRow || !noOfStepInRow || !noInCol || !noOfStepInCol || !minimumMark) {
-            return
-        }
+        // if (!name || !windowNgOption || !noInRow || !noOfStepInRow || !noInCol || !noOfStepInCol || !minimumMark) {
+        //     return
+        // }
         let newData = {}
 
         if (selectedFieldType === "idField") {
@@ -353,8 +353,8 @@ const DesignTemplate = () => {
                                         style={{
                                             border: "2px solid #007bff",
                                             position: "absolute",
-                                            left: `${(data.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 6}px`,
-                                            top: `${(data.startRow * (imageRef.current.getBoundingClientRect().height / numRows))}px`,
+                                            left: `${(data.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 4}px`,
+                                            top: `${(data.startRow * (imageRef.current.getBoundingClientRect().height / numRows)) - 3}px`,
                                             width: `${((data.endCol - data.startCol + 1) * (imageRef.current.getBoundingClientRect().width / numCols))}px`,
                                             height: `${((data.endRow - data.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows))}px`
                                         }}
@@ -366,8 +366,8 @@ const DesignTemplate = () => {
                                         style={{
                                             border: "2px solid green",
                                             position: "absolute",
-                                            left: `${(selection.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 6}px`,
-                                            top: `${(selection.startRow * (imageRef.current.getBoundingClientRect().height / numRows))}px`,
+                                            left: `${(selection.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 4}px`,
+                                            top: `${(selection.startRow * (imageRef.current.getBoundingClientRect().height / numRows)) - 3}px`,
                                             width: `${(selection.endCol - selection.startCol + 1) * (imageRef.current.getBoundingClientRect().width / numCols)}px`,
                                             height: `${(selection.endRow - selection.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows)}px`
                                         }}
@@ -502,7 +502,7 @@ const DesignTemplate = () => {
                                 required />
                         </div>
                     </Row>
-                    <Row className="mb-2">
+                    {selectedFieldType === 'skewMarkField' && <Row className="mb-2">
                         <label htmlFor="example-select-input" className="col-md-2 col-form-label">
                             Skew Mark
                         </label>
@@ -514,14 +514,11 @@ const DesignTemplate = () => {
                                 defaultValue={"none"}
                             >
                                 <option value="">Select an option</option>
-                                <option value="none">Not a Skew Mark</option>
                                 <option value="rear">Top Skew Mark</option>
                                 <option value="front">Bottom Skew Mark</option>
                             </select>
                         </div>
-
-
-                    </Row>
+                    </Row>}
 
                     <Row className="mb-2">
                         <label htmlFor="example-select-input" className="col-2 col-form-label">
@@ -602,7 +599,7 @@ const DesignTemplate = () => {
                         </div>
                     </Row>
 
-                    {selectedFieldType !== 'idField' && <Row className="mb-2">
+                    <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 "
@@ -632,8 +629,8 @@ const DesignTemplate = () => {
                                 <option value="7">From the lower right to the left  </option>
                             </select>
                         </div>
-                    </Row>}
-                    {selectedFieldType === 'idField' && <Row>
+                    </Row>
+                    {/* {selectedFieldType === 'idField' && <Row>
                         <label htmlFor="example-text-input"
                             className="col-md-2 ">
                             Page Position :
@@ -645,16 +642,16 @@ const DesignTemplate = () => {
                                 onChange={(e) => { setReadingDirectionOption(e.target.value) }}
                                 defaultValue={""}
                             >
-                                <option value="">Select reading direction... </option>
-                                <option value="Top To Bottom ">Top To Bottom </option>
-                                <option value="Bottom To Top">Bottom To Top </option>
+                                <option value="">Select Page position... </option>
+                                <option value="Linear">Linear </option>
+                                <option value="Horizontal"> Horizontal </option>
                             </select>
                         </div>
-                    </Row>}
+                    </Row>} */}
                     <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-2 "
+                            className="col-md-2  col-form-label"
                         >
                             Type :
                         </label>

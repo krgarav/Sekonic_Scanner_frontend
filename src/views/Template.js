@@ -43,7 +43,7 @@ import { useContext, useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
 import DataContext from "store/DataContext";
-import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData, windowNgData, faceData } from "data/helperData";
+import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData, windowNgData, faceData, directionData } from "data/helperData";
 import axios from 'axios';
 import pako from 'pako';
 const Template = () => {
@@ -104,6 +104,7 @@ const Template = () => {
   const [windowNgOption, setWindowNgOption] = useState("");
   const [timingMark, setTimingMark] = useState();
   const [face, setFace] = useState();
+  const [direction, setDirection] = useState();
   const dataCtx = useContext(DataContext);
 
 
@@ -164,16 +165,10 @@ const Template = () => {
     });
 
   }
-  const arrayToJsonString = (arr) => {
-    return JSON.stringify(arr);
-  };
 
-  const compressJsonString = (jsonString) => {
-    const compressed = pako.gzip(jsonString);
-    return compressed;
-  };
   const sendToBackendHandler = async (arr, index) => {
 
+    console.log(arr)
     const templateData = arr[0];
     const formFieldData = arr.formFieldWindowParameters;
     const questionField = arr.questionsWindowParameters;
@@ -182,165 +177,187 @@ const Template = () => {
     const tempdata = { ...templateData, ...idFeild[0] }
 
 
-
-    const temstrucData = [tempdata].map((item) => {
+    const temstrucData = [tempdata]?.map((item) => {
       const layoutName = item["Template Name"];
       const timingMarks = +item["Rows"];
       const barcodeCount = +item["Bar Count"];
-      const iFace = +item["iFace"].id;
-      const iReject = +item["iReject"].id;
-      const ngAction = +item["ngAction"].id;
-      const columnStart = item.Cols;
-      const rowStart = item.Rows;
-      const iDifference = item["iDifference"];
-      const iSensitivity = item["iSensitivity"];
+      const iFace = +item["face"];
+      const columnStart = +item["columnStart"];
+      const columnNumber = +item["totalNoInColumn"];
+      const columnStep = +item["totalStepInColumn"];
+      const rowStart = +item["rowStart"];
+      const rowNumber = +item["totalNoInRow"];
+      const rowStep = +item["totalStepInRow"];
+      const iDirection = + item["direction"];
+      const iSensitivity = +item["sensitivity"]
+      const iDifference = +item["difference"];
+      const ngAction = item["ngAction"].toString();
+      const dataReadDirection = item["dataReadDirection"]
+      const iReject = +item["iReject"];
+
+      return {
+        layoutName,
+        timingMarks,
+        barcodeCount,
+        iFace,
+        columnStart,
+        columnNumber,
+        columnStep,
+        rowStart,
+        rowNumber,
+        rowStep,
+        iDirection,
+        iSensitivity,
+        iDifference,
+        ngAction,
+        dataReadDirection,
+        iReject
+      }
     })
 
-
-    // const layoutName = arr[0]["Template Name"];
-    // const timingMarks = +arr[0]["Rows"];
-    // const barcodeCount = +arr.Regions[0]["barcodeCount"];
-    // const iFace = arr.Regions[0]["face"];
-    // const ngAction = arr.Regions[0]["windowNG"];
-    // const iReject = arr.Regions[0]["isReject"];
-
-
-    // const columnStart = +arr.Regions[0]["columnStart"];
-    // const columnNumber = +arr.Regions[0]["columnStart"];
-    // const columnStep = +arr.Regions[0]["totalStepInColumn"];
-    // const rowStart = +arr.Regions[0]["rowStart"];
-    // const rowStep = +arr.Regions[0]["totalStepInRow"];
-    // const iSensitivity = +arr.Regions[0]["sensitivity"];
-    // const iDifference = +arr.Regions[0]["difference"];
-    // const iOption = +arr.Regions[0]["option"];
-    // const iMaximumMarks = +arr.Regions[0]["maximumMark"];
-    // const iMinimumMarks = +arr.Regions[0]["minimumMark"];
-    // const iType = arr.Regions[0]["type"];
+    const skewFieldStruc = skewField?.map((item) => {
+      const iFace = +item["face"];
+      const columnStart = +item["columnStart"];
+      const columnNumber = +item["totalNoInColumn"];
+      const columnStep = +item["totalStepInColumn"];
+      const rowStart = +item["rowStart"];
+      const rowNumber = +item["totalNoInRow"];
+      const rowStep = +item["totalStepInRow"];
+      const iDirection = +item["readingDirection"];
+      const iSensitivity = +item["sensitivity"]
+      const iDifference = +item["difference"];
+      const ngAction = item["windowNG"];
+      const iType = item["type"];
+      const iMaximumMarks = +item["maximumMark"];
+      const iMinimumMarks = +item["minimumMark"];
 
 
-    // const templateObj = arr.map((item) => {
+      return {
+        iFace,
+        columnStart,
+        columnNumber,
+        columnStep,
+        rowStart,
+        rowNumber,
+        rowStep,
+        iDirection,
+        iSensitivity,
+        iDifference,
+        iMinimumMarks,
+        iMaximumMarks,
+        iType,
+        ngAction
+      }
+    });
 
-    //   if (!Array.isArray(item)) {
-    //     const layoutName = item["Template Name"];
-    //     const timingMarks = +item["Rows"];
-    //     const barcodeCount = +item["Bar Count"];
-    //     const iFace = +item["iFace"].id;
-    //     const iReject = +item["iReject"].id;
-    //     const ngAction = +item["ngAction"].id;
-    //     const columnStart = item.Cols;
-    //     const rowStart = item.Rows;
-    //     const iDifference = item["iDifference"];
-    //     const iSensitivity = item["iSensitivity"];
-    //     // const 
 
-    //     return { layoutName, timingMarks, barcodeCount, iFace, columnStart, rowStart, iReject, ngAction }
-    //   } else {
-    //     return item
-    //   }
-    // })
-    const mainObj = { "layoutParameters": tempdata, "skewMarksWindowParameters": skewField, "formFieldWindowParameters": formFieldData, "questionsWindowParameters": questionField };
+    const formFieldStruc = formFieldData?.map((item) => {
+      const iFace = +item["face"];
+      const columnStart = +item["columnStart"];
+      const columnNumber = +item["totalNoInColumn"];
+      const columnStep = +item["totalStepInColumn"];
+      const rowStart = +item["rowStart"];
+      const rowNumber = +item["totalNoInRow"];
+      const rowStep = +item["totalStepInRow"];
+      const iDirection = +item["readingDirection"];
+      const iSensitivity = +item["sensitivity"]
+      const iDifference = +item["difference"];
+      const ngAction = item["windowNG"];
+      const iType = item["type"];
+      const iMaximumMarks = +item["maximumMark"];
+      const iMinimumMarks = +item["minimumMark"];
+      const windowName = item["windowName"]
+      const iOption = +item["option"];
+      const totalNumberOfFileds = item["totalNumberOfFields"];
+      const numericOrAlphabets = item["numericOrAlphabets"];
+
+      return {
+        iFace,
+        windowName,
+        columnStart,
+        columnNumber,
+        columnStep,
+        rowStart,
+        rowNumber,
+        rowStep,
+        iDirection,
+        iSensitivity,
+        iDifference,
+        iOption,
+        iMinimumMarks,
+        iMaximumMarks,
+        iType,
+        ngAction,
+        totalNumberOfFileds,
+        numericOrAlphabets
+      }
+    });
+
+
+
+    const questionFieldStruc = questionField?.map((item) => {
+      const iFace = +item["face"];
+      const columnStart = +item["columnStart"];
+      const columnNumber = +item["totalNoInColumn"];
+      const columnStep = +item["totalStepInColumn"];
+      const rowStart = +item["rowStart"];
+      const rowNumber = +item["totalNoInRow"];
+      const rowStep = +item["totalStepInRow"];
+      const iSensitivity = +item["sensitivity"]
+      const iDifference = +item["difference"];
+      const ngAction = item["windowNG"];
+      const iType = item["type"];
+      const iMaximumMarks = +item["maximumMark"];
+      const iMinimumMarks = +item["minimumMark"];
+      const windowName = item["windowName"]
+      const iOption = +item["option"];
+      const totalNumberOfFileds = item["totalNumberOfFields"];
+      const numericOrAlphabets = item["numericOrAlphabets"];
+
+      return {
+        iFace,
+        windowName,
+        columnStart,
+        columnNumber,
+        columnStep,
+        rowStart,
+        rowNumber,
+        rowStep,
+        iSensitivity,
+        iDifference,
+        iOption,
+        iMinimumMarks,
+        iMaximumMarks,
+        iType,
+        ngAction,
+        totalNumberOfFileds,
+        numericOrAlphabets
+      }
+    });
+
+    const mainObj = {
+      "layoutParameters": { ...temstrucData[0] },
+      "skewMarksWindowParameters": skewFieldStruc,
+      "formFieldWindowParameters": formFieldStruc,
+      "questionsWindowParameters": questionFieldStruc
+    };
 
     console.log(mainObj)
-    // const regions = arr.Regions;
-    // const mappedRegion = regions.map((item) => {
-    //   const columnStart = +item["columnStart"];
-    //   const columnNumber = +item["columnStart"];
-    //   const columnStep = +item["totalStepInColumn"];
-    //   const rowStart = +item["rowStart"];
-    //   const rowStep = +item["totalStepInRow"];
-    //   const iSensitivity = +item["sensitivity"];
-    //   const iDifference = +item["difference"];
-    //   const iOption = +item["option"];
-    //   const iMaximumMarks = +item["maximumMark"];
-    //   const iMinimumMarks = +item["minimumMark"];
-    //   const iType = item["type"];
-    //   const iFace = item["face"];
-    //   const iDirection = item["readingDirection"];
-    //   const ngAction = item["windowNG"];
-    //   const windowName = item["windowName"]
-    //   return {
-    //     iFace,
-    //     columnStart,
-    //     columnNumber,
-    //     columnStep,
-    //     rowStart,
-    //     rowStep,
-    //     iDirection,
-    //     iSensitivity,
-    //     iDifference,
-    //     iOption,
-    //     iMinimumMarks,
-    //     iMaximumMarks,
-    //     iType,
-    //     ngAction,
-    //     windowName
-    //   }
-    // })
-    // mainObj.layoutWindowParameters = mappedRegion;
-    // console.log(mainObj)
-    // const obj = {
-    //   "layoutParameters": {
-    //     "layoutName": "string",
-    //     "timingMarks": 0,
-    //     "barcodeCount": 0,
-    //     "iFace": 0,
-    //     "columnStart": 0,
-    //     "columnNumber": 0,
-    //     "columnStep": 0,
-    //     "rowStart": 0,
-    //     "rowNumber": 0,
-    //     "rowStep": 0,
-    //     "iDirection": 0,
-    //     "iSensitivity": 0,
-    //     "iDifference": 0,
-    //     "ngAction": "string",
-    //     "iReject": 0
-    //   },
-    //   "layoutWindowParameters": [
-    //     {
-    //       "iFace": 0,
-    //       "columnStart": 0,
-    //       "columnNumber": 0,
-    //       "columnStep": 0,
-    //       "rowStart": 0,
-    //       "rowNumber": 0,
-    //       "rowStep": 0,
-    //       "iDirection": 0,
-    //       "iSensitivity": 0,
-    //       "iDifference": 0,
-    //       "iOption": 0,
-    //       "iMinimumMarks": 0,
-    //       "iMaximumMarks": 0,
-    //       "iType": "string",
-    //       "ngAction": "string"
-    //     }
-    //   ]
 
-    // }
+    try {
+      const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', mainObj, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Response:', response);
+      alert(`Response : ${JSON.stringify(response.data.message)}`)
+    } catch (error) {
+      alert(`Response : ${JSON.stringify(error.response.data)}`)
+      console.error('Error sending POST request:', error);
+    }
 
-    // try {
-    //   // Convert the array to a JSON string
-    //   const jsonString = arrayToJsonString(arr);
 
-    //   // Compress the JSON string
-    //   const compressedData = compressJsonString(jsonString);
-
-    //   // Convert the compressed data to a Uint8Array
-    //   const uint8Array = new Uint8Array(compressedData);
-
-    //   // Send the compressed data to the backend API using axios
-    //   const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', uint8Array, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Content-Encoding': 'gzip',
-    //     },
-    //     responseType: 'json'
-    //   });
-
-    //   console.log('Response from backend:', response.data);
-    // } catch (error) {
-    //   console.error('Error sending data to backend:', error);
-    // }
   };
 
   const createTemplateHandler = () => {
@@ -359,9 +376,8 @@ const Template = () => {
       "ngAction": windowNgOption.id,
       "iReject": reject.name,
       "iSensitivity": sensitivity,
-      "iDifference": difference
-
-    }]
+      "direction": direction.id
+    }];
     const index = dataCtx.setAllTemplates(templateData);
 
     setModalShow(false);
@@ -954,20 +970,21 @@ const Template = () => {
                         className="col-md-3 col-form-label  "
                         style={{ fontSize: ".9rem", textAlign: "right" }}
                       >
-                        Direction :
+                        Page Position :
                       </label>
                       <div className="col-md-3">
                         <Select
-                          value={face}
+                          value={direction}
                           onChange={(selectedValue) =>
-                            setFace(selectedValue)
+                            setDirection(selectedValue)
                           }
-                          options={faceData}
+                          options={directionData}
                           getOptionLabel={(option) => option?.name || ""}
                           getOptionValue={(option) =>
                             option?.id?.toString() || ""
                           }
-                        /></div>
+                        />
+                      </div>
                     </Row>
                     {/* <Row className="mb-3">
                       <Col sm={6}>

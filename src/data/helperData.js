@@ -56,3 +56,8 @@ export const faceData = [
     { id: 0, name: "Front Side" },
     { id: 1, name: "Back Side" },
 ];
+
+export const directionData = [
+    { id: 0, name: "Linear" },
+    { id: 1, name: "Horizontal" },
+];
