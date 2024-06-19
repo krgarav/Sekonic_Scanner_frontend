@@ -299,7 +299,6 @@ const DesignTemplate = () => {
                         minWidth={100}
                         minHeight={100}
                         bounds={null}
-                        // lockAspectRatio  
                         style={{
                             border: '1px solid #ddd',
                         }}
@@ -329,7 +328,7 @@ const DesignTemplate = () => {
                                 <div key={index} className="top-num">{index + 1}</div>
                             ))}
                         </div>
-                        <div style={{ border: "2px solid black", paddingTop: "1.2rem", padding: "1rem", paddingLeft: ".5rem" }}>
+                        <div style={{ border: "2px solid black",paddingTop: "2.0rem", padding: "1rem", paddingLeft: ".5rem" }}>
                             <div className="grid"
                                 ref={imageRef}
                                 onMouseDown={handleMouseDown}
