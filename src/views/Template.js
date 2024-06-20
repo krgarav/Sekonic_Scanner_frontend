@@ -351,9 +351,9 @@ const Template = () => {
         }
       });
       console.log('Response:', response);
-      alert(`Response : ${JSON.stringify(response.data.message)}`)
+      // alert(`Response : ${JSON.stringify(response.data.message)}`)
     } catch (error) {
-      alert(`Response : ${JSON.stringify(error.response.data)}`)
+      // alert(`Response : ${JSON.stringify(error.response.data)}`)
       console.error('Error sending POST request:', error);
     }
 
