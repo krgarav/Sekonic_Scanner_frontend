@@ -1,10 +1,62 @@
-import { useState } from "react";
-import DataContext from "./DataContext";
+import React, { useState, useEffect } from "react";
+import DataContext from "./DataContext"; // Assuming you have a DataContext
 
-const initialData = { allTemplates: [] };
+const initialData = { allTemplates: [] }; // Initial data if localStorage is empty
 
 const DataProvider = (props) => {
-  const [dataState, setDataState] = useState(initialData);
+  // Initialize dataState from localStorage if it exists, otherwise use initialData
+  const [dataState, setDataState] = useState(() => {
+    const savedData = localStorage.getItem("Template");
+    let updateData;
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      console.log(parsedData);
+      updateData = parsedData.map((item) => {
+        const templateData = item.templateData;
+        const formFieldWindowParameters = item?.formFieldWindowParameters;
+        const questionsWindowParameters = item?.questionsWindowParameters;
+        const skewMarksWindowParameters = item?.skewMarksWindowParameters;
+        const idWindowParameters = item?.idWindowParameters;
+        return {
+          ...templateData,
+          formFieldWindowParameters,
+          questionsWindowParameters,
+          skewMarksWindowParameters,
+          idWindowParameters,
+        };
+      });
+      console.log(updateData);
+      return { allTemplates: updateData };
+    } else {
+      return initialData;
+    }
+  });
+  console.log(dataState);
+
+  // Save dataState to localStorage whenever it changes
+
+  useEffect(() => {
+    console.log("dataState changed:", dataState.allTemplates);
+
+    const mappedTemp = dataState.allTemplates.map((item) => {
+      const templateData = item;
+      const formFieldWindowParameters = item?.formFieldWindowParameters;
+      const questionsWindowParameters = item?.questionsWindowParameters;
+      const skewMarksWindowParameters = item?.skewMarksWindowParameters;
+      const idWindowParameters = item?.idWindowParameters;
+      return {
+        templateData,
+        formFieldWindowParameters,
+        questionsWindowParameters,
+        skewMarksWindowParameters,
+        idWindowParameters,
+      };
+    });
+    const stringifiedTemdata = JSON.stringify(mappedTemp);
+    console.log("stringifuied data : ", stringifiedTemdata);
+    localStorage.setItem("Template", stringifiedTemdata);
+  }, [dataState]);
+
   const templateHandler = (template) => {
     let newIndex;
     setDataState((item) => {
@@ -18,88 +70,66 @@ const DataProvider = (props) => {
   };
 
   const modifyTemplateHandler = (index, regionData, fieldType) => {
-    if (fieldType === "skewMarkField") {
-      setDataState((item) => {
-        const copiedData = [...item.allTemplates];
+    setDataState((item) => {
+      const copiedData = [...item.allTemplates];
+      const currentTemplate = copiedData[index];
 
-        const currentTemplate = copiedData[index];
-        if (currentTemplate.skewMarksWindowParameters) {
-          currentTemplate.skewMarksWindowParameters = [
-            ...currentTemplate.skewMarksWindowParameters,
-            regionData,
-          ];
-        } else {
-          currentTemplate.skewMarksWindowParameters = [regionData];
-        }
+      switch (fieldType) {
+        case "skewMarkField":
+          currentTemplate.skewMarksWindowParameters =
+            currentTemplate.skewMarksWindowParameters
+              ? [...currentTemplate.skewMarksWindowParameters, regionData]
+              : [regionData];
+          break;
+        case "formField":
+          currentTemplate.formFieldWindowParameters =
+            currentTemplate.formFieldWindowParameters
+              ? [...currentTemplate.formFieldWindowParameters, regionData]
+              : [regionData];
+          break;
+        case "questionField":
+          currentTemplate.questionsWindowParameters =
+            currentTemplate.questionsWindowParameters
+              ? [...currentTemplate.questionsWindowParameters, regionData]
+              : [regionData];
+          break;
+        default:
+          currentTemplate.idWindowParameters =
+            currentTemplate.idWindowParameters
+              ? [...currentTemplate.idWindowParameters, regionData]
+              : [regionData];
+          break;
+      }
 
+      return {
+        ...item,
+        allTemplates: copiedData,
+      };
+    });
+  };
+  const deleteTemplateHandler = (index) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this item?"
+    );
+
+    if (isConfirmed) {
+      setDataState((prevState) => {
+        const updatedTemplates = prevState.allTemplates.filter(
+          (_, i) => i !== index
+        );
         return {
-          ...item,
-          allTemplates: copiedData,
-        };
-      });
-    } else if (fieldType === "formField") {
-      setDataState((item) => {
-        const copiedData = [...item.allTemplates];
-
-        const currentTemplate = copiedData[index];
-        if (currentTemplate.formFieldWindowParameters) {
-          currentTemplate.formFieldWindowParameters = [
-            ...currentTemplate.formFieldWindowParameters,
-            regionData,
-          ];
-        } else {
-          currentTemplate.formFieldWindowParameters = [regionData];
-        }
-
-        return {
-          ...item,
-          allTemplates: copiedData,
-        };
-      });
-    } else if (fieldType === "questionField") {
-      setDataState((item) => {
-        const copiedData = [...item.allTemplates];
-
-        const currentTemplate = copiedData[index];
-        if (currentTemplate.questionsWindowParameters) {
-          currentTemplate.questionsWindowParameters = [
-            ...currentTemplate.questionsWindowParameters,
-            regionData,
-          ];
-        } else {
-          currentTemplate.questionsWindowParameters = [regionData];
-        }
-
-        return {
-          ...item,
-          allTemplates: copiedData,
-        };
-      });
-    } else {
-      setDataState((item) => {
-        const copiedData = [...item.allTemplates];
-
-        const currentTemplate = copiedData[index];
-        if (currentTemplate.idWindowParameters) {
-          currentTemplate.idWindowParameters = [
-            ...currentTemplate.idWindowParameters,
-            regionData,
-          ];
-        } else {
-          currentTemplate.idWindowParameters = [regionData];
-        }
-
-        return {
-          ...item,
-          allTemplates: copiedData,
+          ...prevState,
+          allTemplates: updatedTemplates,
         };
       });
     }
   };
+
   const dataContext = {
     allTemplates: dataState.allTemplates,
     setAllTemplates: templateHandler,
     modifyAllTemplate: modifyTemplateHandler,
+    deleteTemplate: deleteTemplateHandler,
   };
 
   return (

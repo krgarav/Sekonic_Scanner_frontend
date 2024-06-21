@@ -105,6 +105,7 @@ const Template = () => {
   const [timingMark, setTimingMark] = useState();
   const [face, setFace] = useState();
   const [direction, setDirection] = useState();
+  const [toggle, settoggle] = useState({})
   const dataCtx = useContext(DataContext);
 
 
@@ -148,6 +149,7 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
+    console.log(arr)
     if (!arr || !arr.length) return;
 
     const templateData = arr[0];
@@ -170,7 +172,7 @@ const Template = () => {
         face: +tempdata.face,
         arr: arr
       },
-      
+
     });
   };
 
@@ -178,10 +180,10 @@ const Template = () => {
 
     // console.log(arr)
     const templateData = arr[0];
-    const formFieldData = arr.formFieldWindowParameters;
-    const questionField = arr.questionsWindowParameters;
-    const skewField = arr.skewMarksWindowParameters;
-    const idFeild = arr.idWindowParameters;
+    const formFieldData = arr?.formFieldWindowParameters;
+    const questionField = arr?.questionsWindowParameters;
+    const skewField = arr?.skewMarksWindowParameters;
+    const idFeild = arr?.idWindowParameters;
     const tempdata = { ...templateData, ...idFeild[0] }
 
 
@@ -440,11 +442,47 @@ const Template = () => {
 
 
   };
+  console.log(toggle)
 
   const createTemplateHandler = () => {
-    if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
-      return
+    // if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
+
+
+    //   return
+    // }
+    // if (!name) {
+    //   settoggle((prevData) => {
+    //     return { ...prevData, name: true };
+    //   });
+    //   return;
+    // } else if (!numberOfLines) {
+    //   settoggle((prevData) => {
+    //     return { ...prevData, row: true };
+    //   });
+    //   return;
+    // } else if (!numberOfFrontSideColumn) {
+    //   settoggle((prevData) => {
+    //     return { ...prevData, col: true };
+    //   });
+    //   return;
+    // } else if (!barCount) {
+    //   settoggle((prevData) => {
+    //     return { ...prevData, barcode: true };
+    //   });
+    //   return;
+    // }
+
+    if (!name || !numberOfLines || !numberOfFrontSideColumn || !barCount) {
+      settoggle((prevData) => ({
+        ...prevData,
+        name: !name ? true : prevData.name,
+        row: !numberOfLines ? true : prevData.row,
+        col: !numberOfFrontSideColumn ? true : prevData.col,
+        barcode: !barCount ? true : prevData.barcode,
+      }));
+      return;
     }
+
 
     const templateData = [{
       "Template Name": name,
@@ -477,6 +515,10 @@ const Template = () => {
         face: face.id
       },
     });
+  }
+  const deleteHandler = (arr, index) => {
+    console.log(index)
+    dataCtx.deleteTemplate(index)
   }
   return (
     <>
@@ -537,7 +579,7 @@ const Template = () => {
                               <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
                               <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
                               <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data</DropdownItem>
-                              <DropdownItem href="#pablo">Delete</DropdownItem>
+                              <DropdownItem onClick={() => deleteHandler(d, i)}>Delete</DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>
                         </td>
@@ -708,10 +750,10 @@ const Template = () => {
                     <Nav.Link eventKey="general">General</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="sensitivity">Sensitivity</Nav.Link>
+                    <Nav.Link eventKey="sensitivity">Barcode</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="errors">Errors</Nav.Link>
+                    <Nav.Link eventKey="errors">Image</Nav.Link>
                   </Nav.Item>
                 </Nav>
               </Col>
@@ -732,7 +774,11 @@ const Template = () => {
                           className="form-control"
                           placeholder="Enter Template Name"
                           value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          onChange={(e) => {
+                            settoggle((item) => ({ ...item, name: false }));
+                            setName(e.target.value)
+                          }}
+                          style={{ border: toggle.name ? "1px solid red" : "" }}
                         />
                         {!name && (
                           <span style={{ color: "red", display: spanDisplay }}>
@@ -760,7 +806,7 @@ const Template = () => {
                           }
                         />
                         {!size && (
-                          <span style={{ color: "red", display: spanDisplay }}>
+                          <span style={{ color: "red", display: "block" }}>
                             This feild is required
                           </span>
                         )}
@@ -836,7 +882,11 @@ const Template = () => {
                               className="form-control"
                               value={numberOfLines}
                               placeholder="Enter rows"
-                              onChange={(e) => setNumberOfLines(e.target.value)}
+                              onChange={(e) => {
+                                settoggle((item) => ({ ...item, row: false }));
+                                setNumberOfLines(e.target.value)
+                              }}
+                              style={{ border: toggle.row ? "1px solid red" : "" }}
                             />
                             {!numberOfLines && (
                               <span
@@ -863,9 +913,12 @@ const Template = () => {
                               type="number"
                               className="form-control"
                               value={numberOfFrontSideColumn}
-                              onChange={(e) =>
+                              onChange={(e) => {
+                                settoggle((item) => ({ ...item, col: false }));
                                 setNumberOfFrontSideColumn(e.target.value)
                               }
+                              }
+                              style={{ border: toggle.col ? "1px solid red" : "" }}
                             />
                             {!numberOfFrontSideColumn && (
                               <span
@@ -1010,7 +1063,12 @@ const Template = () => {
                         Barcode Count :
                       </label>
                       <div className="col-md-9">
-                        <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => setBarCount(e.target.value)} />
+                        <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => {
+                          settoggle((item) => ({ ...item, barcode: false }));
+                          setBarCount(e.target.value)
+                        }}
+                          style={{ border: toggle.barcode ? "1px solid red" : "" }}
+                        />
                         {!selectedBubble && (
                           <span style={{ color: "red", display: spanDisplay }}>
                             This feild is required
@@ -1019,6 +1077,57 @@ const Template = () => {
                       </div>
                     </Row>
 
+
+                    <Row className="mb-3">
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 col-form-label  "
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Sensitivity :
+                      </label>
+                      <div className="col-md-3">
+                        <input
+                          type="number"
+                          className="form-control col-form-label "
+                          value={sensitivity}
+                          onChange={(e) =>
+                            setSensitivity(e.target.value)
+                          }
+                        />
+                        {!sensitivity && (
+                          <span
+                            style={{ color: "red", display: spanDisplay }}
+                          >
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 col-form-label "
+                        style={{ fontSize: ".9rem", textAlign: "right" }}
+                      >
+                        Difference :
+                      </label>
+                      <div className="col-md-3">
+                        <input
+                          type="number"
+                          className="form-control"
+                          value={difference}
+                          onChange={(e) =>
+                            setDifference(e.target.value)
+                          }
+                        />
+                        {!difference && (
+                          <span
+                            style={{ color: "red", display: spanDisplay }}
+                          >
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                    </Row>
                     <Row className="mb-3">
                       <label
                         htmlFor="example-text-input"
@@ -1157,58 +1266,7 @@ const Template = () => {
                   </Tab.Pane>
                   <Tab.Pane eventKey="sensitivity">
                     <Form>
-                      <Row className="mb-3">
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-3 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Sensitivity
-                        </label>
-                        <div className="col-md-6">
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={sensitivity}
-                            onChange={(e) =>
-                              setSensitivity(e.target.value)
-                            }
-                          />
-                          {!sensitivity && (
-                            <span
-                              style={{ color: "red", display: spanDisplay }}
-                            >
-                              This feild is required
-                            </span>
-                          )}
-                        </div>
-                      </Row>
-                      <Row>
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-3 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Difference
-                        </label>
-                        <div className="col-md-6">
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={difference}
-                            onChange={(e) =>
-                              setDifference(e.target.value)
-                            }
-                          />
-                          {!difference && (
-                            <span
-                              style={{ color: "red", display: spanDisplay }}
-                            >
-                              This feild is required
-                            </span>
-                          )}
-                        </div>
-                      </Row>
+
                     </Form>
                   </Tab.Pane>
                   <Tab.Pane eventKey="errors">
@@ -1423,10 +1481,14 @@ const Template = () => {
           </Tab.Container>
         </Modal.Body>
         <Modal.Footer>
-          <label>
+          {/* <label>
             Upload Image:
             <input type="file" onChange={handleImageUpload} accept="image/*" />
-          </label>
+          </label> */}
+          <div className="grid w-full max-w-xs items-center gap-1.5">
+            <label className="text-sm text-gray-400 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Picture</label>
+            <input id="picture" type="file" onChange={handleImageUpload} accept="image/*" className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-400 file:border-0 file:bg-transparent file:text-gray-600 file:text-sm file:font-medium" />
+          </div>
           <Button variant="secondary" onClick={() => setModalShow(false)}>
             Close
           </Button>

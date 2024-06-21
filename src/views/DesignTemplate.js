@@ -67,9 +67,16 @@ const DesignTemplate = () => {
             return newState;
         });
     }
-    // arr.forEach(element => {
-    //     console.log(element)
-    // });
+   const coordinateData =[];
+    const formFieldData = arr?.formFieldWindowParameters;
+    const questionField = arr?.questionsWindowParameters;
+    const skewField = arr?.skewMarksWindowParameters;
+    const idFeild = arr?.idWindowParameters;
+    // if(formFieldData){
+    //     formFieldData.map((item)=>{
+    //         item.Coordinate
+    //     })
+    // }
     console.log(arr)
     useEffect(() => {
         switch (selectedBubble) {
