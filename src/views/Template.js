@@ -148,22 +148,24 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
-    // console.log(arr.Regions)
+    const templateData = arr[0];
+    const idFeild = arr.idWindowParameters;
+    const tempdata = { ...templateData, ...idFeild[0] }
+
     navigate("/admin/design-template", {
       state: {
         templateIndex: index,
-        numberOfLines: +arr[0].Rows,
-        numberOfFrontSideColumn: +arr[0].Cols,
-        imgsrc: arr[0].Image,
-        selectedBubble: arr[0]["Bubble Type"],
-        sensitivity: arr.Regions[0]["sensitivity"],
-        difference: arr.Regions[0]["difference"],
-        barCount: arr.Regions[0]["barcodeCount"],
-        reject: arr.Regions[0]["isReject"],
-        face: arr.Regions[0]["face"]
+        numberOfLines: +tempdata.Rows,
+        numberOfFrontSideColumn: +tempdata.Cols,
+        imgsrc: tempdata.Image,
+        selectedBubble: tempdata["Bubble Type"],
+        sensitivity: tempdata["sensitivity"],
+        difference: tempdata["difference"],
+        barCount: tempdata["barcodeCount"],
+        reject: tempdata["isReject"],
+        face: tempdata["face"]
       },
     });
-
   }
 
   const sendToBackendHandler = async (arr, index) => {
@@ -188,11 +190,11 @@ const Template = () => {
       const rowStart = +item["rowStart"];
       const rowNumber = +item["totalNoInRow"];
       const rowStep = +item["totalStepInRow"];
-      const iDirection = + item["direction"];
+      const iDirection = + item["iDirection"];
       const iSensitivity = +item["sensitivity"]
       const iDifference = +item["difference"];
       const ngAction = item["ngAction"].toString();
-      const dataReadDirection = item["dataReadDirection"]
+      const dataReadDirection = item["direction"]
       const iReject = +item["iReject"];
 
       return {
@@ -344,18 +346,18 @@ const Template = () => {
 
     console.log(mainObj)
 
-    try {
-      const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', mainObj, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('Response:', response);
-      // alert(`Response : ${JSON.stringify(response.data.message)}`)
-    } catch (error) {
-      // alert(`Response : ${JSON.stringify(error.response.data)}`)
-      console.error('Error sending POST request:', error);
-    }
+    // try {
+    //   const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', mainObj, {
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   });
+    //   console.log('Response:', response);
+    //   // alert(`Response : ${JSON.stringify(response.data.message)}`)
+    // } catch (error) {
+    //   // alert(`Response : ${JSON.stringify(error.response.data)}`)
+    //   console.error('Error sending POST request:', error);
+    // }
 
 
   };
@@ -378,6 +380,7 @@ const Template = () => {
       "iSensitivity": sensitivity,
       "direction": direction.id
     }];
+    console.log(templateData)
     const index = dataCtx.setAllTemplates(templateData);
 
     setModalShow(false);

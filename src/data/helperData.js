@@ -58,6 +58,6 @@ export const faceData = [
 ];
 
 export const directionData = [
-    { id: 0, name: "Linear" },
-    { id: 1, name: "Horizontal" },
+    { id: "Top To Bottom", name: "Top To Bottom" },
+    { id: "Bottom To Top", name: "Bottom To Top" },
 ];

@@ -190,7 +190,7 @@ const DesignTemplate = () => {
                     "End Row": selection?.endRow + 1,
                     "End Col": selection?.endCol
                 },
-                "dataReadDirection": readingDirectionOption,
+                "iDirection": readingDirectionOption,
                 "rowStart": selection?.startRow + 1,
                 "timingMarks": numRows,
                 "windowNG": windowNgOption,
@@ -328,7 +328,7 @@ const DesignTemplate = () => {
                                 <div key={index} className="top-num">{index + 1}</div>
                             ))}
                         </div>
-                        <div style={{ border: "2px solid black",paddingTop: "2.0rem", padding: "1rem", paddingLeft: ".5rem" }}>
+                        <div style={{ border: "2px solid black", paddingTop: "2.0rem", padding: "1rem", paddingLeft: ".5rem" }}>
                             <div className="grid"
                                 ref={imageRef}
                                 onMouseDown={handleMouseDown}
@@ -397,7 +397,7 @@ const DesignTemplate = () => {
                             Field Type
                         </label>
                         <Col md={2} className="d-flex align-items-center">
-                            <label htmlFor="formField" className="mr-2 mb-0" >Form : </label>
+                            <label htmlFor="formField" className="mr-2 mb-0 field-label" >Form : </label>
                             <input
                                 id="formField"
                                 type="radio"
@@ -405,10 +405,11 @@ const DesignTemplate = () => {
                                 value="formField"
                                 checked={selectedFieldType === 'formField'}
                                 onChange={handleRadioChange}
+                                className=" field-label"
                             />
                         </Col>
                         <Col md={2} className="d-flex align-items-center">
-                            <label htmlFor="fieldType" className="mr-2 mb-0" >Question :</label>
+                            <label htmlFor="fieldType" className="mr-2 mb-0 field-label" >Question : </label>
                             <input
                                 id="fieldType"
                                 type="radio"
@@ -416,10 +417,11 @@ const DesignTemplate = () => {
                                 value="questionField"
                                 checked={selectedFieldType === 'questionField'}
                                 onChange={handleRadioChange}
+                                className=" field-label"
                             />
                         </Col>
                         <Col md={3} className="d-flex align-items-center">
-                            <label htmlFor="skewMarkField" className="mr-2 mb-0">Skew Mark:</label>
+                            <label htmlFor="skewMarkField" className="mr-2 mb-0 field-label">Skew Mark:</label>
                             <input
                                 id="skewMarkField"
                                 type="radio"
@@ -427,10 +429,11 @@ const DesignTemplate = () => {
                                 value="skewMarkField"
                                 checked={selectedFieldType === 'skewMarkField'}
                                 onChange={handleRadioChange}
+                                className=" field-label"
                             />
                         </Col>
-                        <Col md={2} className="d-flex align-items-center">
-                            <label htmlFor="idField" className="mr-2 mb-0">ID Mark :</label>
+                        <Col md={2} className="d-flex align-items-center  ">
+                            <label htmlFor="idField" className="mr-2 mb-0 field-label">ID Mark :</label>
                             <input
                                 id="idField"
                                 type="radio"
@@ -438,6 +441,7 @@ const DesignTemplate = () => {
                                 value="idField"
                                 checked={selectedFieldType === 'idField'}
                                 onChange={handleRadioChange}
+                                className=" field-label"
                             />
                         </Col>
                     </Row>
@@ -685,7 +689,7 @@ const DesignTemplate = () => {
                                 required />
                         </div>
                     </Row>
-                    {selectedFieldType !== "skewMarkField" && <Row>
+                    {(selectedFieldType === "questionField" || selectedFieldType === 'formField') && (<Row>
                         <label
                             htmlFor="example-text-input"
                             className="col-md-2 col-form-label "
@@ -719,7 +723,7 @@ const DesignTemplate = () => {
 
                             </select>
                         </div>
-                    </Row>}
+                    </Row>)}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button type="button" color="primary" onClick={handleCancel} className="waves-effect waves-light">Cancel</Button>{" "}

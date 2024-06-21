@@ -161,3 +161,6 @@ input[type="number"] {
   background-color: blue;
   /* Change color as needed to indicate selection */
 }
+.field-label{
+  cursor: pointer;
+}
