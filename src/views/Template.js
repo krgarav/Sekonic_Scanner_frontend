@@ -148,9 +148,13 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
+    if (!arr || !arr.length) return;
+
     const templateData = arr[0];
-    const idFeild = arr.idWindowParameters;
-    const tempdata = { ...templateData, ...idFeild[0] }
+    const idField = arr.idWindowParameters || [];
+    if (!templateData || !idField.length) return;
+
+    const tempdata = { ...templateData, ...idField[0] };
 
     navigate("/admin/design-template", {
       state: {
@@ -159,18 +163,20 @@ const Template = () => {
         numberOfFrontSideColumn: +tempdata.Cols,
         imgsrc: tempdata.Image,
         selectedBubble: tempdata["Bubble Type"],
-        sensitivity: tempdata["sensitivity"],
-        difference: tempdata["difference"],
-        barCount: tempdata["barcodeCount"],
-        reject: tempdata["isReject"],
-        face: tempdata["face"]
+        sensitivity: +tempdata.sensitivity,
+        difference: +tempdata.difference,
+        barCount: +tempdata.barcodeCount,
+        reject: tempdata.isReject,
+        face: +tempdata.face,
+        arr: arr
       },
+      
     });
-  }
+  };
 
   const sendToBackendHandler = async (arr, index) => {
 
-    console.log(arr)
+    // console.log(arr)
     const templateData = arr[0];
     const formFieldData = arr.formFieldWindowParameters;
     const questionField = arr.questionsWindowParameters;
@@ -343,6 +349,79 @@ const Template = () => {
       "formFieldWindowParameters": formFieldStruc,
       "questionsWindowParameters": questionFieldStruc
     };
+
+
+    // const templateData = arr[0];
+    // const formFieldData = arr.formFieldWindowParameters || [];
+    // const questionField = arr.questionsWindowParameters || [];
+    // const skewField = arr.skewMarksWindowParameters || [];
+    // const idField = arr.idWindowParameters || [];
+
+    // const tempdata = { ...templateData, ...idField[0] };
+
+    // const mapCommonFields = (item) => ({
+    //   iFace: +item["face"],
+    //   columnStart: +item["columnStart"],
+    //   columnNumber: +item["totalNoInColumn"],
+    //   columnStep: +item["totalStepInColumn"],
+    //   rowStart: +item["rowStart"],
+    //   rowNumber: +item["totalNoInRow"],
+    //   rowStep: +item["totalStepInRow"],
+    //   iSensitivity: +item["sensitivity"],
+    //   iDifference: +item["difference"],
+    //   iMaximumMarks: +item["maximumMark"],
+    //   iMinimumMarks: +item["minimumMark"],
+    //   iType: item["type"],
+    //   ngAction: item["windowNG"],
+    // });
+
+    // const temstrucData = [{
+    //   layoutName: tempdata["Template Name"],
+    //   timingMarks: +tempdata["Rows"],
+    //   barcodeCount: +tempdata["Bar Count"],
+    //   iFace: +tempdata["face"],
+    //   columnStart: +tempdata["columnStart"],
+    //   columnNumber: +tempdata["totalNoInColumn"],
+    //   columnStep: +tempdata["totalStepInColumn"],
+    //   rowStart: +tempdata["rowStart"],
+    //   rowNumber: +tempdata["totalNoInRow"],
+    //   rowStep: +tempdata["totalStepInRow"],
+    //   iDirection: +tempdata["iDirection"],
+    //   iSensitivity: +tempdata["sensitivity"],
+    //   iDifference: +tempdata["difference"],
+    //   ngAction: tempdata["ngAction"].toString(),
+    //   dataReadDirection: tempdata["direction"],
+    //   iReject: +tempdata["iReject"]
+    // }];
+
+    // const skewFieldStruc = skewField.map(item => ({
+    //   ...mapCommonFields(item),
+    //   iDirection: +item["readingDirection"]
+    // }));
+
+    // const formFieldStruc = formFieldData.map(item => ({
+    //   ...mapCommonFields(item),
+    //   iDirection: +item["readingDirection"],
+    //   windowName: item["windowName"],
+    //   iOption: +item["option"],
+    //   totalNumberOfFields: item["totalNumberOfFields"],
+    //   numericOrAlphabets: item["numericOrAlphabets"]
+    // }));
+
+    // const questionFieldStruc = questionField.map(item => ({
+    //   ...mapCommonFields(item),
+    //   windowName: item["windowName"],
+    //   iOption: +item["option"],
+    //   totalNumberOfFields: item["totalNumberOfFields"],
+    //   numericOrAlphabets: item["numericOrAlphabets"]
+    // }));
+
+    // const mainObj = {
+    //   layoutParameters: { ...temstrucData[0] },
+    //   skewMarksWindowParameters: skewFieldStruc,
+    //   formFieldWindowParameters: formFieldStruc,
+    //   questionsWindowParameters: questionFieldStruc
+    // };
 
     console.log(mainObj)
 

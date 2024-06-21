@@ -3,17 +3,16 @@ import { Modal, Button, Col } from "react-bootstrap";
 import { Row } from "reactstrap";
 import { useLocation } from "react-router-dom";
 import classes from "./DesignTemplate.module.css";
-import image1 from "../assets/cropped.jpg";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import DataContext from "store/DataContext";
+
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
     const [selection, setSelection] = useState(null);
     const [dragStart, setDragStart] = useState(null);
     const [modalShow, setModalShow] = useState(false);
-    const [rotation, setRotation] = useState(0);
     const [selectedClass, setSelectedClass] = useState("circle")
     const imageRef = useRef(null);
     const containerRef = useRef(null);
@@ -44,7 +43,19 @@ const DesignTemplate = () => {
     const [fieldType, setFieldType] = useState();
     const [numberOfField, setNumberOfField] = useState();
     const dataCtx = useContext(DataContext);
-    const { numberOfFrontSideColumn, numberOfLines, imgsrc, selectedBubble, templateIndex, sensitivity, difference, barCount, reject, face } = useLocation().state;
+    const {
+        numberOfFrontSideColumn,
+        numberOfLines,
+        imgsrc,
+        selectedBubble,
+        templateIndex,
+        sensitivity,
+        difference,
+        barCount,
+        reject,
+        face,
+        arr
+    } = useLocation().state;
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
 
@@ -56,6 +67,10 @@ const DesignTemplate = () => {
             return newState;
         });
     }
+    // arr.forEach(element => {
+    //     console.log(element)
+    // });
+    console.log(arr)
     useEffect(() => {
         switch (selectedBubble) {
             case "rounded rectangle":
@@ -155,7 +170,8 @@ const DesignTemplate = () => {
 
             return newSelection;
         });
-        console.log(selection?.endRow + 1, " ", selection?.startRow + 1, " ", selection?.endCol, " ", selection?.startCol);
+        console.log(selection)
+        console.log(selection?.endRow + 1, " ", selection?.startRow + 1, " ", selection?.endCol, " ", selection?.startCol,);
     };
 
     const handleMouseUp = () => {
