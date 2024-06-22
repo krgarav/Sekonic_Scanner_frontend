@@ -1,21 +1,4 @@
-/*!
 
-=========================================================
-* Argon Dashboard React - v1.2.4
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import {
   Card,
   CardHeader,
@@ -43,7 +26,20 @@ import { useContext, useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
 import DataContext from "store/DataContext";
-import { rejectData, sizeData, bubbleData, timingMethodData, typeOfColumnDisplayData, sensivityDensivityDifferenceData, errorOfTheNumberOfTimingMarksData, windowNgData, faceData, directionData } from "data/helperData";
+import {
+  rejectData,
+  sizeData, bubbleData,
+  timingMethodData,
+  typeOfColumnDisplayData,
+  sensivityDensivityDifferenceData,
+  errorOfTheNumberOfTimingMarksData,
+  windowNgData,
+  faceData,
+  directionData,
+  barcodeTypeData,
+  colorTypeData,
+  encodingOptionData
+} from "data/helperData";
 import axios from 'axios';
 import pako from 'pako';
 const Template = () => {
@@ -149,7 +145,6 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
-    console.log(arr)
     if (!arr || !arr.length) return;
 
     const templateData = arr[0];
@@ -178,7 +173,6 @@ const Template = () => {
 
   const sendToBackendHandler = async (arr, index) => {
 
-    // console.log(arr)
     const templateData = arr[0];
     const formFieldData = arr?.formFieldWindowParameters;
     const questionField = arr?.questionsWindowParameters;
@@ -442,7 +436,7 @@ const Template = () => {
 
 
   };
-  console.log(toggle)
+
 
   const createTemplateHandler = () => {
     // if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
@@ -497,7 +491,7 @@ const Template = () => {
       "iSensitivity": sensitivity,
       "direction": direction.id
     }];
-    console.log(templateData)
+
     const index = dataCtx.setAllTemplates(templateData);
 
     setModalShow(false);
@@ -517,7 +511,6 @@ const Template = () => {
     });
   }
   const deleteHandler = (arr, index) => {
-    console.log(index)
     dataCtx.deleteTemplate(index)
   }
   return (
@@ -750,10 +743,10 @@ const Template = () => {
                     <Nav.Link eventKey="general">General</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="sensitivity">Barcode</Nav.Link>
+                    <Nav.Link eventKey="barcode">Barcode</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="errors">Image</Nav.Link>
+                    <Nav.Link eventKey="image">Image</Nav.Link>
                   </Nav.Item>
                 </Nav>
               </Col>
@@ -1264,12 +1257,34 @@ const Template = () => {
                       </div>
                     </Row> */}
                   </Tab.Pane>
-                  <Tab.Pane eventKey="sensitivity">
-                    <Form>
-
-                    </Form>
+                  <Tab.Pane eventKey="barcode">
+                    <Row className="mb-3">
+                      <label
+                        htmlFor="example-text-input"
+                        className="col-md-3 "
+                        style={{ fontSize: ".9rem" }}
+                      >
+                        Barcode Type :
+                      </label>
+                      <div className="col-md-9">
+                        <Select
+                          value={size}
+                          onChange={(selectedValue) => setSize(selectedValue)}
+                          options={barcodeTypeData}
+                          getOptionLabel={(option) => option?.name || ""}
+                          getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                          }
+                        />
+                        {!size && (
+                          <span style={{ color: "red", display: "block" }}>
+                            This feild is required
+                          </span>
+                        )}
+                      </div>
+                    </Row>
                   </Tab.Pane>
-                  <Tab.Pane eventKey="errors">
+                  <Tab.Pane eventKey="image">
                     <Form>
                       <Row className="mb-3">
                         <label
@@ -1277,7 +1292,7 @@ const Template = () => {
                           className="col-md-3 "
                           style={{ fontSize: ".9rem" }}
                         >
-                          Error of the number of the timing mark error:
+                          Color Types :
                         </label>
                         <div className="col-md-9">
                           <Select
@@ -1285,7 +1300,7 @@ const Template = () => {
                             onChange={(selectedValue) =>
                               setErrorOfTheNumberOfTimingMarks(selectedValue)
                             }
-                            options={errorOfTheNumberOfTimingMarksData}
+                            options={colorTypeData}
                             getOptionLabel={(option) => option?.name || ""}
                             getOptionValue={(option) =>
                               option?.id?.toString() || ""
@@ -1300,30 +1315,27 @@ const Template = () => {
                           )}
                         </div>
                       </Row>
-
-                      <Row>
+                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
-                          className="col-md-6 "
+                          className="col-md-3 "
                           style={{ fontSize: ".9rem" }}
                         >
-                          Suspended when an error is detected in the skew mark
-                          frame
+                          Encoding Option :
                         </label>
-                        <div className="col-md-1">
-                          <input
-                            type="checkbox"
-                            className=""
-                            checked={
-                              suspendedWhenAnErrorIsDetectedInTheSkewMarksFrame
+                        <div className="col-md-9">
+                          <Select
+                            value={errorOfTheNumberOfTimingMarks}
+                            onChange={(selectedValue) =>
+                              setErrorOfTheNumberOfTimingMarks(selectedValue)
                             }
-                            onChange={(e) =>
-                              setSuspendedWhenAnErrorIsDetectedInTheSkewMarksFrame(
-                                e.target.checked
-                              )
+                            options={encodingOptionData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
                             }
                           />
-                          {!suspendedWhenAnErrorIsDetectedInTheSkewMarksFrame && (
+                          {!errorOfTheNumberOfTimingMarks && (
                             <span
                               style={{ color: "red", display: spanDisplay }}
                             >
@@ -1332,139 +1344,27 @@ const Template = () => {
                           )}
                         </div>
                       </Row>
-                      <Row>
+                      <Row className="mb-3">
                         <label
                           htmlFor="example-text-input"
-                          className="col-md-6 "
+                          className="col-md-3 "
                           style={{ fontSize: ".9rem" }}
                         >
-                          Suspended when an error is detected in the Id mark
-                          frame
+                          Rotation :
                         </label>
-                        <div className="col-md-1">
-                          <input
-                            type="checkbox"
-                            className=""
-                            checked={
-                              suspendedWhenAnErrorIsDetectedInTheIdMarksFrame
+                        <div className="col-md-9">
+                          <Select
+                            value={errorOfTheNumberOfTimingMarks}
+                            onChange={(selectedValue) =>
+                              setErrorOfTheNumberOfTimingMarks(selectedValue)
                             }
-                            onChange={(e) =>
-                              setSuspendedWhenAnErrorIsDetectedInTheIdMarksFrame(
-                                e.target.checked
-                              )
+                            options={encodingOptionData}
+                            getOptionLabel={(option) => option?.name || ""}
+                            getOptionValue={(option) =>
+                              option?.id?.toString() || ""
                             }
                           />
-                          {!suspendedWhenAnErrorIsDetectedInTheIdMarksFrame && (
-                            <span
-                              style={{ color: "red", display: spanDisplay }}
-                            >
-                              This feild is required
-                            </span>
-                          )}
-                        </div>
-                      </Row>
-                      <Row>
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-6 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Suspended when an error is detected in the mark frame
-                        </label>
-                        <div className="col-md-1">
-                          <input
-                            type="checkbox"
-                            className=""
-                            checked={
-                              suspendedWhenAnErrorIsDetectedInTheMarksFrame
-                            }
-                            onChange={(e) =>
-                              setSuspendedWhenAnErrorIsDetectedInTheIdMarksFrame(
-                                e.target.checked
-                              )
-                            }
-                          />
-                          {!suspendedWhenAnErrorIsDetectedInTheMarksFrame && (
-                            <span
-                              style={{ color: "red", display: spanDisplay }}
-                            >
-                              This feild is required
-                            </span>
-                          )}
-                        </div>
-                      </Row>
-                      <Row>
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-6 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Output the data when mark error detected
-                        </label>
-                        <div className="col-md-1">
-                          <input
-                            type="checkbox"
-                            className=""
-                            checked={outputTheDataWhenWarkErrorDetected}
-                            onChange={(e) =>
-                              setOutputTheDataWhenMarkErrorDetected(
-                                e.target.checked
-                              )
-                            }
-                          />
-                          {!outputTheDataWhenWarkErrorDetected && (
-                            <span
-                              style={{ color: "red", display: spanDisplay }}
-                            >
-                              This feild is required
-                            </span>
-                          )}
-                        </div>
-                      </Row>
-                      <Row>
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-6 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Use rejecter
-                        </label>
-                        <div className="col-md-1">
-                          <input
-                            type="checkbox"
-                            className=""
-                            checked={useRejecter}
-                            onChange={(e) => setUseRejecter(e.target.checked)}
-                          />
-                          {!useRejecter && (
-                            <span
-                              style={{ color: "red", display: spanDisplay }}
-                            >
-                              This feild is required
-                            </span>
-                          )}
-                        </div>
-                      </Row>
-                      <Row>
-                        <label
-                          htmlFor="example-text-input"
-                          className="col-md-6 "
-                          style={{ fontSize: ".9rem" }}
-                        >
-                          Edit the data when mark error detected
-                        </label>
-                        <div className="col-md-1">
-                          <input
-                            type="checkbox"
-                            className=""
-                            checked={editTheDataWhenMarkErrorDetected}
-                            onChange={(e) =>
-                              setEditTheDataWhenMarkErrorDetected(
-                                e.target.checked
-                              )
-                            }
-                          />
-                          {!editTheDataWhenMarkErrorDetected && (
+                          {!errorOfTheNumberOfTimingMarks && (
                             <span
                               style={{ color: "red", display: spanDisplay }}
                             >
@@ -1481,14 +1381,17 @@ const Template = () => {
           </Tab.Container>
         </Modal.Body>
         <Modal.Footer>
-          {/* <label>
-            Upload Image:
-            <input type="file" onChange={handleImageUpload} accept="image/*" />
-          </label> */}
-          <div className="grid w-full max-w-xs items-center gap-1.5">
-            <label className="text-sm text-gray-400 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Picture</label>
-            <input id="picture" type="file" onChange={handleImageUpload} accept="image/*" className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-400 file:border-0 file:bg-transparent file:text-gray-600 file:text-sm file:font-medium" />
+
+          <div style={{ width: "50%" }}>
+            <div class="mb-4" >
+              <label for="formFile" class="form-label">Upload OMR Image</label>
+              <input class="form-control" type="file" id="formFile" onChange={handleImageUpload} accept="image/*" />
+            </div>
           </div>
+
+          <div className="w-20 flex-shrink-0" style={{
+            content: "", width: "12%"
+          }}></div> {/* Spacer div */}
           <Button variant="secondary" onClick={() => setModalShow(false)}>
             Close
           </Button>

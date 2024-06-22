@@ -10,7 +10,7 @@ const DataProvider = (props) => {
     let updateData;
     if (savedData) {
       const parsedData = JSON.parse(savedData);
-      console.log(parsedData);
+     
       updateData = parsedData.map((item) => {
         const templateData = item.templateData;
         const formFieldWindowParameters = item?.formFieldWindowParameters;
@@ -25,18 +25,32 @@ const DataProvider = (props) => {
           idWindowParameters,
         };
       });
-      console.log(updateData);
-      return { allTemplates: updateData };
+      const data = updateData.map((item) => {
+        const arr = [];
+        const templateData = item[0];
+        const formFieldWindowParameters = item?.formFieldWindowParameters;
+        const questionsWindowParameters = item?.questionsWindowParameters;
+        const skewMarksWindowParameters = item?.skewMarksWindowParameters;
+        const idWindowParameters = item?.idWindowParameters;
+
+        arr.push(templateData);
+        arr.questionsWindowParameters = questionsWindowParameters;
+        arr.skewMarksWindowParameters = skewMarksWindowParameters;
+        arr.idWindowParameters = idWindowParameters;
+        arr.formFieldWindowParameters = formFieldWindowParameters;
+        return arr;
+      });
+
+      return { allTemplates: data };
     } else {
       return initialData;
     }
   });
-  console.log(dataState);
+
 
   // Save dataState to localStorage whenever it changes
 
   useEffect(() => {
-    console.log("dataState changed:", dataState.allTemplates);
 
     const mappedTemp = dataState.allTemplates.map((item) => {
       const templateData = item;
@@ -53,7 +67,6 @@ const DataProvider = (props) => {
       };
     });
     const stringifiedTemdata = JSON.stringify(mappedTemp);
-    console.log("stringifuied data : ", stringifiedTemdata);
     localStorage.setItem("Template", stringifiedTemdata);
   }, [dataState]);
 

@@ -72,12 +72,7 @@ const DesignTemplate = () => {
     const questionField = arr?.questionsWindowParameters;
     const skewField = arr?.skewMarksWindowParameters;
     const idFeild = arr?.idWindowParameters;
-    // if(formFieldData){
-    //     formFieldData.map((item)=>{
-    //         item.Coordinate
-    //     })
-    // }
-    console.log(arr)
+ 
     useEffect(() => {
         switch (selectedBubble) {
             case "rounded rectangle":

@@ -61,3 +61,48 @@ export const directionData = [
     { id: "Top To Bottom", name: "Top To Bottom" },
     { id: "Bottom To Top", name: "Bottom To Top" },
 ];
+export const barcodeTypeData = [
+    { id: "0x1U", name: "CODE-39" },
+    { id: "0x2U", name: "Interleaved 2 of 5 (ITF)" },
+    { id: "0x4U", name: "NW-7" },
+    { id: "0x8U", name: "JAN,EAN,UPC" },
+    { id: "0x10U", name: "Code-128" },
+    { id: "0x20U", name: "Industrial 2 of 5" },
+    { id: "0x40U", name: "COOP 2 of 5" },
+    { id: "0x80U", name: "CODE-93" },
+    { id: "0x100U", name: "JAN,EAN 8" },
+    { id: "0x200U", name: "JAN,EAN 13" },
+    { id: "0x400U", name: " UPC-A" },
+    { id: "0x800U", name: "UPC-E" },
+    { id: "0x1000000U", name: "QR Code" },
+];
+
+export const colorTypeData = [
+    { id: "0", name: "Color (3 colors)" },
+    { id: "1", name: "Gray scale (single color)" },
+    { id: "2", name: "Red (single color)" },
+    { id: "3", name: "Green (single color)" },
+    { id: "4", name: "Blue (single color)" },
+
+];
+export const encodingOptionData = [
+    { id: "0", name: "Bit map format" },
+    { id: "1", name: "GIF format" },
+    { id: "2", name: "Jpeg format" },
+    { id: "3", name: "PNG format" },
+    { id: "4", name: "Tiff format" },
+];
+export const rotationOptionData = [
+    { id: "0", name: "No rotation" },
+    { id: "1", name: "Rotated 90 degrees" },
+    { id: "2", name: "Rotated 180 degrees" },
+    { id: "3", name: "Rotated 270 degrees" },
+];
+
+export const resolutionOptionData = [
+    { id: "0", name: "600dpi" },
+    { id: "1", name: "300dpi" },
+    { id: "2", name: "200dpi" },
+    { id: "3", name: "150dpi" },
+    { id: "4", name: "100dpi" },
+];
