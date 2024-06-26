@@ -20,7 +20,8 @@ import {
     encodingOptionData,
     rotationOptionData,
     resolutionOptionData,
-    scanningSideData
+    scanningSideData,
+    imageStatusData
 } from "data/helperData";
 import DataContext from 'store/DataContext';
 import Select, { components } from "react-select";
@@ -53,6 +54,7 @@ const TemplateModal = (props) => {
     const [rotation, setRotation] = useState();
     const [resolution, setResolution] = useState();
     const [scannningSide, setScanningSide] = useState();
+    const [imageStatus, setImageStatus] = useState(imageStatusData[0]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -196,9 +198,10 @@ const TemplateModal = (props) => {
                                 <Nav.Item>
                                     <Nav.Link eventKey="barcode">Barcode</Nav.Link>
                                 </Nav.Item>
-                                <Nav.Item>
+                                {imageStatus.id !== "0" && <Nav.Item>
                                     <Nav.Link eventKey="image">Image</Nav.Link>
                                 </Nav.Item>
+                                }
                             </Nav>
                         </Col>
                         <Col sm={12} className="mt-3">
@@ -357,7 +360,7 @@ const TemplateModal = (props) => {
                                         >
                                             Window NG
                                         </label>
-                                        <div className="col-md-10">
+                                        <div className="col-md-5">
                                             <Select
                                                 value={windowNgOption}
                                                 onChange={(selectedValue) => setWindowNgOption(selectedValue)}
@@ -373,17 +376,15 @@ const TemplateModal = (props) => {
                                                 </span>
                                             )}
                                         </div>
-
-                                    </Row>
-                                    <Row className="mb-3">
                                         <label
                                             htmlFor="bubble-variant-input"
-                                            className="col-md-2 "
-                                            style={{ fontSize: ".9rem" }}
+
+                                            className="col-md-2 col-form-label  "
+                                            style={{ fontSize: ".9rem", textAlign: "right" }}
                                         >
                                             Rejected:
                                         </label>
-                                        <div className="col-md-10">
+                                        <div className="col-md-3">
                                             <Select
                                                 value={reject}
                                                 onChange={(selectedValue) =>
@@ -402,6 +403,7 @@ const TemplateModal = (props) => {
                                             )}
                                         </div>
                                     </Row>
+
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
@@ -561,6 +563,30 @@ const TemplateModal = (props) => {
                                             />
                                         </div>
                                     </Row>
+                                    <Row className="mb-3">
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-2 col-form-label  "
+                                            style={{ fontSize: ".95rem"}}
+                                        >
+                                        Image Status :
+                                        </label>
+                                        <div className="col-md-10">
+                                            <Select
+                                                value={imageStatus}
+                                                onChange={(selectedValue) =>
+                                                    setImageStatus(selectedValue)
+                                                }
+                                                options={imageStatusData}
+                                                getOptionLabel={(option) => option?.name || ""}
+                                                getOptionValue={(option) =>
+                                                    option?.id?.toString() || ""
+                                                }
+                                                defaultInputValue=''
+                                            />
+                                        </div>
+
+                                    </Row>
                                     {/* <Row className="mb-3">
                       <Col sm={6}>
                         <Row>
@@ -703,12 +729,12 @@ const TemplateModal = (props) => {
 
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-6 "
+                                            className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Set check digit:
                                         </label>
-                                        <div className="col-md-6">
+                                        <div className="col-md-10">
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -1025,7 +1051,7 @@ const TemplateModal = (props) => {
                     Create Template
                 </Button>
             </Modal.Footer>
-        </Modal>
+        </Modal >
     )
 }
 

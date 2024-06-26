@@ -113,3 +113,8 @@ export const scanningSideData = [
     { id: "2", name: "Front side only" },
     { id: "3", name: "Back side only" },
 ];
+export const imageStatusData = [
+    { id: "0", name: "Not Enabled" },
+    { id: "1", name: "Enabled" },
+
+];
