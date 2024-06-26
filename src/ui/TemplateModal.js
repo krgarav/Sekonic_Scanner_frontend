@@ -131,6 +131,7 @@ const TemplateModal = (props) => {
                 row: !numberOfLines ? true : prevData.row,
                 col: !numberOfFrontSideColumn ? true : prevData.col,
                 barcode: !barCount ? true : prevData.barcode,
+
             }));
             return;
         }
@@ -567,9 +568,9 @@ const TemplateModal = (props) => {
                                         <label
                                             htmlFor="example-text-input"
                                             className="col-md-2 col-form-label  "
-                                            style={{ fontSize: ".95rem"}}
+                                            style={{ fontSize: ".95rem" }}
                                         >
-                                        Image Status :
+                                            Image Status :
                                         </label>
                                         <div className="col-md-10">
                                             <Select
