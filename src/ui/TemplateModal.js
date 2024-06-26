@@ -18,21 +18,24 @@ import {
     barcodeTypeData,
     colorTypeData,
     encodingOptionData,
-    rotationOptionData
+    rotationOptionData,
+    resolutionOptionData,
+    scanningSideData
 } from "data/helperData";
 import DataContext from 'store/DataContext';
 import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
+import Slider from '@mui/material/Slider';
+import ShadesOfGrey from './shadesOfGrey';
 
 const TemplateModal = (props) => {
-    console.log(props)
     const [modalShow, setModalShow] = useState(false);
     const [name, setName] = useState("");
     const [size, setSize] = useState({ id: 1, name: "A4" });
     const [numberOfLines, setNumberOfLines] = useState("");
     const [imageSrc, setImageSrc] = useState('/img.jpg');
 
-    const [sensitivity, setSensitivity] = useState("")
+    const [sensitivity, setSensitivity] = useState(1)
     const [difference, setDifference] = useState("");
     const [barCount, setBarCount] = useState("")
     const [selectedBubble, setSelectedBubble] = useState({})
@@ -48,6 +51,8 @@ const TemplateModal = (props) => {
     const [colorType, setColorType] = useState();
     const [encoding, setEncoding] = useState();
     const [rotation, setRotation] = useState();
+    const [resolution, setResolution] = useState();
+    const [scannningSide, setScanningSide] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -168,18 +173,18 @@ const TemplateModal = (props) => {
             size="lg"
             aria-labelledby="modal-custom-navbar"
             centered
+            dialogClassName="modal-90w"
         >
             <Modal.Header>
                 <Modal.Title id="modal-custom-navbar">Create Template</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body style={{ height: '65dvh' }} >
                 <Tab.Container
                     activeKey={activeKey}
                     onSelect={(k) => setActiveKey(k)}
                 >
                     <Row>
                         <Col sm={12}>
-                            {" "}
                             {/* Adjusted column span to full width if needed */}
                             <Nav
                                 variant="pills"
@@ -202,12 +207,12 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 "
+                                            className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Name:
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <input
                                                 type="text"
                                                 className="form-control"
@@ -229,12 +234,12 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 "
+                                            className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Size:
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <Select
                                                 value={size}
                                                 onChange={(selectedValue) => setSize(selectedValue)}
@@ -256,10 +261,10 @@ const TemplateModal = (props) => {
                                             <Row>
                                                 <label
                                                     htmlFor="example-text-input"
-                                                    className="col-md-6 col-form-label"
+                                                    className="col-md-4 col-form-label"
                                                     style={{ fontSize: ".9rem" }}
                                                 >
-                                                    Number of Rows:
+                                                    No. of Rows :
                                                 </label>
                                                 <div className="col-md-6">
                                                     <input
@@ -319,12 +324,12 @@ const TemplateModal = (props) => {
                                     <Row className="mb-2">
                                         <label
                                             htmlFor="bubble-variant-input"
-                                            className="col-md-3  col-form-label"
-                                            style={{ fontSize: ".9rem" }}
+                                            className="col-md-2  col-form-label"
+                                            style={{ fontSize: ".87rem" }}
                                         >
                                             Bubble Variant:
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <Select
                                                 value={selectedBubble}
                                                 onChange={(selectedValue) =>
@@ -347,12 +352,12 @@ const TemplateModal = (props) => {
                                     <Row className="mb-2">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 col-form-label"
+                                            className="col-md-2 col-form-label"
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Window NG
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <Select
                                                 value={windowNgOption}
                                                 onChange={(selectedValue) => setWindowNgOption(selectedValue)}
@@ -373,12 +378,12 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="bubble-variant-input"
-                                            className="col-md-3 "
+                                            className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Rejected:
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <Select
                                                 value={reject}
                                                 onChange={(selectedValue) =>
@@ -397,43 +402,15 @@ const TemplateModal = (props) => {
                                             )}
                                         </div>
                                     </Row>
-                                    {/* <Row className="mb-3">
-                      <label
-                        htmlFor="example-text-input"
-                        className="col-md-3 "
-                        style={{ fontSize: ".9rem" }}
-                      >
-                        Timing method:
-                      </label>
-                      <div className="col-md-9">
-                        <Select
-                          value={timingMethod}
-                          onChange={(selectedValue) =>
-                            setTimingMethod(selectedValue)
-                          }
-                          options={sizeData}
-                          getOptionLabel={(option) => option?.name || ""}
-                          getOptionValue={(option) =>
-                            option?.id?.toString() || ""
-                          }
-                        />
-                        {!timingMethod && (
-                          <span style={{ color: "red", display: spanDisplay }}>
-                            This feild is required
-                          </span>
-                        )}
-                      </div>
-                    </Row> */}
-
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 col-form-label "
-                                            style={{ fontSize: ".9rem" }}
+                                            className="col-md-2 col-form-label "
+                                            style={{ fontSize: ".85rem" }}
                                         >
-                                            Barcode Count :
+                                            Barcode Count:
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => {
                                                 settoggle((item) => ({ ...item, barcode: false }));
                                                 setBarCount(e.target.value)
@@ -452,34 +429,46 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 col-form-label  "
+                                            className="col-md-2 col-form-label  "
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Sensitivity :
                                         </label>
-                                        <div className="col-md-3" style={{
+                                        <div className="col-md-5" style={{
                                             display: "flex", gap: "5px", width: "100%"
                                         }}>
-                                            <input
-                                                type="range"
 
-                                                id="sensitivityRange"
-                                                min="1"
-                                                max="16"
+
+                                            <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                                                <div style={{ borderRadius: "6px", overflow: "hidden" }}>
+                                                    <ShadesOfGrey />
+                                                </div>
+
+                                                <input
+                                                    type="range"
+                                                    id="sensitivityRange"
+                                                    min="1"
+                                                    max="16"
+                                                    value={sensitivity}
+                                                    onChange={(e) => setSensitivity(e.target.value)}
+                                                    title={sensitivity}
+                                                    style={{ cursor: "pointer" }}
+
+                                                />
+                                            </div>
+
+
+                                            <input
                                                 value={sensitivity}
                                                 onChange={(e) => setSensitivity(e.target.value)}
-                                                title={1}
-                                                style={{ cursor: "pointer" }}
+                                                style={{ width: "100%", padding: "2px", textAlign: "center" }}
+                                                className='form-control'
+                                                type='number'
+                                                min={1}
+                                                max={16}
 
                                             />
-                                            <input
-                                                // readOnly
-                                                value={sensitivity}
-                                                onChange={(e) => setSensitivity(e.target.value)}
-                                                style={{ width: "50%", padding: "2px" }}
 
-
-                                            />
                                             {!sensitivity && (
                                                 <span
                                                     style={{ color: "red", display: spanDisplay }}
@@ -490,27 +479,30 @@ const TemplateModal = (props) => {
                                         </div>
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 col-form-label "
+                                            className="col-md-2 col-form-label "
                                             style={{ fontSize: ".9rem", textAlign: "right" }}
                                         >
                                             Difference :
                                         </label>
                                         <div className="col-md-3">
                                             <input
-
                                                 type="number"
                                                 className="form-control"
                                                 value={difference}
                                                 onChange={(e) => {
-                                                    if (e.target.value < sensitivity) {
-                                                        alert("Entered value cannot be less than sensitivity")
+                                                    const inputValue = e.target.value;
+
+                                                    // Check if the input value is not empty and less than sensitivity
+                                                    if (inputValue !== "" && +inputValue < +sensitivity) {
+                                                        alert("Entered value cannot be less than sensitivity");
                                                         return;
                                                     }
-                                                    setDifference(e.target.value)
-                                                }
 
-                                                }
+                                                    // Update the state with the new value
+                                                    setDifference(inputValue);
+                                                }}
                                             />
+
                                             {!difference && (
                                                 <span
                                                     style={{ color: "red", display: spanDisplay }}
@@ -523,12 +515,12 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3  col-form-label "
+                                            className="col-md-2  col-form-label "
                                             style={{ fontSize: ".9rem" }}
                                         >
                                             Face:
                                         </label>
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                             <Select
                                                 value={face}
                                                 onChange={(selectedValue) =>
@@ -682,6 +674,207 @@ const TemplateModal = (props) => {
                                             )}
                                         </div>
                                     </Row>
+                                    <Row className="mb-3">
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-3 "
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Barcode reading area:                                            :
+                                        </label>
+                                        <div className="col-md-9">
+                                            <Select
+                                                value={size}
+                                                onChange={(selectedValue) => setSize(selectedValue)}
+                                                options={barcodeTypeData}
+                                                getOptionLabel={(option) => option?.name || ""}
+                                                getOptionValue={(option) =>
+                                                    option?.id?.toString() || ""
+                                                }
+                                            />
+                                            {!size && (
+                                                <span style={{ color: "red", display: "block" }}>
+                                                    This feild is required
+                                                </span>
+                                            )}
+                                        </div>
+                                    </Row>
+                                    <Row className="mb-3">
+
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-6 "
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Set check digit:
+                                        </label>
+                                        <div className="col-md-6">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) =>
+                                                    setNumberOfFrontSideColumn(e.target.value)
+                                                }
+                                            />
+                                        </div>
+                                    </Row>
+                                    <Row className="mb-3">
+
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-6 "
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Set option:
+                                        </label>
+                                        <div className="col-md-6">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) =>
+                                                    setNumberOfFrontSideColumn(e.target.value)
+                                                }
+                                            />
+                                        </div>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-6 "
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Set Barcode Coordinate :-
+                                        </label>
+                                    </Row>
+                                    {/* <Row className="mb-3">
+
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-2 "
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Top :
+                                        </label>
+                                        <div className="col-md-2">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) =>
+                                                    setNumberOfFrontSideColumn(e.target.value)
+                                                }
+                                            />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <p>in mm</p>
+                                        </div>
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-2 "
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Bottom :
+                                        </label>
+                                        <div className="col-md-2">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) =>
+                                                    setNumberOfFrontSideColumn(e.target.value)
+                                                }
+                                            />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <p>in mm</p>
+                                        </div>
+
+                                    </Row> */}
+                                    <Row className="mb-3 align-items-center">
+                                        <label
+                                            htmlFor="top-input"
+                                            className="col-md-2 col-form-label"
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Top:
+                                        </label>
+                                        <div className="col-md-2">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                id="top-input"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                        </div>
+                                        <label
+                                            htmlFor="bottom-input"
+                                            className="col-md-2 col-form-label"
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Bottom:
+                                        </label>
+                                        <div className="col-md-2">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                id="bottom-input"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                        </div>
+                                    </Row>
+
+                                    <Row className="mb-3 align-items-center">
+                                        <label
+                                            htmlFor="top-input"
+                                            className="col-md-2 col-form-label"
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Left:
+                                        </label>
+                                        <div className="col-md-2">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                id="top-input"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                        </div>
+                                        <label
+                                            htmlFor="bottom-input"
+                                            className="col-md-2 col-form-label"
+                                            style={{ fontSize: ".9rem" }}
+                                        >
+                                            Right:
+                                        </label>
+                                        <div className="col-md-2">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                id="bottom-input"
+                                                value={numberOfFrontSideColumn}
+                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-2">
+                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                        </div>
+                                    </Row>
+
+
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="image">
                                     <Form>
@@ -757,6 +950,53 @@ const TemplateModal = (props) => {
 
                                             </div>
                                         </Row>
+                                        <Row className="mb-3">
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-3 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Resolution :
+                                            </label>
+                                            <div className="col-md-9">
+                                                <Select
+                                                    value={resolution}
+                                                    onChange={(selectedValue) =>
+                                                        setResolution(selectedValue)
+                                                    }
+                                                    options={resolutionOptionData}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    getOptionValue={(option) =>
+                                                        option?.id?.toString() || ""
+                                                    }
+                                                    placeholder="Select rotation option..."
+                                                />
+
+                                            </div>
+                                        </Row>
+                                        <Row className="mb-3">
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-3 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Scanning Side :
+                                            </label>
+                                            <div className="col-md-9">
+                                                <Select
+                                                    value={scannningSide}
+                                                    onChange={(selectedValue) =>
+                                                        setScanningSide(selectedValue)
+                                                    }
+                                                    options={scanningSideData}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    getOptionValue={(option) =>
+                                                        option?.id?.toString() || ""
+                                                    }
+                                                    placeholder="Select rotation option..."
+                                                />
+                                            </div>
+                                        </Row>
                                     </Form>
                                 </Tab.Pane>
                             </Tab.Content>
@@ -765,7 +1005,6 @@ const TemplateModal = (props) => {
                 </Tab.Container>
             </Modal.Body>
             <Modal.Footer>
-
                 <div style={{ width: "50%" }}>
                     <div class="mb-4" >
                         <label for="formFile" class="form-label">Upload OMR Image</label>

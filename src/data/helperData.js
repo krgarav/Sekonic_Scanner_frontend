@@ -106,3 +106,10 @@ export const resolutionOptionData = [
     { id: "3", name: "150dpi" },
     { id: "4", name: "100dpi" },
 ];
+
+export const scanningSideData = [
+    { id: "0", name: "Non-reading image" },
+    { id: "1", name: "Double side" },
+    { id: "2", name: "Front side only" },
+    { id: "3", name: "Back side only" },
+];
