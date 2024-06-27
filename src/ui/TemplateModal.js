@@ -21,7 +21,13 @@ import {
     rotationOptionData,
     resolutionOptionData,
     scanningSideData,
-    imageStatusData
+    imageStatusData,
+    barcodeCategoryData,
+    code39OrItfCheckDigitData,
+    nw7CheckDigitData,
+    upcaOptionData,
+    upceOptionData,
+    barcodeRejectData
 } from "data/helperData";
 import DataContext from 'store/DataContext';
 import Select, { components } from "react-select";
@@ -55,6 +61,10 @@ const TemplateModal = (props) => {
     const [resolution, setResolution] = useState();
     const [scannningSide, setScanningSide] = useState();
     const [imageStatus, setImageStatus] = useState(imageStatusData[0]);
+    const [barcodeReadingArea, setBarcodeReadingArea] = useState();
+    const [barcodeType, setBarcodeType] = useState({});
+    const [barcodeCategory, setBarcodeCategory] = useState({});
+    const [barcodeRejectStatus, setBarcodeRejectStatus] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -679,16 +689,16 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 "
+                                            className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
-                                            Barcode Type :
+                                            Barcode Category:
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <Select
-                                                value={size}
-                                                onChange={(selectedValue) => setSize(selectedValue)}
-                                                options={barcodeTypeData}
+                                                value={barcodeCategory}
+                                                onChange={(selectedValue) => setBarcodeCategory(selectedValue)}
+                                                options={barcodeCategoryData}
                                                 getOptionLabel={(option) => option?.name || ""}
                                                 getOptionValue={(option) =>
                                                     option?.id?.toString() || ""
@@ -704,16 +714,16 @@ const TemplateModal = (props) => {
                                     <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
-                                            className="col-md-3 "
+                                            className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
-                                            Barcode reading area:                                            :
+                                            Barcode Rejection :
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className="col-md-10">
                                             <Select
-                                                value={size}
-                                                onChange={(selectedValue) => setSize(selectedValue)}
-                                                options={barcodeTypeData}
+                                                value={barcodeRejectStatus}
+                                                onChange={(selectedValue) => setBarcodeRejectStatus(selectedValue)}
+                                                options={barcodeRejectData}
                                                 getOptionLabel={(option) => option?.name || ""}
                                                 getOptionValue={(option) =>
                                                     option?.id?.toString() || ""
@@ -726,6 +736,65 @@ const TemplateModal = (props) => {
                                             )}
                                         </div>
                                     </Row>
+
+                                    {(barcodeRejectStatus.id !== "0"  ) && (
+                                        <>
+                                            <Row className="mb-3">
+                                                <label
+                                                    htmlFor="example-text-input"
+                                                    className="col-md-2 "
+                                                    style={{ fontSize: ".9rem" }}
+                                                >
+                                                    Barcode Type :
+                                                </label>
+                                                <div className="col-md-10">
+                                                    <Select
+                                                        value={barcodeType}
+                                                        onChange={(selectedValue) => setBarcodeType(selectedValue)}
+                                                        options={barcodeTypeData}
+                                                        getOptionLabel={(option) => option?.name || ""}
+                                                        getOptionValue={(option) =>
+                                                            option?.id?.toString() || ""
+                                                        }
+                                                    />
+                                                    {!size && (
+                                                        <span style={{ color: "red", display: "block" }}>
+                                                            This feild is required
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </Row>
+
+                                            <Row className="mb-3">
+
+                                                <label
+                                                    htmlFor="example-text-input"
+                                                    className="col-md-2 "
+                                                    style={{ fontSize: ".9rem" }}
+                                                >
+                                                    Set check digit:
+                                                </label>
+
+                                                <div className="col-md-10">
+                                                    {(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") && (<Select
+                                                        value={barcodeType}
+                                                        onChange={(selectedValue) => setBarcodeType(selectedValue)}
+                                                        options={barcodeType.id === "0x1U" ? code39OrItfCheckDigitData : nw7CheckDigitData}
+                                                        getOptionLabel={(option) => option?.name || ""}
+                                                        getOptionValue={(option) =>
+                                                            option?.id?.toString() || ""
+                                                        }
+                                                    />)}
+                                                    {(!(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") || Object.keys(barcodeType).length === 0) && (
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            value={(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") ? 0 : numberOfFrontSideColumn}
+                                                            onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </Row></>)}
                                     <Row className="mb-3">
 
                                         <label
@@ -733,37 +802,28 @@ const TemplateModal = (props) => {
                                             className="col-md-2 "
                                             style={{ fontSize: ".9rem" }}
                                         >
-                                            Set check digit:
-                                        </label>
-                                        <div className="col-md-10">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                value={numberOfFrontSideColumn}
-                                                onChange={(e) =>
-                                                    setNumberOfFrontSideColumn(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                    </Row>
-                                    <Row className="mb-3">
-
-                                        <label
-                                            htmlFor="example-text-input"
-                                            className="col-md-6 "
-                                            style={{ fontSize: ".9rem" }}
-                                        >
                                             Set option:
                                         </label>
-                                        <div className="col-md-6">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                value={numberOfFrontSideColumn}
-                                                onChange={(e) =>
-                                                    setNumberOfFrontSideColumn(e.target.value)
+                                        <div className="col-md-10">
+                                            {(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") && (<Select
+                                                value={barcodeType}
+                                                onChange={(selectedValue) => setBarcodeType(selectedValue)}
+                                                options={barcodeType.id === "0x400U" ? upcaOptionData : upceOptionData}
+                                                getOptionLabel={(option) => option?.name || ""}
+                                                getOptionValue={(option) =>
+                                                    option?.id?.toString() || ""
                                                 }
-                                            />
+                                            />)}
+                                            {(!(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") || Object.keys(barcodeType).length === 0) && (
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+
+                                                    // value={}
+                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                />
+                                            )}
+
                                         </div>
                                     </Row>
                                     <Row className="mb-3">
@@ -772,7 +832,7 @@ const TemplateModal = (props) => {
                                             className="col-md-6 "
                                             style={{ fontSize: ".9rem" }}
                                         >
-                                            Set Barcode Coordinate :-
+                                            Set Barcode reading area :-
                                         </label>
                                     </Row>
                                     {/* <Row className="mb-3">

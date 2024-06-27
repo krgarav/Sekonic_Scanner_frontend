@@ -118,3 +118,39 @@ export const imageStatusData = [
     { id: "1", name: "Enabled" },
 
 ];
+
+export const code39OrItfCheckDigitData = [
+    { id: "0", name: "No check" },
+    { id: "1", name: "Check" },
+
+];
+
+export const nw7CheckDigitData = [
+    { id: "0", name: "No check" },
+    { id: "1", name: "Modulus 16" },
+    { id: "2", name: "Modulus 11" },
+    { id: "3", name: "Modulus 10 / 2" },
+    { id: "4", name: "Modulus 10 / 3" },
+    { id: "5", name: "7 check DR" },
+    { id: "6", name: "Weighted modulus 11" },
+    { id: "7", name: "Runes" },
+
+];
+
+export const upcaOptionData = [
+    { id: "0", name: "Output in 12 digits" },
+    { id: "1", name: "Output in 13 digits" },
+];
+export const upceOptionData = [
+    { id: "0", name: "Not to add system code" },
+    { id: "1", name: "Add system code" },
+];
+export const barcodeCategoryData = [
+    { id: "software", name: "Software" },
+    { id: "hardware", name: "Hardware" },
+];
+
+export const barcodeRejectData = [
+    { id: "0", name: "Reject" },
+    { id: "1", name: "Not Reject" },
+];
