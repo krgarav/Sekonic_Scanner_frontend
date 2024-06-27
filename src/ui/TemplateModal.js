@@ -64,11 +64,11 @@ const TemplateModal = (props) => {
     const [barcodeReadingArea, setBarcodeReadingArea] = useState();
     const [barcodeType, setBarcodeType] = useState({});
     const [barcodeCategory, setBarcodeCategory] = useState({});
-    const [barcodeRejectStatus, setBarcodeRejectStatus] = useState({});
+    const [barcodeRejectStatus, setBarcodeRejectStatus] = useState(barcodeRejectData[1]);
+    const [checkDigit, setCheckDigit] = useState()
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("called");
         if (props.show) {
             setModalShow(true);
         } else {
@@ -711,131 +711,133 @@ const TemplateModal = (props) => {
                                             )}
                                         </div>
                                     </Row>
-                                    <Row className="mb-3">
-                                        <label
-                                            htmlFor="example-text-input"
-                                            className="col-md-2 "
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Barcode Rejection :
-                                        </label>
-                                        <div className="col-md-10">
-                                            <Select
-                                                value={barcodeRejectStatus}
-                                                onChange={(selectedValue) => setBarcodeRejectStatus(selectedValue)}
-                                                options={barcodeRejectData}
-                                                getOptionLabel={(option) => option?.name || ""}
-                                                getOptionValue={(option) =>
-                                                    option?.id?.toString() || ""
-                                                }
-                                            />
-                                            {!size && (
-                                                <span style={{ color: "red", display: "block" }}>
-                                                    This feild is required
-                                                </span>
-                                            )}
-                                        </div>
-                                    </Row>
-
-                                    {(barcodeRejectStatus.id !== "0"  ) && (
-                                        <>
-                                            <Row className="mb-3">
-                                                <label
-                                                    htmlFor="example-text-input"
-                                                    className="col-md-2 "
-                                                    style={{ fontSize: ".9rem" }}
-                                                >
-                                                    Barcode Type :
-                                                </label>
-                                                <div className="col-md-10">
-                                                    <Select
-                                                        value={barcodeType}
-                                                        onChange={(selectedValue) => setBarcodeType(selectedValue)}
-                                                        options={barcodeTypeData}
-                                                        getOptionLabel={(option) => option?.name || ""}
-                                                        getOptionValue={(option) =>
-                                                            option?.id?.toString() || ""
-                                                        }
-                                                    />
-                                                    {!size && (
-                                                        <span style={{ color: "red", display: "block" }}>
-                                                            This feild is required
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </Row>
-
-                                            <Row className="mb-3">
-
-                                                <label
-                                                    htmlFor="example-text-input"
-                                                    className="col-md-2 "
-                                                    style={{ fontSize: ".9rem" }}
-                                                >
-                                                    Set check digit:
-                                                </label>
-
-                                                <div className="col-md-10">
-                                                    {(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") && (<Select
-                                                        value={barcodeType}
-                                                        onChange={(selectedValue) => setBarcodeType(selectedValue)}
-                                                        options={barcodeType.id === "0x1U" ? code39OrItfCheckDigitData : nw7CheckDigitData}
-                                                        getOptionLabel={(option) => option?.name || ""}
-                                                        getOptionValue={(option) =>
-                                                            option?.id?.toString() || ""
-                                                        }
-                                                    />)}
-                                                    {(!(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") || Object.keys(barcodeType).length === 0) && (
-                                                        <input
-                                                            type="number"
-                                                            className="form-control"
-                                                            value={(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") ? 0 : numberOfFrontSideColumn}
-                                                            onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </Row></>)}
-                                    <Row className="mb-3">
-
-                                        <label
-                                            htmlFor="example-text-input"
-                                            className="col-md-2 "
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Set option:
-                                        </label>
-                                        <div className="col-md-10">
-                                            {(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") && (<Select
-                                                value={barcodeType}
-                                                onChange={(selectedValue) => setBarcodeType(selectedValue)}
-                                                options={barcodeType.id === "0x400U" ? upcaOptionData : upceOptionData}
-                                                getOptionLabel={(option) => option?.name || ""}
-                                                getOptionValue={(option) =>
-                                                    option?.id?.toString() || ""
-                                                }
-                                            />)}
-                                            {(!(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") || Object.keys(barcodeType).length === 0) && (
-                                                <input
-                                                    type="number"
-                                                    className="form-control"
-
-                                                    // value={}
-                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                    {barcodeCategory.id === "hardware" &&
+                                        <Row className="mb-3">
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-2 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Barcode Rejection :
+                                            </label>
+                                            <div className="col-md-10">
+                                                <Select
+                                                    value={barcodeRejectStatus}
+                                                    onChange={(selectedValue) => setBarcodeRejectStatus(selectedValue)}
+                                                    options={barcodeRejectData}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    getOptionValue={(option) =>
+                                                        option?.id?.toString() || ""
+                                                    }
                                                 />
-                                            )}
+                                                {!size && (
+                                                    <span style={{ color: "red", display: "block" }}>
+                                                        This feild is required
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </Row>}
 
-                                        </div>
-                                    </Row>
-                                    <Row className="mb-3">
-                                        <label
-                                            htmlFor="example-text-input"
-                                            className="col-md-6 "
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Set Barcode reading area :-
-                                        </label>
-                                    </Row>
-                                    {/* <Row className="mb-3">
+
+                                    <>
+                                        <Row className="mb-3">
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-2 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Barcode Type :
+                                            </label>
+                                            <div className="col-md-10">
+                                                <Select
+                                                    value={barcodeType}
+                                                    onChange={(selectedValue) => setBarcodeType(selectedValue)}
+                                                    options={barcodeTypeData}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    getOptionValue={(option) =>
+                                                        option?.id?.toString() || ""
+                                                    }
+                                                />
+                                                {!size && (
+                                                    <span style={{ color: "red", display: "block" }}>
+                                                        This feild is required
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </Row>
+
+                                        <Row className="mb-3">
+
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-2 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Set check digit:
+                                            </label>
+
+                                            <div className="col-md-10">
+                                                {(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") && (<Select
+                                                    value={checkDigit}
+                                                    onChange={(selectedValue) => setCheckDigit(selectedValue)}
+                                                    options={barcodeType.id === "0x1U" ? code39OrItfCheckDigitData : nw7CheckDigitData}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    getOptionValue={(option) =>
+                                                        option?.id?.toString() || ""
+                                                    }
+                                                    placeholder="Select check digit"
+                                                />)}
+                                                {(!(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") || Object.keys(barcodeType).length === 0) && (
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        value={(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") ? 0 : numberOfFrontSideColumn}
+                                                        onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                    />
+                                                )}
+                                            </div>
+                                        </Row>
+                                        <Row className="mb-3">
+
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-2 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Set option:
+                                            </label>
+                                            <div className="col-md-10">
+                                                {(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") && (<Select
+                                                    value={barcodeType}
+                                                    onChange={(selectedValue) => setBarcodeType(selectedValue)}
+                                                    options={barcodeType.id === "0x400U" ? upcaOptionData : upceOptionData}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    getOptionValue={(option) =>
+                                                        option?.id?.toString() || ""
+                                                    }
+                                                />)}
+                                                {(!(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") || Object.keys(barcodeType).length === 0) && (
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+
+                                                        // value={}
+                                                        onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                    />
+                                                )}
+
+                                            </div>
+                                        </Row>
+                                        <Row className="mb-3">
+                                            <label
+                                                htmlFor="example-text-input"
+                                                className="col-md-6 "
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Set Barcode reading area :-
+                                            </label>
+                                        </Row>
+                                        {/* <Row className="mb-3">
 
                                         <label
                                             htmlFor="example-text-input"
@@ -879,87 +881,88 @@ const TemplateModal = (props) => {
                                         </div>
 
                                     </Row> */}
-                                    <Row className="mb-3 align-items-center">
-                                        <label
-                                            htmlFor="top-input"
-                                            className="col-md-2 col-form-label"
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Top:
-                                        </label>
-                                        <div className="col-md-2">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="top-input"
-                                                value={numberOfFrontSideColumn}
-                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2">
-                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
-                                        </div>
-                                        <label
-                                            htmlFor="bottom-input"
-                                            className="col-md-2 col-form-label"
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Bottom:
-                                        </label>
-                                        <div className="col-md-2">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="bottom-input"
-                                                value={numberOfFrontSideColumn}
-                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2">
-                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
-                                        </div>
-                                    </Row>
+                                        <Row className="mb-3 align-items-center">
+                                            <label
+                                                htmlFor="top-input"
+                                                className="col-md-2 col-form-label"
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Top:
+                                            </label>
+                                            <div className="col-md-2">
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    id="top-input"
+                                                    value={numberOfFrontSideColumn}
+                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="col-md-2">
+                                                <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                            </div>
+                                            <label
+                                                htmlFor="bottom-input"
+                                                className="col-md-2 col-form-label"
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Bottom:
+                                            </label>
+                                            <div className="col-md-2">
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    id="bottom-input"
+                                                    value={numberOfFrontSideColumn}
+                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="col-md-2">
+                                                <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                            </div>
+                                        </Row>
 
-                                    <Row className="mb-3 align-items-center">
-                                        <label
-                                            htmlFor="top-input"
-                                            className="col-md-2 col-form-label"
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Left:
-                                        </label>
-                                        <div className="col-md-2">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="top-input"
-                                                value={numberOfFrontSideColumn}
-                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2">
-                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
-                                        </div>
-                                        <label
-                                            htmlFor="bottom-input"
-                                            className="col-md-2 col-form-label"
-                                            style={{ fontSize: ".9rem" }}
-                                        >
-                                            Right:
-                                        </label>
-                                        <div className="col-md-2">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                id="bottom-input"
-                                                value={numberOfFrontSideColumn}
-                                                onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2">
-                                            <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
-                                        </div>
-                                    </Row>
+                                        <Row className="mb-3 align-items-center">
+                                            <label
+                                                htmlFor="top-input"
+                                                className="col-md-2 col-form-label"
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Left:
+                                            </label>
+                                            <div className="col-md-2">
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    id="top-input"
+                                                    value={numberOfFrontSideColumn}
+                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="col-md-2">
+                                                <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                            </div>
+                                            <label
+                                                htmlFor="bottom-input"
+                                                className="col-md-2 col-form-label"
+                                                style={{ fontSize: ".9rem" }}
+                                            >
+                                                Right:
+                                            </label>
+                                            <div className="col-md-2">
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    id="bottom-input"
+                                                    value={numberOfFrontSideColumn}
+                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="col-md-2">
+                                                <p className="m-0" style={{ fontSize: ".9rem" }}>in mm</p>
+                                            </div>
+                                        </Row>
+                                    </>
 
 
                                 </Tab.Pane>
