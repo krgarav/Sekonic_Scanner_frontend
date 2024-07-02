@@ -67,6 +67,7 @@ const Template = () => {
     });
   };
 
+
   const sendToBackendHandler = async (arr, index) => {
 
     const templateData = arr[0];
@@ -74,123 +75,321 @@ const Template = () => {
     const questionField = arr?.questionsWindowParameters;
     const skewField = arr?.skewMarksWindowParameters;
     const idFeild = arr?.idWindowParameters;
-    const tempdata = { ...templateData, ...idFeild[0] }
+    const tempdata = { ...templateData, ...idFeild?.[0] }
 
 
-    const temstrucData = [tempdata]?.map((item) => {
-      const layoutName = item["Template Name"];
-      const timingMarks = +item["Rows"];
-      const barcodeCount = +item["Bar Count"];
-      const iFace = +item["face"];
-      const columnStart = +item["columnStart"];
-      const columnNumber = +item["totalNoInColumn"];
-      const columnStep = +item["totalStepInColumn"];
-      const rowStart = +item["rowStart"];
-      const rowNumber = +item["totalNoInRow"];
-      const rowStep = +item["totalStepInRow"];
-      const iDirection = + item["iDirection"];
-      const iSensitivity = +item["sensitivity"]
-      const iDifference = +item["difference"];
-      const ngAction = item["ngAction"].toString();
-      const dataReadDirection = item["direction"]
-      const iReject = +item["iReject"];
+    // const temstrucData = [tempdata]?.map((item) => {
+    //   const layoutName = item["Template Name"];
+    //   const timingMarks = +item["Rows"];
+    //   const barcodeCount = +item["Bar Count"];
+    //   const iFace = +item["face"];
+    //   const columnStart = +item["columnStart"];
+    //   const columnNumber = +item["totalNoInColumn"];
+    //   const columnStep = +item["totalStepInColumn"];
+    //   const rowStart = +item["rowStart"];
+    //   const rowNumber = +item["totalNoInRow"];
+    //   const rowStep = +item["totalStepInRow"];
+    //   const iDirection = + item["iDirection"];
+    //   const iSensitivity = +item["sensitivity"]
+    //   const iDifference = +item["difference"];
+    //   const ngAction = item["ngAction"].toString();
+    //   const dataReadDirection = item["direction"]
+    //   const iReject = +item["iReject"];
+    //   const { barcodeSide, barcodeColor, barcodeType, barcodeCheckDigit, barcodeOption,
+    //     barcodeRightPos, barcodeLeftPos, barcodeTopPos, barcodeBottomPos, imageEnable, imageColor,
+    //     imageType, imageParam, imageRotation, imageResoMode, imageResolution, printEnable, printStartPos,
+    //     printDigit, printStartNumber, printOrientation, printFontSize, printFontSpace, printMode
+    //   } = item;
+
+
+    //   return {
+    //     layoutName,
+    //     timingMarks,
+    //     barcodeCount,
+    //     iFace,
+    //     columnStart,
+    //     columnNumber,
+    //     columnStep,
+    //     rowStart,
+    //     rowNumber,
+    //     rowStep,
+    //     iDirection,
+    //     iSensitivity,
+    //     iDifference,
+    //     ngAction,
+    //     dataReadDirection,
+    //     iReject,
+    //     barcodeSide,
+    //     barcodeColor,
+    //     barcodeType,
+    //     barcodeCheckDigit,
+    //     barcodeOption,
+    //     barcodeRightPos,
+    //     barcodeLeftPos,
+    //     barcodeTopPos,
+    //     barcodeBottomPos,
+    //     imageEnable,
+    //     imageColor,
+    //     imageType,
+    //     imageParam,
+    //     imageRotation,
+    //     imageResoMode,
+    //     imageResolution,
+    //     printEnable,
+    //     printStartPos,
+    //     printDigit,
+    //     printStartNumber,
+    //     printOrientation,
+    //     printFontSize,
+    //     printFontSpace,
+    //     printMode
+    //   }
+    // })
+    const temstrucData = [tempdata]?.map(item => {
+      const {
+        "Template Name": layoutName,
+        "Rows": timingMarks,
+        "Bar Count": barcodeCount,
+        "face": iFace,
+        "columnStart": columnStart,
+        "totalNoInColumn": columnNumber,
+        "totalStepInColumn": columnStep,
+        "rowStart": rowStart,
+        "totalNoInRow": rowNumber,
+        "totalStepInRow": rowStep,
+        "iDirection": iDirection,
+        "sensitivity": iSensitivity,
+        "difference": iDifference,
+        "ngAction": ngAction,
+        "direction": dataReadDirection,
+        "iReject": iReject,
+        barcodeSide,
+        barcodeColor,
+        barcodeType,
+        barcodeCheckDigit,
+        barcodeOption,
+        barcodeRightPos,
+        barcodeLeftPos,
+        barcodeTopPos,
+        barcodeBottomPos,
+        imageEnable,
+        imageColor,
+        imageType,
+        imageParam,
+        imageRotation,
+        imageResoMode,
+        imageResolution,
+        printEnable,
+        printStartPos,
+        printDigit,
+        printStartNumber,
+        printOrientation,
+        printFontSize,
+        printFontSpace,
+        printMode
+      } = item;
 
       return {
         layoutName,
-        timingMarks,
-        barcodeCount,
-        iFace,
-        columnStart,
-        columnNumber,
-        columnStep,
-        rowStart,
-        rowNumber,
-        rowStep,
-        iDirection,
-        iSensitivity,
-        iDifference,
-        ngAction,
+        timingMarks: +timingMarks,
+        barcodeCount: +barcodeCount,
+        iFace: +iFace,
+        columnStart: +columnStart,
+        columnNumber: +columnNumber,
+        columnStep: +columnStep,
+        rowStart: +rowStart,
+        rowNumber: +rowNumber,
+        rowStep: +rowStep,
+        iDirection: +iDirection,
+        iSensitivity: +iSensitivity,
+        iDifference: +iDifference,
+        ngAction: ngAction.toString(),
         dataReadDirection,
-        iReject
-      }
-    })
-
-    const skewFieldStruc = skewField?.map((item) => {
-      const iFace = +item["face"];
-      const columnStart = +item["columnStart"];
-      const columnNumber = +item["totalNoInColumn"];
-      const columnStep = +item["totalStepInColumn"];
-      const rowStart = +item["rowStart"];
-      const rowNumber = +item["totalNoInRow"];
-      const rowStep = +item["totalStepInRow"];
-      const iDirection = +item["readingDirection"];
-      const iSensitivity = +item["sensitivity"]
-      const iDifference = +item["difference"];
-      const ngAction = item["windowNG"];
-      const iType = item["type"];
-      const iMaximumMarks = +item["maximumMark"];
-      const iMinimumMarks = +item["minimumMark"];
-
-
-      return {
-        iFace,
-        columnStart,
-        columnNumber,
-        columnStep,
-        rowStart,
-        rowNumber,
-        rowStep,
-        iDirection,
-        iSensitivity,
-        iDifference,
-        iMinimumMarks,
-        iMaximumMarks,
-        iType,
-        ngAction
-      }
+        iReject: +iReject,
+        barcodeSide,
+        barcodeColor,
+        barcodeType,
+        barcodeCheckDigit: +barcodeCheckDigit,
+        barcodeOption: +barcodeOption,
+        barcodeRightPos: +barcodeRightPos,
+        barcodeLeftPos: +barcodeLeftPos,
+        barcodeTopPos: +barcodeTopPos,
+        barcodeBottomPos: +barcodeBottomPos,
+        imageEnable: +imageEnable,
+        imageColor,
+        imageType,
+        imageParam,
+        imageRotation,
+        imageResoMode,
+        imageResolution,
+        printEnable,
+        printStartPos,
+        printDigit,
+        printStartNumber,
+        printOrientation,
+        printFontSize,
+        printFontSpace,
+        printMode
+      };
     });
 
 
-    const formFieldStruc = formFieldData?.map((item) => {
-      const iFace = +item["face"];
-      const columnStart = +item["columnStart"];
-      const columnNumber = +item["totalNoInColumn"];
-      const columnStep = +item["totalStepInColumn"];
-      const rowStart = +item["rowStart"];
-      const rowNumber = +item["totalNoInRow"];
-      const rowStep = +item["totalStepInRow"];
-      const iDirection = +item["readingDirection"];
-      const iSensitivity = +item["sensitivity"]
-      const iDifference = +item["difference"];
-      const ngAction = item["windowNG"];
-      const iType = item["type"];
-      const iMaximumMarks = +item["maximumMark"];
-      const iMinimumMarks = +item["minimumMark"];
-      const windowName = item["windowName"]
-      const iOption = +item["option"];
-      const totalNumberOfFileds = item["totalNumberOfFields"];
-      const numericOrAlphabets = item["numericOrAlphabets"];
+    // const skewFieldStruc = skewField?.map((item) => {
+    //   const iFace = +item["face"];
+    //   const columnStart = +item["columnStart"];
+    //   const columnNumber = +item["totalNoInColumn"];
+    //   const columnStep = +item["totalStepInColumn"];
+    //   const rowStart = +item["rowStart"];
+    //   const rowNumber = +item["totalNoInRow"];
+    //   const rowStep = +item["totalStepInRow"];
+    //   const iDirection = +item["readingDirection"];
+    //   const iSensitivity = +item["sensitivity"]
+    //   const iDifference = +item["difference"];
+    //   const ngAction = item["windowNG"];
+    //   const iType = item["type"];
+    //   const iMaximumMarks = +item["maximumMark"];
+    //   const iMinimumMarks = +item["minimumMark"];
+
+
+    //   return {
+    //     iFace,
+    //     columnStart,
+    //     columnNumber,
+    //     columnStep,
+    //     rowStart,
+    //     rowNumber,
+    //     rowStep,
+    //     iDirection,
+    //     iSensitivity,
+    //     iDifference,
+    //     iMinimumMarks,
+    //     iMaximumMarks,
+    //     iType,
+    //     ngAction
+    //   }
+    // });
+
+    const skewFieldStruc = skewField?.map(item => {
+      const {
+        "face": iFace,
+        "columnStart": columnStart,
+        "totalNoInColumn": columnNumber,
+        "totalStepInColumn": columnStep,
+        "rowStart": rowStart,
+        "totalNoInRow": rowNumber,
+        "totalStepInRow": rowStep,
+        "readingDirection": iDirection,
+        "sensitivity": iSensitivity,
+        "difference": iDifference,
+        "windowNG": ngAction,
+        "type": iType,
+        "maximumMark": iMaximumMarks,
+        "minimumMark": iMinimumMarks
+      } = item;
 
       return {
-        iFace,
+        iFace: +iFace,
+        columnStart: +columnStart,
+        columnNumber: +columnNumber,
+        columnStep: +columnStep,
+        rowStart: +rowStart,
+        rowNumber: +rowNumber,
+        rowStep: +rowStep,
+        iDirection: +iDirection,
+        iSensitivity: +iSensitivity,
+        iDifference: +iDifference,
+        iMinimumMarks: +iMinimumMarks,
+        iMaximumMarks: +iMaximumMarks,
+        iType,
+        ngAction
+      };
+    });
+
+
+    // const formFieldStruc = formFieldData?.map((item) => {
+    //   const iFace = +item["face"];
+    //   const columnStart = +item["columnStart"];
+    //   const columnNumber = +item["totalNoInColumn"];
+    //   const columnStep = +item["totalStepInColumn"];
+    //   const rowStart = +item["rowStart"];
+    //   const rowNumber = +item["totalNoInRow"];
+    //   const rowStep = +item["totalStepInRow"];
+    //   const iDirection = +item["readingDirection"];
+    //   const iSensitivity = +item["sensitivity"]
+    //   const iDifference = +item["difference"];
+    //   const ngAction = item["windowNG"];
+    //   const iType = item["type"];
+    //   const iMaximumMarks = +item["maximumMark"];
+    //   const iMinimumMarks = +item["minimumMark"];
+    //   const windowName = item["windowName"]
+    //   const iOption = +item["option"];
+    //   const totalNumberOfFileds = item["totalNumberOfFields"];
+    //   const numericOrAlphabets = item["numericOrAlphabets"];
+
+    //   return {
+    //     iFace,
+    //     windowName,
+    //     columnStart,
+    //     columnNumber,
+    //     columnStep,
+    //     rowStart,
+    //     rowNumber,
+    //     rowStep,
+    //     iDirection,
+    //     iSensitivity,
+    //     iDifference,
+    //     iOption,
+    //     iMinimumMarks,
+    //     iMaximumMarks,
+    //     iType,
+    //     ngAction,
+    //     totalNumberOfFileds,
+    //     numericOrAlphabets
+    //   }
+    // });
+
+    const formFieldStruc = formFieldData?.map(item => {
+      const {
+        "face": iFace,
+        "columnStart": columnStart,
+        "totalNoInColumn": columnNumber,
+        "totalStepInColumn": columnStep,
+        "rowStart": rowStart,
+        "totalNoInRow": rowNumber,
+        "totalStepInRow": rowStep,
+        "readingDirection": iDirection,
+        "sensitivity": iSensitivity,
+        "difference": iDifference,
+        "windowNG": ngAction,
+        "type": iType,
+        "maximumMark": iMaximumMarks,
+        "minimumMark": iMinimumMarks,
+        "windowName": windowName,
+        "option": iOption,
+        "totalNumberOfFields": totalNumberOfFileds,
+        "numericOrAlphabets": numericOrAlphabets
+      } = item;
+
+      return {
+        iFace: +iFace,
         windowName,
-        columnStart,
-        columnNumber,
-        columnStep,
-        rowStart,
-        rowNumber,
-        rowStep,
-        iDirection,
-        iSensitivity,
-        iDifference,
-        iOption,
-        iMinimumMarks,
-        iMaximumMarks,
+        columnStart: +columnStart,
+        columnNumber: +columnNumber,
+        columnStep: +columnStep,
+        rowStart: +rowStart,
+        rowNumber: +rowNumber,
+        rowStep: +rowStep,
+        iDirection: +iDirection,
+        iSensitivity: +iSensitivity,
+        iDifference: +iDifference,
+        iOption: +iOption,
+        iMinimumMarks: +iMinimumMarks,
+        iMaximumMarks: +iMaximumMarks,
         iType,
         ngAction,
         totalNumberOfFileds,
         numericOrAlphabets
-      }
+      };
     });
 
 
@@ -332,8 +531,6 @@ const Template = () => {
 
 
   };
-
-
 
   const deleteHandler = (arr, index) => {
     dataCtx.deleteTemplate(index)

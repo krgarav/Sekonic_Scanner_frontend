@@ -30,6 +30,25 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import DesignTemplate from "views/DesignTemplate";
 import DataProvider from "store/DataProvider";
+//Import Register Licence from syncfusion
+import { registerLicense } from '@syncfusion/ej2-base';
+
+// Import Syncfusion CSS
+import '@syncfusion/ej2-base/styles/material.css';
+import '@syncfusion/ej2-react-grids/styles/material.css';
+import '../node_modules/@syncfusion/ej2-base/styles/material.css';
+import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
+import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';
+import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
+import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
+import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
+import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
+import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
+import '../node_modules/@syncfusion/ej2-notifications/styles/material.css';
+import "../node_modules/@syncfusion/ej2-react-grids/styles/material.css";
+
+
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NCaF5cXmZCeUx0TXxbf1x0ZFFMYFpbQXNPMyBoS35RckVlW3dedHRdQ2FaWUF2');
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

@@ -67,12 +67,12 @@ const DesignTemplate = () => {
             return newState;
         });
     }
-   const coordinateData =[];
+    const coordinateData = [];
     const formFieldData = arr?.formFieldWindowParameters;
     const questionField = arr?.questionsWindowParameters;
     const skewField = arr?.skewMarksWindowParameters;
     const idFeild = arr?.idWindowParameters;
- 
+
     useEffect(() => {
         switch (selectedBubble) {
             case "rounded rectangle":
@@ -305,7 +305,10 @@ const DesignTemplate = () => {
     };
     return (
         <>
+            <Button>See The saved Data</Button>
+            <Button>Send to Backend</Button>
             <div className="container">
+
                 <div id="imagecontainer" className={classes.img} >
                     <Rnd
                         default={{

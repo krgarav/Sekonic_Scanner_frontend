@@ -34,7 +34,10 @@ import Select, { components } from "react-select";
 import { useNavigate } from "react-router-dom";
 import Slider from '@mui/material/Slider';
 import ShadesOfGrey from './shadesOfGrey';
-
+import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
+import '@syncfusion/ej2-base/styles/material.css';
+import '@syncfusion/ej2-react-dropdowns/styles/material.css';
+import { MultiSelect } from "react-multi-select-component";
 const TemplateModal = (props) => {
     const [modalShow, setModalShow] = useState(false);
     const [name, setName] = useState("");
@@ -65,7 +68,46 @@ const TemplateModal = (props) => {
     const [barcodeType, setBarcodeType] = useState({});
     const [barcodeCategory, setBarcodeCategory] = useState({});
     const [barcodeRejectStatus, setBarcodeRejectStatus] = useState(barcodeRejectData[1]);
-    const [checkDigit, setCheckDigit] = useState()
+    const [checkDigit, setCheckDigit] = useState(null);
+    const [barcodeRightPos, setBarcodeRightPos] = useState()
+    const [barcodeLeftPos, setBarcodeLeftPos] = useState()
+    const [barcodeTopPos, setBarcodeTopPos] = useState();
+    const [barcodeBottomPos, setBarcodeBottomPos] = useState();
+    const [option, setOption] = useState(null);
+    const [selected, setSelected] = useState([]);
+    const [selectedColumn, setSelectedColumn] = useState(null);
+    const columns = Array.from({ length: 48 }, (_, i) => i + 1);
+    const [values, setValues] = useState(Array(48).fill(0));
+    const [options, setOptions] = useState([]);
+    const [colIdPattern, setColIdPattern] = useState();
+    // const options = [
+    //     { label: "Col ", value: "grapes" },
+    //     { label: "", value: "mango" },
+    //     { label: "", value: "strawberry" },
+    // ];
+    useEffect(() => {
+        const arr = Array(+numberOfFrontSideColumn).fill(0)
+        for (let i = 0 ;i<arr.length;i++){
+            
+        }
+    }, [options]);
+    useEffect(() => {
+        const option = []
+        for (let i = 0; i < +numberOfFrontSideColumn; i++) {
+            let obj = { label: `Col ${i + 1}`, value: i }
+            option.push(obj);
+        }
+        setOptions(option)
+    }, [numberOfFrontSideColumn]);
+
+    const handleColumnChange = (event) => {
+        const columnIndex = event.value - 1;
+        const newValues = Array(48).fill(0);
+        newValues[columnIndex] = 1;
+        setSelectedColumn(event.value);
+        setValues(newValues);
+    };
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -107,32 +149,6 @@ const TemplateModal = (props) => {
 
 
     const createTemplateHandler = () => {
-        // if (!name || !numberOfLines || !numberOfFrontSideColumn || !selectedBubble.name || !imageSrc || !sensitivity || !difference || !barCount || !reject) {
-
-
-        //   return
-        // }
-        // if (!name) {
-        //   settoggle((prevData) => {
-        //     return { ...prevData, name: true };
-        //   });
-        //   return;
-        // } else if (!numberOfLines) {
-        //   settoggle((prevData) => {
-        //     return { ...prevData, row: true };
-        //   });
-        //   return;
-        // } else if (!numberOfFrontSideColumn) {
-        //   settoggle((prevData) => {
-        //     return { ...prevData, col: true };
-        //   });
-        //   return;
-        // } else if (!barCount) {
-        //   settoggle((prevData) => {
-        //     return { ...prevData, barcode: true };
-        //   });
-        //   return;
-        // }
 
         if (!name || !numberOfLines || !numberOfFrontSideColumn || !barCount) {
             settoggle((prevData) => ({
@@ -158,12 +174,37 @@ const TemplateModal = (props) => {
             "ngAction": windowNgOption.id,
             "iReject": reject.name,
             "iSensitivity": sensitivity,
-            "direction": direction.id
+            "direction": direction.id,
+            "barcodeSide": 0,
+            "barcodeColor": 0,
+            "barcodeType": barcodeType.id,
+            "barcodeCheckDigit": checkDigit !== null ? checkDigit.id : 0,
+            "barcodeOption": option !== null ? option.id : 0,
+            "barcodeRightPos": barcodeRightPos,
+            "barcodeLeftPos": barcodeLeftPos,
+            "barcodeTopPos": barcodeTopPos,
+            "barcodeBottomPos": barcodeBottomPos,
+            "imageEnable": imageStatus.id,
+            "imageColor": +colorType.id,
+            "imageType": +encoding.id,
+            "imageParam": 0,
+            "imageRotation": +rotation.id,
+            "imageResoMode": 0,
+            "imageResolution": +resolution.id,
+            "printEnable": 0,
+            "printStartPos": 0,
+            "printDigit": 0,
+            "printStartNumber": 0,
+            "printOrientation": 0,
+            "printFontSize": 0,
+            "printFontSpace": 0,
+            "printMode": 0,
+            "colIdPattern": "0000000000100001000001"
         }];
-
+        console.log(templateData)
         const index = dataCtx.setAllTemplates(templateData);
 
-        // setModalShow(false);
+        setModalShow(false);
         navigate("/admin/design-template", {
             state: {
                 templateIndex: index,
@@ -187,6 +228,8 @@ const TemplateModal = (props) => {
             aria-labelledby="modal-custom-navbar"
             centered
             dialogClassName="modal-90w"
+            backdrop="static"
+            keyboard={false}
         >
             <Modal.Header>
                 <Modal.Title id="modal-custom-navbar">Create Template</Modal.Title>
@@ -335,7 +378,44 @@ const TemplateModal = (props) => {
                                             </Row>
                                         </Col>
                                     </Row>
-                                    <Row className="mb-2">
+                                    <Row className='mb-3'>
+                                        <Col md={2}>
+                                            <label style={{ fontSize: ".9rem" }}>
+                                                Select Col Id
+                                            </label>
+                                        </Col>
+                                        <Col md={5}>
+                                            <MultiSelect
+                                                options={options}
+                                                value={selected}
+                                                onChange={setSelected}
+                                                labelledBy="Select"
+                                            />
+                                        </Col>
+
+                                        <label
+                                            htmlFor="example-text-input"
+                                            className="col-md-2 col-form-label "
+                                            style={{ fontSize: ".85rem" }}
+                                        >
+                                            Barcode Count:
+                                        </label>
+                                        <div className="col-md-3">
+                                            <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => {
+                                                settoggle((item) => ({ ...item, barcode: false }));
+                                                setBarCount(e.target.value)
+                                            }}
+                                                style={{ border: toggle.barcode ? "1px solid red" : "" }}
+                                            />
+                                            {!selectedBubble && (
+                                                <span style={{ color: "red", display: spanDisplay }}>
+                                                    This feild is required
+                                                </span>
+                                            )}
+                                        </div>
+
+                                    </Row>
+                                    <Row className="mb-3">
                                         <label
                                             htmlFor="bubble-variant-input"
                                             className="col-md-2  col-form-label"
@@ -415,7 +495,7 @@ const TemplateModal = (props) => {
                                         </div>
                                     </Row>
 
-                                    <Row className="mb-3">
+                                    {/* <Row className="mb-3">
                                         <label
                                             htmlFor="example-text-input"
                                             className="col-md-2 col-form-label "
@@ -436,7 +516,7 @@ const TemplateModal = (props) => {
                                                 </span>
                                             )}
                                         </div>
-                                    </Row>
+                                    </Row> */}
 
 
                                     <Row className="mb-3">
@@ -502,18 +582,17 @@ const TemplateModal = (props) => {
                                                 type="number"
                                                 className="form-control"
                                                 value={difference}
-                                                onChange={(e) => {
+                                                onBlur={(e) => {
                                                     const inputValue = e.target.value;
 
                                                     // Check if the input value is not empty and less than sensitivity
                                                     if (inputValue !== "" && +inputValue < +sensitivity) {
                                                         alert("Entered value cannot be less than sensitivity");
+                                                        setDifference('');
                                                         return;
                                                     }
-
-                                                    // Update the state with the new value
-                                                    setDifference(inputValue);
                                                 }}
+                                                onChange={(e) => setDifference(e.target.value)}
                                             />
 
                                             {!difference && (
@@ -598,6 +677,18 @@ const TemplateModal = (props) => {
                                         </div>
 
                                     </Row>
+
+
+                                    {/* <div>
+                                        <DropDownListComponent
+                                            dataSource={columns}
+                                            placeholder="Select a column"
+                                            change={handleColumnChange}
+                                        />
+
+                                    </div> */}
+
+
                                     {/* <Row className="mb-3">
                       <Col sm={6}>
                         <Row>
@@ -766,57 +857,60 @@ const TemplateModal = (props) => {
                                             </div>
                                         </Row>
 
-                                        <Row className="mb-3">
 
-                                            <label
-                                                htmlFor="example-text-input"
-                                                className="col-md-2 "
-                                                style={{ fontSize: ".9rem" }}
-                                            >
-                                                Set check digit:
-                                            </label>
+                                        {(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") && (
+                                            <Row className="mb-3">
 
-                                            <div className="col-md-10">
-                                                {(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") && (<Select
-                                                    value={checkDigit}
-                                                    onChange={(selectedValue) => setCheckDigit(selectedValue)}
-                                                    options={barcodeType.id === "0x1U" ? code39OrItfCheckDigitData : nw7CheckDigitData}
-                                                    getOptionLabel={(option) => option?.name || ""}
-                                                    getOptionValue={(option) =>
-                                                        option?.id?.toString() || ""
-                                                    }
-                                                    placeholder="Select check digit"
-                                                />)}
-                                                {(!(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") || Object.keys(barcodeType).length === 0) && (
+                                                <label
+                                                    htmlFor="example-text-input"
+                                                    className="col-md-2 "
+                                                    style={{ fontSize: ".9rem" }}
+                                                >
+                                                    Set check digit:
+                                                </label>
+
+                                                <div className="col-md-10">
+                                                    <Select
+                                                        value={checkDigit}
+                                                        onChange={(selectedValue) => setCheckDigit(selectedValue)}
+                                                        options={barcodeType.id === "0x1U" ? code39OrItfCheckDigitData : nw7CheckDigitData}
+                                                        getOptionLabel={(option) => option?.name || ""}
+                                                        getOptionValue={(option) =>
+                                                            option?.id?.toString() || ""
+                                                        }
+                                                        placeholder="Select check digit"
+                                                    />
+                                                    {/* {(!(barcodeType.id === "0x1U" || barcodeType.id === "0x2U") || Object.keys(barcodeType).length === 0) && (
                                                     <input
                                                         type="number"
                                                         className="form-control"
                                                         value={(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") ? 0 : numberOfFrontSideColumn}
                                                         onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
                                                     />
-                                                )}
-                                            </div>
-                                        </Row>
-                                        <Row className="mb-3">
+                                                )} */}
+                                                </div>
+                                            </Row>)}
+                                        {(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") && (
+                                            <Row className="mb-3">
 
-                                            <label
-                                                htmlFor="example-text-input"
-                                                className="col-md-2 "
-                                                style={{ fontSize: ".9rem" }}
-                                            >
-                                                Set option:
-                                            </label>
-                                            <div className="col-md-10">
-                                                {(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") && (<Select
-                                                    value={barcodeType}
-                                                    onChange={(selectedValue) => setBarcodeType(selectedValue)}
-                                                    options={barcodeType.id === "0x400U" ? upcaOptionData : upceOptionData}
-                                                    getOptionLabel={(option) => option?.name || ""}
-                                                    getOptionValue={(option) =>
-                                                        option?.id?.toString() || ""
-                                                    }
-                                                />)}
-                                                {(!(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") || Object.keys(barcodeType).length === 0) && (
+                                                <label
+                                                    htmlFor="example-text-input"
+                                                    className="col-md-2 "
+                                                    style={{ fontSize: ".9rem" }}
+                                                >
+                                                    Set option:
+                                                </label>
+                                                <div className="col-md-10">
+                                                    <Select
+                                                        value={option}
+                                                        onChange={(selectedValue) => setOption(selectedValue)}
+                                                        options={barcodeType.id === "0x400U" ? upcaOptionData : upceOptionData}
+                                                        getOptionLabel={(option) => option?.name || ""}
+                                                        getOptionValue={(option) =>
+                                                            option?.id?.toString() || ""
+                                                        }
+                                                    />
+                                                    {/* {(!(barcodeType.id === "0x400U" || barcodeType.id === "0x800U") || Object.keys(barcodeType).length === 0) && (
                                                     <input
                                                         type="number"
                                                         className="form-control"
@@ -824,10 +918,10 @@ const TemplateModal = (props) => {
                                                         // value={}
                                                         onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
                                                     />
-                                                )}
+                                                )} */}
 
-                                            </div>
-                                        </Row>
+                                                </div>
+                                            </Row>)}
                                         <Row className="mb-3">
                                             <label
                                                 htmlFor="example-text-input"
@@ -894,8 +988,8 @@ const TemplateModal = (props) => {
                                                     type="number"
                                                     className="form-control"
                                                     id="top-input"
-                                                    value={numberOfFrontSideColumn}
-                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                    value={barcodeTopPos}
+                                                    onChange={(e) => setBarcodeTopPos(e.target.value)}
                                                 />
                                             </div>
                                             <div className="col-md-2">
@@ -913,8 +1007,8 @@ const TemplateModal = (props) => {
                                                     type="number"
                                                     className="form-control"
                                                     id="bottom-input"
-                                                    value={numberOfFrontSideColumn}
-                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                    value={barcodeBottomPos}
+                                                    onChange={(e) => setBarcodeBottomPos(e.target.value)}
                                                 />
                                             </div>
                                             <div className="col-md-2">
@@ -935,8 +1029,8 @@ const TemplateModal = (props) => {
                                                     type="number"
                                                     className="form-control"
                                                     id="top-input"
-                                                    value={numberOfFrontSideColumn}
-                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                    value={barcodeLeftPos}
+                                                    onChange={(e) => setBarcodeLeftPos(e.target.value)}
                                                 />
                                             </div>
                                             <div className="col-md-2">
@@ -954,8 +1048,8 @@ const TemplateModal = (props) => {
                                                     type="number"
                                                     className="form-control"
                                                     id="bottom-input"
-                                                    value={numberOfFrontSideColumn}
-                                                    onChange={(e) => setNumberOfFrontSideColumn(e.target.value)}
+                                                    value={barcodeRightPos}
+                                                    onChange={(e) => setBarcodeRightPos(e.target.value)}
                                                 />
                                             </div>
                                             <div className="col-md-2">
