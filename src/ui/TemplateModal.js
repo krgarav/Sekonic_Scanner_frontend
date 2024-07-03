@@ -80,17 +80,19 @@ const TemplateModal = (props) => {
     const [values, setValues] = useState(Array(48).fill(0));
     const [options, setOptions] = useState([]);
     const [colIdPattern, setColIdPattern] = useState();
-    // const options = [
-    //     { label: "Col ", value: "grapes" },
-    //     { label: "", value: "mango" },
-    //     { label: "", value: "strawberry" },
-    // ];
+    const [idNumber, setIdNumber] = useState("");
     useEffect(() => {
+        console.log(selected);
+        const value = selected.map((item) => item.value);
+        console.log(value)
         const arr = Array(+numberOfFrontSideColumn).fill(0)
-        for (let i = 0 ;i<arr.length;i++){
-            
+        for (let j = 0; j < value.length; j++) {
+            arr[value[j]] = 1
         }
-    }, [options]);
+        // }
+        console.log(arr.join("").toString());
+        setIdNumber(arr.join("").toString())
+    }, [options, selected]);
     useEffect(() => {
         const option = []
         for (let i = 0; i < +numberOfFrontSideColumn; i++) {
@@ -199,7 +201,7 @@ const TemplateModal = (props) => {
             "printFontSize": 0,
             "printFontSpace": 0,
             "printMode": 0,
-            "colIdPattern": "0000000000100001000001"
+            "colIdPattern": idNumber
         }];
         console.log(templateData)
         const index = dataCtx.setAllTemplates(templateData);

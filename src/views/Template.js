@@ -284,7 +284,8 @@ const Template = () => {
         "windowNG": ngAction,
         "type": iType,
         "maximumMark": iMaximumMarks,
-        "minimumMark": iMinimumMarks
+        "minimumMark": iMinimumMarks,
+        "colIdPattern": colIdPattern
       } = item;
 
       return {
@@ -300,6 +301,7 @@ const Template = () => {
         iDifference: +iDifference,
         iMinimumMarks: +iMinimumMarks,
         iMaximumMarks: +iMaximumMarks,
+        colIdPattern,
         iType,
         ngAction
       };

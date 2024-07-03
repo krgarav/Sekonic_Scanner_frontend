@@ -19,5 +19,5 @@ export const GET_PROCESS_24_PAGE_DATA = url + "Process_24_Page_Booklet_Data";
 export const SCAN_24_PAGE_FILES = url + "Scan_24_Page_Booklet";
 
 
-export const GET_PROCESS_32_PAG_DATA = url + "Process_32_Page_Booklet_Data";
+export const GET_PROCESS_32_PAG_DATA = url + "ProcessData";
 export const SCAN_32_PAGE_FILES = url + "Scan_32_Page_Booklet";

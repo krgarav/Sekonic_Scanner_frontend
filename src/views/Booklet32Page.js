@@ -11,7 +11,10 @@ import { toast } from "react-toastify";
 import { Button, Card, CardHeader, Container, Row, Table } from "reactstrap";
 import { refreshScanner } from "helper/Booklet32Page_helper";
 import { scanFiles } from "helper/Booklet32Page_helper";
-import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, ToolbarItems, FilterSettingsModel, EditSettingsModel, Filter, Edit } from '@syncfusion/ej2-react-grids';
+// import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, Page, Filter, Edit } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, ExcelExport, PdfExport, ToolbarItems, Page, FilterSettingsModel, EditSettingsModel, Filter, Edit } from '@syncfusion/ej2-react-grids';
+
+import axios from "axios";
 const dataSet = [
     { OrderID: 10248, CustomerName: 'Paul Henriot', OrderDate: new Date(2020, 5, 20), Freight: 32.38, ShippedDate: new Date(2020, 5, 23), ShipCountry: 'France' },
     { OrderID: 10249, CustomerName: 'Karin Josephs', OrderDate: new Date(2020, 6, 19), Freight: 11.61, ShippedDate: new Date(2020, 6, 22), ShipCountry: 'Germany' },
@@ -33,6 +36,7 @@ const Booklet32Page = () => {
         { OrderID: 10249, CustomerID: 'TOMSP' }]);
 
     const [scanning, setScanning] = useState(false);
+    const [headData, setHeadData] = useState([]);
     const filterSettings = { type: 'Excel' };
     const toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
@@ -42,7 +46,7 @@ const Booklet32Page = () => {
 
     const getScanData = async () => {
         try {
-            const data = await fetchProcessData();
+            const data = await fetchProcessData(1009);
             if (data?.result?.success) {
                 setData(data?.result?.data);
             }
@@ -54,20 +58,27 @@ const Booklet32Page = () => {
         }
     };
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            if (scanning) {
-                getScanData();
-            }
-        }, 1000);
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => {
+    //         if (scanning) {
+    //             getScanData();
+    //         }
+    //     }, 1000);
 
-        return () => clearInterval(intervalId);
-    }, [scanning]);
+    //     return () => clearInterval(intervalId);
+    // }, [scanning]);
 
     const handleStart = async () => {
+        console.log("clicked")
         try {
             setScanning(true);
-            const result = await scanFiles();
+            const res = await axios.get("https://rb5xhrfq-5289.inc1.devtunnels.ms/ProcessData?Id=1009")
+            // const result = await fetchProcessData(1009);
+            const newData = Object.keys(res.data.result.data[0])
+            setHeadData(newData);
+            setData(res.data.result.data)
+            console.log(newData)
+            console.log(dataSet)
         } catch (error) {
             console.log(error);
             toast.error("Error in starting");
@@ -76,7 +87,10 @@ const Booklet32Page = () => {
         }
     };
 
-
+    const handleSave = (args) => {
+        // const updatedData = data.map((item) => (item.id === args.rowData.id ? args.rowData : item));
+        // setData([]);
+    };
     const handleRefresh = () => {
         try {
             refreshScanner();
@@ -86,88 +100,45 @@ const Booklet32Page = () => {
         }
     }
 
+    // https://rb5xhrfq-5289.inc1.devtunnels.ms/ProcessData?Id=1009
+
+    const columnsDirective = headData.map((item, index) => {
+
+
+        return <ColumnDirective field={item} key={index}
+            headerText={item}
+            width='120' textAlign='Right'
+        >
+        </ColumnDirective>
+    })
+
+    console.log(data)
+
     return (
         <>
             <NormalHeader />
 
 
             <Container className="mt--7" fluid>
-
-                {/* <Row>
-                    <div className="col">
-                        <Card className="shadow">
-                            <CardHeader className="border-0">
-                                <div className="d-flex justify-content-between">
-                                    <h1 className="mt-2">32 Page Booklet</h1>
-                                </div>
-                            </CardHeader>
-                            <div className=" head">
-                                <div className="table-main">
-                                    <table className=" ">
-                                        <thead>
-                                            <tr className="JobQueueTableTr">
-                                                <th className="JobQueueTableTh">Index Number</th>
-                                                <th className="JobQueueTableTh">Graph 1</th>
-                                                <th className="JobQueueTableTh">Graph 2</th>
-                                                <th className="JobQueueTableTh">Graph 3</th>
-                                                <th className="JobQueueTableTh">Graph 4</th>
-                                                <th className="JobQueueTableTh">Exam Type</th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {data?.map((item, index) => (
-                                                <tr className="JobQueueTableTr" key={index}>
-                                                    {Object.values(item).map((value, i) => (
-                                                        <td key={i}>{value}</td>
-                                                    ))}
-                                                </tr>
-                                            ))}
-
-                                            {[...Array(20).keys()].map(i => (
-                                                <tr className="JobQueueTableTr" key={i}>
-                                                    {[...Array(6).keys()].map(i => (
-                                                        <td key={i}>  </td>
-                                                    ))}
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="functions mt-2 d-flex justify-content-end">
-                                    <Button className="" color="success" type="button" onClick={handleStart}>
-                                        Start
-                                    </Button>
-                                    <Button className="" color="warning" type="button" onClick={handleRefresh}>
-                                        Refresh
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                </Row> */}
-
                 <div className='control-pane'>
                     <div className='control-section'>
-                        <GridComponent dataSource={dataSet} height='350' allowSorting={true} editSettings={editSettings} allowFiltering={true} filterSettings={filterSettings} toolbar={toolbar}>
+                        <GridComponent actionComplete={handleSave} dataSource={data} height='350' allowSorting={false} editSettings={editSettings} allowFiltering={false} filterSettings={filterSettings} toolbar={toolbar}>
                             <ColumnsDirective>
-                                <ColumnDirective field='OrderID' headerText='Order ID' width='120' textAlign='Right' validationRules={orderidRules} isPrimaryKey={true}></ColumnDirective>
-                                <ColumnDirective field='CustomerName' headerText='Customer Name' width='150' validationRules={customeridRule}></ColumnDirective>
-                                <ColumnDirective field='OrderDate' headerText='Order Date' width='130' format='yMd' textAlign='Right' editType='datepickeredit' />
-                                <ColumnDirective field='Freight' headerText='Freight' width='120' format='C2' textAlign='Right' validationRules={freightRules} editType='numericedit' />
-                                <ColumnDirective field='ShippedDate' headerText='Shipped Date' width='130' format='yMd' textAlign='Right' editType='datepickeredit'></ColumnDirective>
-                                <ColumnDirective field='ShipCountry' headerText='Ship Country' width='150' editType='dropdownedit'></ColumnDirective>
+                                {columnsDirective}
                             </ColumnsDirective>
                             <Inject services={[Sort, Toolbar, Filter, Edit]} />
+
                         </GridComponent>
+                        <div className="m-2" style={{ float: "right" }}>
+                            <Button className="" color="success" type="button" onClick={handleStart} >Start</Button>
+                            <Button className="" color="warning" type="button" onClick={handleStart} >Refresh</Button>
+                        </div>
+
                     </div>
+
                 </div>
 
             </Container>
-
-
-
-
 
         </>
     );

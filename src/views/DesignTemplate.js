@@ -289,11 +289,14 @@ const DesignTemplate = () => {
             };
 
         }
-        setSelectedCoordinates((prev) => [...prev, selection]);
+
+        const newSelected = { ...selection, name: selectedFieldType !== "idField" ? name : "Id Field" }
+        setSelectedCoordinates((prev) => [...prev, newSelected]);
         setSelection(null);
         setModalShow(false);
         dataCtx.modifyAllTemplate(templateIndex, newData, selectedFieldType);
     };
+
     const handleSkewMarkOptionChange = (event) => {
         setSkewOption(event.target.value);
     };
@@ -301,12 +304,15 @@ const DesignTemplate = () => {
         setWindowNgOption(event.target.value)
     }
     const handleRadioChange = (e) => {
+        // if (e.target.value === "idField") {
+        //     setName("Id Field")
+        // }
         setSelectedFieldType(e.target.value);
     };
     return (
         <>
-            <Button>See The saved Data</Button>
-            <Button>Send to Backend</Button>
+
+            <Button>Submit</Button>
             <div className="container">
 
                 <div id="imagecontainer" className={classes.img} >
@@ -369,27 +375,42 @@ const DesignTemplate = () => {
                                 {selectedCoordinates.map((data, index) => (
                                     <div
                                         key={index}
-                                        className="border-blue-500"
+                                        className="border-blue-900"
                                         style={{
                                             border: "2px solid #007bff",
                                             position: "absolute",
                                             left: `${(data.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 4}px`,
                                             top: `${(data.startRow * (imageRef.current.getBoundingClientRect().height / numRows)) - 3}px`,
                                             width: `${((data.endCol - data.startCol + 1) * (imageRef.current.getBoundingClientRect().width / numCols))}px`,
-                                            height: `${((data.endRow - data.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows))}px`
+                                            height: `${((data.endRow - data.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows))}px`,
+
                                         }}
-                                    ></div>
+
+                                    >
+
+                                        <div className="d-flex justify-content-between align-items-center bg-dark text-white p-1" style={{ opacity: 0.8, fontSize: '12px' }}>
+                                            <span className="user-select-none">
+                                                {data.name}
+                                            </span>
+                                            <span className="d-flex align-items-center user-select-none gap-10">
+                                                <i className="fas fa-eye me-2 mr-1" style={{ cursor: 'pointer' }}></i>
+                                                <i className="fas fa-times text-danger cross-icon  ml-1" style={{ cursor: 'pointer' }}></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
                                 ))}
                                 {selection && (
                                     <div
-                                        className="border-green-500"
+                                        className="border-green-700"
                                         style={{
                                             border: "2px solid green",
                                             position: "absolute",
                                             left: `${(selection.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 4}px`,
                                             top: `${(selection.startRow * (imageRef.current.getBoundingClientRect().height / numRows)) - 3}px`,
                                             width: `${(selection.endCol - selection.startCol + 1) * (imageRef.current.getBoundingClientRect().width / numCols)}px`,
-                                            height: `${(selection.endRow - selection.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows)}px`
+                                            height: `${(selection.endRow - selection.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows)}px`,
+                                            content: "question field"
                                         }}
                                     ></div>
                                 )}
