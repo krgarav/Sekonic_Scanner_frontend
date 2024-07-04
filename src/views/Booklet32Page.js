@@ -54,7 +54,6 @@ const Booklet32Page = () => {
             console.log(error);
             toast.error("something went wrong");
             setScanning(false);
-
         }
     };
 
@@ -69,16 +68,13 @@ const Booklet32Page = () => {
     // }, [scanning]);
 
     const handleStart = async () => {
-        console.log("clicked")
         try {
             setScanning(true);
-            const res = await axios.get("https://rb5xhrfq-5289.inc1.devtunnels.ms/ProcessData?Id=1009")
-            // const result = await fetchProcessData(1009);
-            const newData = Object.keys(res.data.result.data[0])
+            const result = await fetchProcessData(1009);
+            console.log(result.result.data)
+            const newData = Object.keys(result.result.data[0])
             setHeadData(newData);
-            setData(res.data.result.data)
-            console.log(newData)
-            console.log(dataSet)
+            setData(result.result.data)
         } catch (error) {
             console.log(error);
             toast.error("Error in starting");
@@ -100,16 +96,13 @@ const Booklet32Page = () => {
         }
     }
 
-    // https://rb5xhrfq-5289.inc1.devtunnels.ms/ProcessData?Id=1009
-
     const columnsDirective = headData.map((item, index) => {
-
-
-        return <ColumnDirective field={item} key={index}
-            headerText={item}
-            width='120' textAlign='Right'
-        >
-        </ColumnDirective>
+        return (
+            <ColumnDirective field={item} key={index}
+                headerText={item}
+                width='120' textAlign='Right'
+            >
+            </ColumnDirective>)
     })
 
     console.log(data)
@@ -117,8 +110,6 @@ const Booklet32Page = () => {
     return (
         <>
             <NormalHeader />
-
-
             <Container className="mt--7" fluid>
                 <div className='control-pane'>
                     <div className='control-section'>

@@ -81,26 +81,6 @@ const TemplateModal = (props) => {
     const [options, setOptions] = useState([]);
     const [colIdPattern, setColIdPattern] = useState();
     const [idNumber, setIdNumber] = useState("");
-    useEffect(() => {
-        console.log(selected);
-        const value = selected.map((item) => item.value);
-        console.log(value)
-        const arr = Array(+numberOfFrontSideColumn).fill(0)
-        for (let j = 0; j < value.length; j++) {
-            arr[value[j]] = 1
-        }
-        // }
-        console.log(arr.join("").toString());
-        setIdNumber(arr.join("").toString())
-    }, [options, selected]);
-    useEffect(() => {
-        const option = []
-        for (let i = 0; i < +numberOfFrontSideColumn; i++) {
-            let obj = { label: `Col ${i + 1}`, value: i }
-            option.push(obj);
-        }
-        setOptions(option)
-    }, [numberOfFrontSideColumn]);
 
     const handleColumnChange = (event) => {
         const columnIndex = event.value - 1;
@@ -147,8 +127,6 @@ const TemplateModal = (props) => {
             reader.readAsDataURL(file);
         }
     }
-
-
 
     const createTemplateHandler = () => {
 
@@ -201,7 +179,6 @@ const TemplateModal = (props) => {
             "printFontSize": 0,
             "printFontSpace": 0,
             "printMode": 0,
-            "colIdPattern": idNumber
         }];
         console.log(templateData)
         const index = dataCtx.setAllTemplates(templateData);

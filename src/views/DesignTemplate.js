@@ -7,6 +7,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import DataContext from "store/DataContext";
+import { MultiSelect } from "react-multi-select-component";
 
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
@@ -56,9 +57,11 @@ const DesignTemplate = () => {
         face,
         arr
     } = useLocation().state;
+    const [selectedCol, setSelectedCol] = useState([]);
+    const [options, setOptions] = useState([]);
+    const [idNumber, setIdNumber] = useState("");
     const numRows = numberOfLines;
     const numCols = numberOfFrontSideColumn;
-
     const toggleSelection = (row, col) => {
         const key = `${row},${col}`;
         setSelected((prev) => {
@@ -94,12 +97,27 @@ const DesignTemplate = () => {
                 break;
         }
     }, [])
+    useEffect(() => {
+        const option = []
+        for (let i = 0; i < +numberOfFrontSideColumn; i++) {
+            let obj = { label: `Col ${i + 1}`, value: i }
+            option.push(obj);
+        }
+        setOptions(option)
+    }, [numberOfFrontSideColumn]);
+    useEffect(() => {
+        const value = selectedCol.map((item) => item.value);
+        const arr = Array(+numberOfFrontSideColumn).fill(0)
+        for (let j = 0; j < value.length; j++) {
+            arr[value[j]] = 1
+        }
+        setIdNumber(arr.join("").toString())
+    }, [options, selectedCol]);
     {/* useEffect for toggling image overlapping over coordinate selection area*/ }
     useEffect(() => {
         const handleKeyPress = (event) => {
             if (modalShow) return; // Ignore keyboard events when modal is shown
-            if (event.altKey && event.shiftKey) {
-                // Toggle z-index when Alt + Enter is pressed
+            if (event.altKey && event.shiftKey) { // Toggle z-index when Alt + Enter is pressed
                 const imgDiv = document.getElementById("imagecontainer");
                 imgDiv.style.zIndex = imgDiv.style.zIndex === "999" ? "-1" : "999";
             }
@@ -172,8 +190,7 @@ const DesignTemplate = () => {
 
             return newSelection;
         });
-        console.log(selection)
-        console.log(selection?.endRow + 1, " ", selection?.startRow + 1, " ", selection?.endCol, " ", selection?.startCol,);
+
     };
 
     const handleMouseUp = () => {
@@ -182,7 +199,6 @@ const DesignTemplate = () => {
             setModalShow(true);
         }
     };
-
     const handleCancel = () => {
         setDragStart(null);
         setSelection(null);
@@ -304,17 +320,28 @@ const DesignTemplate = () => {
         setWindowNgOption(event.target.value)
     }
     const handleRadioChange = (e) => {
-        // if (e.target.value === "idField") {
-        //     setName("Id Field")
-        // }
         setSelectedFieldType(e.target.value);
+    };
+
+
+    const handleEyeClick = (event) => {
+        event.stopPropagation();
+        console.log("Eye Clicked")
+
+    };
+
+    const handleCrossClick = (event) => {
+        event.stopPropagation();
+        console.log("Cross Clicked")
+
+    };
+    const handleIconMouseUp = (event) => {
+        event.stopPropagation();
     };
     return (
         <>
-
             <Button>Submit</Button>
             <div className="container">
-
                 <div id="imagecontainer" className={classes.img} >
                     <Rnd
                         default={{
@@ -385,16 +412,16 @@ const DesignTemplate = () => {
                                             height: `${((data.endRow - data.startRow + 1) * (imageRef.current.getBoundingClientRect().height / numRows))}px`,
 
                                         }}
-
+                                        onClick={(e) => e.stopPropagation()}
                                     >
 
-                                        <div className="d-flex justify-content-between align-items-center bg-dark text-white p-1" style={{ opacity: 0.8, fontSize: '12px' }}>
+                                        <div className="d-flex justify-content-between align-items-center bg-dark text-white p-1" style={{ opacity: 0.8, fontSize: '12px', zIndex: "999", position: 'relative' }}>
                                             <span className="user-select-none">
                                                 {data.name}
                                             </span>
                                             <span className="d-flex align-items-center user-select-none gap-10">
-                                                <i className="fas fa-eye me-2 mr-1" style={{ cursor: 'pointer' }}></i>
-                                                <i className="fas fa-times text-danger cross-icon  ml-1" style={{ cursor: 'pointer' }}></i>
+                                                <i className="fas fa-eye me-2 mr-1" onMouseUp={handleIconMouseUp} onClick={(e) => { e.stopPropagation(); handleEyeClick(e); }} style={{ cursor: 'pointer' }}></i>
+                                                <i className="fas fa-times text-danger cross-icon  ml-1" onMouseUp={handleIconMouseUp} onClick={(e) => { e.stopPropagation(); handleCrossClick(e); }} style={{ cursor: 'pointer' }}></i>
                                             </span>
                                         </div>
 
@@ -432,8 +459,7 @@ const DesignTemplate = () => {
                         <h2 className="text-center">DEFINE REGION</h2>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-
+                <Modal.Body style={{ height: "70vh" }}>
                     <Row className="mb-2">
                         <label htmlFor="example-text-input" className="col-md-2 col-form-label">
                             Field Type
@@ -547,6 +573,34 @@ const DesignTemplate = () => {
                                 required />
                         </div>
                     </Row>
+                    {selectedFieldType === "idField" && <Row className="mb-2">
+                        <label className="col-md-2 " style={{}}>
+                            Set Id Pattern
+                        </label>
+                        <div className="col-md-10">
+                            {/* <Row> */}
+                            <div className="row">
+
+
+                                <select className="col-md-6 form-control">
+                                    <option>Row</option>
+                                    <option>Col</option>
+                                </select>
+                                <div className="col-md-6">
+                                    <MultiSelect
+                                        options={options}
+                                        value={selectedCol}
+                                        onChange={setSelectedCol}
+                                        labelledBy="Select"
+                                    />
+                                </div>
+                            </div>
+                            <small>{idNumber}</small>
+                            {/* </Row> */}
+
+                        </div>
+
+                    </Row>}
                     {selectedFieldType === 'skewMarkField' && <Row className="mb-2">
                         <label htmlFor="example-select-input" className="col-md-2 col-form-label">
                             Skew Mark
@@ -675,24 +729,7 @@ const DesignTemplate = () => {
                             </select>
                         </div>
                     </Row>
-                    {/* {selectedFieldType === 'idField' && <Row>
-                        <label htmlFor="example-text-input"
-                            className="col-md-2 ">
-                            Page Position :
-                        </label>
-                        <div className="col-md-10">
-                            <select
-                                className="form-control"
-                                value={readingDirectionOption}
-                                onChange={(e) => { setReadingDirectionOption(e.target.value) }}
-                                defaultValue={""}
-                            >
-                                <option value="">Select Page position... </option>
-                                <option value="Linear">Linear </option>
-                                <option value="Horizontal"> Horizontal </option>
-                            </select>
-                        </div>
-                    </Row>} */}
+
                     <Row className="mb-2">
                         <label
                             htmlFor="example-text-input"
