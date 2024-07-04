@@ -70,12 +70,46 @@ const DesignTemplate = () => {
             return newState;
         });
     }
-    const coordinateData = [];
+    const rndRef = useRef();
     const formFieldData = arr?.formFieldWindowParameters;
     const questionField = arr?.questionsWindowParameters;
     const skewField = arr?.skewMarksWindowParameters;
     const idFeild = arr?.idWindowParameters;
 
+
+    // Function to get the current position and dimensions
+    const getCurrentImageState = () => {
+        if (rndRef.current) {
+            const { x, y, width, height } = rndRef.current.resizableElement.current.getBoundingClientRect();
+            return { x, y, width, height };
+        }
+        return null;
+    };
+    // useEffect(() => {
+    //     // Example usage: log the current state
+    //     console.log(getCurrentImageState());
+    // }, [rndRef.current]);
+    useEffect(() => {
+        if (arr) {
+            const formFieldData = arr?.formFieldWindowParameters;
+            const questionField = arr?.questionsWindowParameters;
+            const skewField = arr?.skewMarksWindowParameters;
+            const idField = arr?.idWindowParameters;
+            const coordinateOfFormData = formFieldData?.map((item) => item.Coordinate)
+            const coordinateOfquestionField = questionField?.map((item) => item.Coordinate)
+            const coordinateOfskewField = skewField?.map((item) => item.Coordinate)
+            const coordinateOfidField = idField?.map((item) => item.Coordinate)
+            const allCoordinates = [...coordinateOfFormData, ...coordinateOfquestionField, ...coordinateOfskewField, ...coordinateOfidField]
+
+            console.log(allCoordinates)
+            const newSelectedFields = allCoordinates?.map((item) => {
+                const { "Start Row": startRow, "Start Col": startCol, "End Row": endRow, "End Col": endCol, name } = item;
+                return { startRow, startCol, endRow, endCol, name }
+            })
+            setSelectedCoordinates(newSelectedFields)
+            console.log(coordinateOfFormData)
+        }
+    }, [])
     useEffect(() => {
         switch (selectedBubble) {
             case "rounded rectangle":
@@ -98,13 +132,16 @@ const DesignTemplate = () => {
         }
     }, [])
     useEffect(() => {
-        const option = []
-        for (let i = 0; i < +numberOfFrontSideColumn; i++) {
-            let obj = { label: `Col ${i + 1}`, value: i }
-            option.push(obj);
-        }
-        setOptions(option)
+        // Create an array to hold the options
+        const options = Array.from({ length: +numberOfFrontSideColumn }, (v, i) => ({
+            label: `Col ${i + 1}`, // Set the label as 'Col X' where X is the column number
+            value: i               // Set the value as the index
+        }));
+
+        // Update the state with the new options array
+        setOptions(options);
     }, [numberOfFrontSideColumn]);
+
     useEffect(() => {
         const value = selectedCol.map((item) => item.value);
         const arr = Array(+numberOfFrontSideColumn).fill(0)
@@ -150,7 +187,6 @@ const DesignTemplate = () => {
 
         setDragStart({ row, col });
     };
-
     // const handleMouseMove = (e) => {
     //     if (!e.buttons || !dragStart) return;
     //     const boundingRect = imageRef.current.getBoundingClientRect();
@@ -222,7 +258,8 @@ const DesignTemplate = () => {
                     "Start Row": selection?.startRow + 1,
                     "Start Col": selection?.startCol,
                     "End Row": selection?.endRow + 1,
-                    "End Col": selection?.endCol
+                    "End Col": selection?.endCol,
+                    "name": "Id Field"
                 },
                 "iDirection": readingDirectionOption,
                 "rowStart": selection?.startRow + 1,
@@ -239,7 +276,7 @@ const DesignTemplate = () => {
                 "type": type,
                 "option": option,
                 "face": face
-            };
+            }
 
         } else if (selectedFieldType === "skewMarkField") {
             newData = {
@@ -252,7 +289,8 @@ const DesignTemplate = () => {
                     "Start Row": selection?.startRow + 1,
                     "Start Col": selection?.startCol,
                     "End Row": selection?.endRow + 1,
-                    "End Col": selection?.endCol
+                    "End Col": selection?.endCol,
+                    "name": name
                 },
                 "readingDirection": readingDirectionOption,
                 "rowStart": selection?.startRow + 1,
@@ -283,7 +321,8 @@ const DesignTemplate = () => {
                     "Start Row": selection?.startRow + 1,
                     "Start Col": selection?.startCol,
                     "End Row": selection?.endRow + 1,
-                    "End Col": selection?.endCol
+                    "End Col": selection?.endCol,
+                    "name": name
                 },
                 "readingDirection": readingDirectionOption,
                 "rowStart": selection?.startRow + 1,
@@ -305,6 +344,7 @@ const DesignTemplate = () => {
             };
 
         }
+        console.log(getCurrentImageState())
 
         const newSelected = { ...selection, name: selectedFieldType !== "idField" ? name : "Id Field" }
         setSelectedCoordinates((prev) => [...prev, newSelected]);
@@ -324,16 +364,26 @@ const DesignTemplate = () => {
     };
 
 
-    const handleEyeClick = (event) => {
-        event.stopPropagation();
-        console.log("Eye Clicked")
-
+    const handleEyeClick = (data) => {
+        console.log(data, templateIndex)
+        const template = dataCtx.allTemplates[templateIndex]
+        console.log(data.name)
+        if (data.name === "Id Field") {
+            const data = template.idWindowParameters[0]
+            // setSelectedFieldType("idField")
+            // setWindowNgOption(data?.windowNG);
+            // setMinimumMark(data?.minimumMark);
+            // setMaximumMark(data?.maximumMark);
+            // setNoInRow(data?.totalNoInRow);
+            // setNoInCol(data?.totalNoInColumn)
+            setModalShow(true);
+        }
     };
 
-    const handleCrossClick = (event) => {
-        event.stopPropagation();
-        console.log("Cross Clicked")
-
+    const handleCrossClick = (data) => {
+        const response = window.confirm("Are you sure you want to delete the selected field ?");
+        console.log(response);
+        console.log(data)
     };
     const handleIconMouseUp = (event) => {
         event.stopPropagation();
@@ -344,6 +394,7 @@ const DesignTemplate = () => {
             <div className="container">
                 <div id="imagecontainer" className={classes.img} >
                     <Rnd
+                        ref={rndRef}
                         default={{
                             x: 0,
                             y: 0,
@@ -420,8 +471,8 @@ const DesignTemplate = () => {
                                                 {data.name}
                                             </span>
                                             <span className="d-flex align-items-center user-select-none gap-10">
-                                                <i className="fas fa-eye me-2 mr-1" onMouseUp={handleIconMouseUp} onClick={(e) => { e.stopPropagation(); handleEyeClick(e); }} style={{ cursor: 'pointer' }}></i>
-                                                <i className="fas fa-times text-danger cross-icon  ml-1" onMouseUp={handleIconMouseUp} onClick={(e) => { e.stopPropagation(); handleCrossClick(e); }} style={{ cursor: 'pointer' }}></i>
+                                                <i className="fas fa-eye me-2 mr-1" onMouseUp={handleIconMouseUp} onClick={(e) => { handleEyeClick(data); }} style={{ cursor: 'pointer' }}></i>
+                                                <i className="fas fa-times text-danger cross-icon  ml-1" onMouseUp={handleIconMouseUp} onClick={() => { handleCrossClick(data); }} style={{ cursor: 'pointer' }}></i>
                                             </span>
                                         </div>
 
@@ -577,29 +628,24 @@ const DesignTemplate = () => {
                         <label className="col-md-2 " style={{}}>
                             Set Id Pattern
                         </label>
-                        <div className="col-md-10">
-                            {/* <Row> */}
-                            <div className="row">
 
-
-                                <select className="col-md-6 form-control">
-                                    <option>Row</option>
-                                    <option>Col</option>
-                                </select>
-                                <div className="col-md-6">
-                                    <MultiSelect
-                                        options={options}
-                                        value={selectedCol}
-                                        onChange={setSelectedCol}
-                                        labelledBy="Select"
-                                    />
-                                </div>
-                            </div>
-                            <small>{idNumber}</small>
-                            {/* </Row> */}
-
+                        <div className="col-md-2">
+                            <select className=" form-control">
+                                <option>Row</option>
+                                <option>Col</option>
+                            </select>
                         </div>
-
+                        <label htmlFor="example-select-input" className="col-md-2 ">
+                            Id selection
+                        </label>
+                        <div className="col-md-6">
+                            <MultiSelect
+                                options={options}
+                                value={selectedCol}
+                                onChange={setSelectedCol}
+                                labelledBy="Select"
+                            />
+                        </div>
                     </Row>}
                     {selectedFieldType === 'skewMarkField' && <Row className="mb-2">
                         <label htmlFor="example-select-input" className="col-md-2 col-form-label">
@@ -624,7 +670,7 @@ const DesignTemplate = () => {
                             Start Row
                         </label>
                         <div className="col-2 ">
-                            <input value={selection?.startRow + 1} readOnly className="form-control" />
+                            <input id="startRow" value={selection?.startRow + 1} readOnly className="form-control" />
                         </div>
                         <label htmlFor="example-select-input" className="col-2 col-form-label">
                             End Row

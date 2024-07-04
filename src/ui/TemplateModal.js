@@ -180,7 +180,6 @@ const TemplateModal = (props) => {
             "printFontSpace": 0,
             "printMode": 0,
         }];
-        console.log(templateData)
         const index = dataCtx.setAllTemplates(templateData);
 
         setModalShow(false);
@@ -358,19 +357,7 @@ const TemplateModal = (props) => {
                                         </Col>
                                     </Row>
                                     <Row className='mb-3'>
-                                        <Col md={2}>
-                                            <label style={{ fontSize: ".9rem" }}>
-                                                Select Col Id
-                                            </label>
-                                        </Col>
-                                        <Col md={5}>
-                                            <MultiSelect
-                                                options={options}
-                                                value={selected}
-                                                onChange={setSelected}
-                                                labelledBy="Select"
-                                            />
-                                        </Col>
+                                       
 
                                         <label
                                             htmlFor="example-text-input"
@@ -379,7 +366,7 @@ const TemplateModal = (props) => {
                                         >
                                             Barcode Count:
                                         </label>
-                                        <div className="col-md-3">
+                                        <div className="col-md-10">
                                             <input placeholder="Enter barcode count" type="number" className="form-control" onChange={(e) => {
                                                 settoggle((item) => ({ ...item, barcode: false }));
                                                 setBarCount(e.target.value)
