@@ -417,7 +417,6 @@ const DesignTemplate = () => {
             console.error('Error sending POST request:', error);
         }
     }
-    console.log(imageState)
     return (
         <>
             <Button onClick={sendHandler}>Submit</Button>

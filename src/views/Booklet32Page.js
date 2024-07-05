@@ -13,8 +13,7 @@ import { refreshScanner } from "helper/Booklet32Page_helper";
 import { scanFiles } from "helper/Booklet32Page_helper";
 // import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, Page, Filter, Edit } from '@syncfusion/ej2-react-grids';
 import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, ExcelExport, PdfExport, ToolbarItems, Page, FilterSettingsModel, EditSettingsModel, Filter, Edit } from '@syncfusion/ej2-react-grids';
-
-import axios from "axios";
+// import Select, { components } from "react-select";
 const dataSet = [
     { OrderID: 10248, CustomerName: 'Paul Henriot', OrderDate: new Date(2020, 5, 20), Freight: 32.38, ShippedDate: new Date(2020, 5, 23), ShipCountry: 'France' },
     { OrderID: 10249, CustomerName: 'Karin Josephs', OrderDate: new Date(2020, 6, 19), Freight: 11.61, ShippedDate: new Date(2020, 6, 22), ShipCountry: 'Germany' },
@@ -36,13 +35,29 @@ const Booklet32Page = () => {
         { OrderID: 10249, CustomerID: 'TOMSP' }]);
 
     const [scanning, setScanning] = useState(false);
-    const [headData, setHeadData] = useState([]);
+    const [headData, setHeadData] = useState(["OrderID"]);
     const filterSettings = { type: 'Excel' };
     const toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
     const customeridRule = { required: true, minLength: 5 };
     const orderidRules = { required: true, number: true };
     const freightRules = { required: true, min: 0 };
+    const [items, setItems] = useState([]);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setItems(prevItems => {
+    //             const nextIndex = prevItems.length;
+    //             if (nextIndex < data.length) {
+    //                 return [...prevItems, data[nextIndex]];
+    //             } else {
+    //                 clearInterval(interval);
+    //                 return prevItems;
+    //             }
+    //         });
+    //     }, 1000);
+
+    //     return () => clearInterval(interval); // Cleanup on unmount
+    // }, [data]);
 
     const getScanData = async () => {
         try {
@@ -74,7 +89,19 @@ const Booklet32Page = () => {
             console.log(result.result.data)
             const newData = Object.keys(result.result.data[0])
             setHeadData(newData);
-            setData(result.result.data)
+            setData(result.result.data);
+            const interval = setInterval(() => {
+                setItems(prevItems => {
+                    const nextIndex = prevItems.length;
+                    if (nextIndex < result.result.data.length) {
+                        return [...prevItems, result.result.data[nextIndex]];
+                    } else {
+                        clearInterval(interval);
+                        return prevItems;
+                    }
+                });
+            }, 1000);
+
         } catch (error) {
             console.log(error);
             toast.error("Error in starting");
@@ -100,20 +127,38 @@ const Booklet32Page = () => {
         return (
             <ColumnDirective field={item} key={index}
                 headerText={item}
-                width='120' textAlign='Right'
+                width='120' textAlign='Center'
             >
             </ColumnDirective>)
     })
 
     console.log(data)
+    console.log(items)
 
     return (
         <>
             <NormalHeader />
+
             <Container className="mt--7" fluid>
+                <div className="d-flex">
+
+                    <h2 style={{ color: "white", zIndex: 999 }}>Choose Template : </h2>
+                    <Select
+                        // value={windowNgOption}
+                        // onChange={(selectedValue) => setWindowNgOption(selectedValue)}
+                        // options={windowNgData}
+                        // getOptionLabel={(option) => option?.showName || ""}
+                        // getOptionValue={(option) =>
+                        //     option?.id?.toString() || ""
+                        // }
+                        placeholder="Select Template"
+                    />
+                </div>
+
+                <br />
                 <div className='control-pane'>
                     <div className='control-section'>
-                        <GridComponent actionComplete={handleSave} dataSource={data} height='350' allowSorting={false} editSettings={editSettings} allowFiltering={false} filterSettings={filterSettings} toolbar={toolbar}>
+                        <GridComponent actionComplete={handleSave} dataSource={items} height='350' allowSorting={false} editSettings={editSettings} allowFiltering={false} filterSettings={filterSettings} toolbar={toolbar}>
                             <ColumnsDirective>
                                 {columnsDirective}
                             </ColumnsDirective>
