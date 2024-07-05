@@ -41,499 +41,41 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
-    // if (!arr || !arr.length) return;
-    const templateData = arr[0];
-    const idField = arr.idWindowParameters || [];
-
-    // if (!templateData || !idField.length) return;
-
-    const tempdata = { ...templateData, ...idField[0] };
+    const tempdata = arr[0].layoutParameters;
 
     navigate("/admin/design-template", {
       state: {
         templateIndex: index,
-        numberOfLines: +tempdata.Rows,
-        numberOfFrontSideColumn: +tempdata.Cols,
-        imgsrc: tempdata.Image,
-        selectedBubble: tempdata["Bubble Type"],
-        sensitivity: +tempdata.sensitivity,
-        difference: +tempdata.difference,
-        barCount: +tempdata.barcodeCount,
-        reject: tempdata.isReject,
-        face: +tempdata.face,
+        timingMarks: +tempdata.timingMarks,
+        totalColumns: +tempdata.totalColumns,
+        imgsrc: tempdata.imagesrc,
+        bubbleType: tempdata.bubbleType,
+        iSensitivity: +tempdata.iSensitivity,
+        iDifference: +tempdata.iDifference,
+        iReject: tempdata.iReject,
+        iFace: +tempdata.iFace,
         arr: arr
-      },
-
-    });
-  };
-
-
-  const sendToBackendHandler = async (arr, index) => {
-
-    const templateData = arr[0];
-    const formFieldData = arr?.formFieldWindowParameters;
-    const questionField = arr?.questionsWindowParameters;
-    const skewField = arr?.skewMarksWindowParameters;
-    const idFeild = arr?.idWindowParameters;
-    const tempdata = { ...templateData, ...idFeild?.[0] }
-
-
-    // const temstrucData = [tempdata]?.map((item) => {
-    //   const layoutName = item["Template Name"];
-    //   const timingMarks = +item["Rows"];
-    //   const barcodeCount = +item["Bar Count"];
-    //   const iFace = +item["face"];
-    //   const columnStart = +item["columnStart"];
-    //   const columnNumber = +item["totalNoInColumn"];
-    //   const columnStep = +item["totalStepInColumn"];
-    //   const rowStart = +item["rowStart"];
-    //   const rowNumber = +item["totalNoInRow"];
-    //   const rowStep = +item["totalStepInRow"];
-    //   const iDirection = + item["iDirection"];
-    //   const iSensitivity = +item["sensitivity"]
-    //   const iDifference = +item["difference"];
-    //   const ngAction = item["ngAction"].toString();
-    //   const dataReadDirection = item["direction"]
-    //   const iReject = +item["iReject"];
-    //   const { barcodeSide, barcodeColor, barcodeType, barcodeCheckDigit, barcodeOption,
-    //     barcodeRightPos, barcodeLeftPos, barcodeTopPos, barcodeBottomPos, imageEnable, imageColor,
-    //     imageType, imageParam, imageRotation, imageResoMode, imageResolution, printEnable, printStartPos,
-    //     printDigit, printStartNumber, printOrientation, printFontSize, printFontSpace, printMode
-    //   } = item;
-
-
-    //   return {
-    //     layoutName,
-    //     timingMarks,
-    //     barcodeCount,
-    //     iFace,
-    //     columnStart,
-    //     columnNumber,
-    //     columnStep,
-    //     rowStart,
-    //     rowNumber,
-    //     rowStep,
-    //     iDirection,
-    //     iSensitivity,
-    //     iDifference,
-    //     ngAction,
-    //     dataReadDirection,
-    //     iReject,
-    //     barcodeSide,
-    //     barcodeColor,
-    //     barcodeType,
-    //     barcodeCheckDigit,
-    //     barcodeOption,
-    //     barcodeRightPos,
-    //     barcodeLeftPos,
-    //     barcodeTopPos,
-    //     barcodeBottomPos,
-    //     imageEnable,
-    //     imageColor,
-    //     imageType,
-    //     imageParam,
-    //     imageRotation,
-    //     imageResoMode,
-    //     imageResolution,
-    //     printEnable,
-    //     printStartPos,
-    //     printDigit,
-    //     printStartNumber,
-    //     printOrientation,
-    //     printFontSize,
-    //     printFontSpace,
-    //     printMode
-    //   }
-    // })
-    const temstrucData = [tempdata]?.map(item => {
-      const {
-        "Template Name": layoutName,
-        "Rows": timingMarks,
-        "Bar Count": barcodeCount,
-        "face": iFace,
-        "columnStart": columnStart,
-        "totalNoInColumn": columnNumber,
-        "totalStepInColumn": columnStep,
-        "rowStart": rowStart,
-        "totalNoInRow": rowNumber,
-        "totalStepInRow": rowStep,
-        "iDirection": iDirection,
-        "sensitivity": iSensitivity,
-        "difference": iDifference,
-        "ngAction": ngAction,
-        "direction": dataReadDirection,
-        "iReject": iReject,
-        barcodeSide,
-        barcodeColor,
-        barcodeType,
-        barcodeCheckDigit,
-        barcodeOption,
-        barcodeRightPos,
-        barcodeLeftPos,
-        barcodeTopPos,
-        barcodeBottomPos,
-        imageEnable,
-        imageColor,
-        imageType,
-        imageParam,
-        imageRotation,
-        imageResoMode,
-        imageResolution,
-        printEnable,
-        printStartPos,
-        printDigit,
-        printStartNumber,
-        printOrientation,
-        printFontSize,
-        printFontSpace,
-        printMode
-      } = item;
-
-      return {
-        layoutName,
-        timingMarks: +timingMarks,
-        barcodeCount: +barcodeCount,
-        iFace: +iFace,
-        columnStart: +columnStart,
-        columnNumber: +columnNumber,
-        columnStep: +columnStep,
-        rowStart: +rowStart,
-        rowNumber: +rowNumber,
-        rowStep: +rowStep,
-        iDirection: +iDirection,
-        iSensitivity: +iSensitivity,
-        iDifference: +iDifference,
-        ngAction: ngAction.toString(),
-        dataReadDirection,
-        iReject: +iReject,
-        barcodeSide,
-        barcodeColor,
-        barcodeType,
-        barcodeCheckDigit: +barcodeCheckDigit,
-        barcodeOption: +barcodeOption,
-        barcodeRightPos: +barcodeRightPos,
-        barcodeLeftPos: +barcodeLeftPos,
-        barcodeTopPos: +barcodeTopPos,
-        barcodeBottomPos: +barcodeBottomPos,
-        imageEnable: +imageEnable,
-        imageColor,
-        imageType,
-        imageParam,
-        imageRotation,
-        imageResoMode,
-        imageResolution,
-        printEnable,
-        printStartPos,
-        printDigit,
-        printStartNumber,
-        printOrientation,
-        printFontSize,
-        printFontSpace,
-        printMode
-      };
-    });
-
-
-    // const skewFieldStruc = skewField?.map((item) => {
-    //   const iFace = +item["face"];
-    //   const columnStart = +item["columnStart"];
-    //   const columnNumber = +item["totalNoInColumn"];
-    //   const columnStep = +item["totalStepInColumn"];
-    //   const rowStart = +item["rowStart"];
-    //   const rowNumber = +item["totalNoInRow"];
-    //   const rowStep = +item["totalStepInRow"];
-    //   const iDirection = +item["readingDirection"];
-    //   const iSensitivity = +item["sensitivity"]
-    //   const iDifference = +item["difference"];
-    //   const ngAction = item["windowNG"];
-    //   const iType = item["type"];
-    //   const iMaximumMarks = +item["maximumMark"];
-    //   const iMinimumMarks = +item["minimumMark"];
-
-
-    //   return {
-    //     iFace,
-    //     columnStart,
-    //     columnNumber,
-    //     columnStep,
-    //     rowStart,
-    //     rowNumber,
-    //     rowStep,
-    //     iDirection,
-    //     iSensitivity,
-    //     iDifference,
-    //     iMinimumMarks,
-    //     iMaximumMarks,
-    //     iType,
-    //     ngAction
-    //   }
-    // });
-
-    const skewFieldStruc = skewField?.map(item => {
-      const {
-        "face": iFace,
-        "columnStart": columnStart,
-        "totalNoInColumn": columnNumber,
-        "totalStepInColumn": columnStep,
-        "rowStart": rowStart,
-        "totalNoInRow": rowNumber,
-        "totalStepInRow": rowStep,
-        "readingDirection": iDirection,
-        "sensitivity": iSensitivity,
-        "difference": iDifference,
-        "windowNG": ngAction,
-        "type": iType,
-        "maximumMark": iMaximumMarks,
-        "minimumMark": iMinimumMarks,
-        "colIdPattern": colIdPattern
-      } = item;
-
-      return {
-        iFace: +iFace,
-        columnStart: +columnStart,
-        columnNumber: +columnNumber,
-        columnStep: +columnStep,
-        rowStart: +rowStart,
-        rowNumber: +rowNumber,
-        rowStep: +rowStep,
-        iDirection: +iDirection,
-        iSensitivity: +iSensitivity,
-        iDifference: +iDifference,
-        iMinimumMarks: +iMinimumMarks,
-        iMaximumMarks: +iMaximumMarks,
-        colIdPattern,
-        iType,
-        ngAction
-      };
-    });
-
-
-    // const formFieldStruc = formFieldData?.map((item) => {
-    //   const iFace = +item["face"];
-    //   const columnStart = +item["columnStart"];
-    //   const columnNumber = +item["totalNoInColumn"];
-    //   const columnStep = +item["totalStepInColumn"];
-    //   const rowStart = +item["rowStart"];
-    //   const rowNumber = +item["totalNoInRow"];
-    //   const rowStep = +item["totalStepInRow"];
-    //   const iDirection = +item["readingDirection"];
-    //   const iSensitivity = +item["sensitivity"]
-    //   const iDifference = +item["difference"];
-    //   const ngAction = item["windowNG"];
-    //   const iType = item["type"];
-    //   const iMaximumMarks = +item["maximumMark"];
-    //   const iMinimumMarks = +item["minimumMark"];
-    //   const windowName = item["windowName"]
-    //   const iOption = +item["option"];
-    //   const totalNumberOfFileds = item["totalNumberOfFields"];
-    //   const numericOrAlphabets = item["numericOrAlphabets"];
-
-    //   return {
-    //     iFace,
-    //     windowName,
-    //     columnStart,
-    //     columnNumber,
-    //     columnStep,
-    //     rowStart,
-    //     rowNumber,
-    //     rowStep,
-    //     iDirection,
-    //     iSensitivity,
-    //     iDifference,
-    //     iOption,
-    //     iMinimumMarks,
-    //     iMaximumMarks,
-    //     iType,
-    //     ngAction,
-    //     totalNumberOfFileds,
-    //     numericOrAlphabets
-    //   }
-    // });
-
-    const formFieldStruc = formFieldData?.map(item => {
-      const {
-        "face": iFace,
-        "columnStart": columnStart,
-        "totalNoInColumn": columnNumber,
-        "totalStepInColumn": columnStep,
-        "rowStart": rowStart,
-        "totalNoInRow": rowNumber,
-        "totalStepInRow": rowStep,
-        "readingDirection": iDirection,
-        "sensitivity": iSensitivity,
-        "difference": iDifference,
-        "windowNG": ngAction,
-        "type": iType,
-        "maximumMark": iMaximumMarks,
-        "minimumMark": iMinimumMarks,
-        "windowName": windowName,
-        "option": iOption,
-        "totalNumberOfFields": totalNumberOfFileds,
-        "numericOrAlphabets": numericOrAlphabets
-      } = item;
-
-      return {
-        iFace: +iFace,
-        windowName,
-        columnStart: +columnStart,
-        columnNumber: +columnNumber,
-        columnStep: +columnStep,
-        rowStart: +rowStart,
-        rowNumber: +rowNumber,
-        rowStep: +rowStep,
-        iDirection: +iDirection,
-        iSensitivity: +iSensitivity,
-        iDifference: +iDifference,
-        iOption: +iOption,
-        iMinimumMarks: +iMinimumMarks,
-        iMaximumMarks: +iMaximumMarks,
-        iType,
-        ngAction,
-        totalNumberOfFileds,
-        numericOrAlphabets
-      };
-    });
-
-
-
-    const questionFieldStruc = questionField?.map((item) => {
-      const iFace = +item["face"];
-      const columnStart = +item["columnStart"];
-      const columnNumber = +item["totalNoInColumn"];
-      const columnStep = +item["totalStepInColumn"];
-      const rowStart = +item["rowStart"];
-      const rowNumber = +item["totalNoInRow"];
-      const rowStep = +item["totalStepInRow"];
-      const iSensitivity = +item["sensitivity"]
-      const iDifference = +item["difference"];
-      const ngAction = item["windowNG"];
-      const iType = item["type"];
-      const iMaximumMarks = +item["maximumMark"];
-      const iMinimumMarks = +item["minimumMark"];
-      const windowName = item["windowName"]
-      const iOption = +item["option"];
-      const totalNumberOfFileds = item["totalNumberOfFields"];
-      const numericOrAlphabets = item["numericOrAlphabets"];
-
-      return {
-        iFace,
-        windowName,
-        columnStart,
-        columnNumber,
-        columnStep,
-        rowStart,
-        rowNumber,
-        rowStep,
-        iSensitivity,
-        iDifference,
-        iOption,
-        iMinimumMarks,
-        iMaximumMarks,
-        iType,
-        ngAction,
-        totalNumberOfFileds,
-        numericOrAlphabets
       }
+
     });
-
-    const mainObj = {
-      "layoutParameters": { ...temstrucData[0] },
-      "skewMarksWindowParameters": skewFieldStruc,
-      "formFieldWindowParameters": formFieldStruc,
-      "questionsWindowParameters": questionFieldStruc
-    };
-
-
-    // const templateData = arr[0];
-    // const formFieldData = arr.formFieldWindowParameters || [];
-    // const questionField = arr.questionsWindowParameters || [];
-    // const skewField = arr.skewMarksWindowParameters || [];
-    // const idField = arr.idWindowParameters || [];
-
-    // const tempdata = { ...templateData, ...idField[0] };
-
-    // const mapCommonFields = (item) => ({
-    //   iFace: +item["face"],
-    //   columnStart: +item["columnStart"],
-    //   columnNumber: +item["totalNoInColumn"],
-    //   columnStep: +item["totalStepInColumn"],
-    //   rowStart: +item["rowStart"],
-    //   rowNumber: +item["totalNoInRow"],
-    //   rowStep: +item["totalStepInRow"],
-    //   iSensitivity: +item["sensitivity"],
-    //   iDifference: +item["difference"],
-    //   iMaximumMarks: +item["maximumMark"],
-    //   iMinimumMarks: +item["minimumMark"],
-    //   iType: item["type"],
-    //   ngAction: item["windowNG"],
-    // });
-
-    // const temstrucData = [{
-    //   layoutName: tempdata["Template Name"],
-    //   timingMarks: +tempdata["Rows"],
-    //   barcodeCount: +tempdata["Bar Count"],
-    //   iFace: +tempdata["face"],
-    //   columnStart: +tempdata["columnStart"],
-    //   columnNumber: +tempdata["totalNoInColumn"],
-    //   columnStep: +tempdata["totalStepInColumn"],
-    //   rowStart: +tempdata["rowStart"],
-    //   rowNumber: +tempdata["totalNoInRow"],
-    //   rowStep: +tempdata["totalStepInRow"],
-    //   iDirection: +tempdata["iDirection"],
-    //   iSensitivity: +tempdata["sensitivity"],
-    //   iDifference: +tempdata["difference"],
-    //   ngAction: tempdata["ngAction"].toString(),
-    //   dataReadDirection: tempdata["direction"],
-    //   iReject: +tempdata["iReject"]
-    // }];
-
-    // const skewFieldStruc = skewField.map(item => ({
-    //   ...mapCommonFields(item),
-    //   iDirection: +item["readingDirection"]
-    // }));
-
-    // const formFieldStruc = formFieldData.map(item => ({
-    //   ...mapCommonFields(item),
-    //   iDirection: +item["readingDirection"],
-    //   windowName: item["windowName"],
-    //   iOption: +item["option"],
-    //   totalNumberOfFields: item["totalNumberOfFields"],
-    //   numericOrAlphabets: item["numericOrAlphabets"]
-    // }));
-
-    // const questionFieldStruc = questionField.map(item => ({
-    //   ...mapCommonFields(item),
-    //   windowName: item["windowName"],
-    //   iOption: +item["option"],
-    //   totalNumberOfFields: item["totalNumberOfFields"],
-    //   numericOrAlphabets: item["numericOrAlphabets"]
-    // }));
-
-    // const mainObj = {
-    //   layoutParameters: { ...temstrucData[0] },
-    //   skewMarksWindowParameters: skewFieldStruc,
-    //   formFieldWindowParameters: formFieldStruc,
-    //   questionsWindowParameters: questionFieldStruc
-    // };
-
-    console.log(mainObj)
-
-    // try {
-    //   const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', mainObj, {
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   });
-    //   console.log('Response:', response);
-    //   // alert(`Response : ${JSON.stringify(response.data.message)}`)
-    // } catch (error) {
-    //   // alert(`Response : ${JSON.stringify(error.response.data)}`)
-    //   console.error('Error sending POST request:', error);
-    // }
-
-
   };
 
+
+  const sendToBackendHandler = async (index) => {
+    const template = dataCtx.allTemplates[index];
+    try {
+      const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', template[0], {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Response:', response);
+      // alert(`Response : ${JSON.stringify(response.data.message)}`)
+    } catch (error) {
+      // alert(`Response : ${JSON.stringify(error.response.data)}`)
+      console.error('Error sending POST request:', error);
+    }
+  };
   const deleteHandler = (arr, index) => {
     dataCtx.deleteTemplate(index)
   }
@@ -573,35 +115,35 @@ const Template = () => {
                 </thead>
                 <tbody style={{ minHeight: "100rem" }}>
                   {dataCtx.allTemplates?.map((d, i) => (
-                    <>
-                      <tr key={i}>
-                        <td>{i + 1}</td>
-                        <td>{d[0]["Template Name"]}</td>
-                        <td>{d[0].Rows}</td>
-                        <td>{d[0].Cols}</td>
-                        <td>{d[0]["Bubble Type"]}</td>
-                        <td className="text-right">
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              className="btn-icon-only text-light"
-                              href="#pablo"
-                              role="button"
-                              size="sm"
-                              color=""
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <i className="fas fa-ellipsis-v" />
-                            </DropdownToggle>
-                            <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
-                              <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
-                              <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data</DropdownItem>
-                              <DropdownItem onClick={() => deleteHandler(d, i)}>Delete</DropdownItem>
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
-                        </td>
-                      </tr>
-                    </>
+
+                    <tr key={i}>
+                      <td>{i + 1}</td>
+                      <td>{d[0].layoutParameters.layoutName}</td>
+                      <td>{d[0].layoutParameters.timingMarks}</td>
+                      <td>{d[0].layoutParameters.totalColumns}</td>
+                      <td>{d[0].layoutParameters["bubbleType"]}</td>
+                      <td className="text-right">
+                        <UncontrolledDropdown>
+                          <DropdownToggle
+                            className="btn-icon-only text-light"
+                            href="#pablo"
+                            role="button"
+                            size="sm"
+                            color=""
+                            onClick={(e) => e.preventDefault()}
+                          >
+                            <i className="fas fa-ellipsis-v" />
+                          </DropdownToggle>
+                          <DropdownMenu className="dropdown-menu-arrow" right>
+                            <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
+                            <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
+                            <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data</DropdownItem>
+                            <DropdownItem onClick={() => deleteHandler(d, i)}>Delete</DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </td>
+                    </tr>
+
                   ))}
                 </tbody>
               </Table>

@@ -8,6 +8,7 @@ import Draggable from 'react-draggable';
 import { Rnd } from 'react-rnd';
 import DataContext from "store/DataContext";
 import { MultiSelect } from "react-multi-select-component";
+import axios from 'axios';
 
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
@@ -43,25 +44,45 @@ const DesignTemplate = () => {
     const [selectedFieldType, setSelectedFieldType] = useState('formField');
     const [fieldType, setFieldType] = useState();
     const [numberOfField, setNumberOfField] = useState();
+    const [imageState, setImageState] = useState({ x: 0, y: 0, width: 400, height: 400 });
+    const [position, setPosition] = useState({
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 400,
+    });
     const dataCtx = useContext(DataContext);
     const {
-        numberOfFrontSideColumn,
-        numberOfLines,
+        totalColumns,
+        timingMarks,
         imgsrc,
-        selectedBubble,
+        bubbleType,
         templateIndex,
-        sensitivity,
-        difference,
-        barCount,
-        reject,
-        face,
+        iSensitivity,
+        iDifference,
+        iReject,
+        iFace,
         arr
     } = useLocation().state;
     const [selectedCol, setSelectedCol] = useState([]);
     const [options, setOptions] = useState([]);
     const [idNumber, setIdNumber] = useState("");
-    const numRows = numberOfLines;
-    const numCols = numberOfFrontSideColumn;
+    const rndRef = useRef();
+
+    const numRows = timingMarks;
+    const numCols = totalColumns;
+    const handleDragStop = (e, d) => {
+        setPosition((prev) => ({ ...prev, x: d.x, y: d.y }));
+    };
+
+    const handleResizeStop = (e, direction, ref, delta, position) => {
+        setPosition({
+            x: position.x,
+            y: position.y,
+            width: ref.style.width.replace('px', ''),
+            height: ref.style.height.replace('px', ''),
+        });
+    };
     const toggleSelection = (row, col) => {
         const key = `${row},${col}`;
         setSelected((prev) => {
@@ -70,12 +91,6 @@ const DesignTemplate = () => {
             return newState;
         });
     }
-    const rndRef = useRef();
-    const formFieldData = arr?.formFieldWindowParameters;
-    const questionField = arr?.questionsWindowParameters;
-    const skewField = arr?.skewMarksWindowParameters;
-    const idFeild = arr?.idWindowParameters;
-
 
     // Function to get the current position and dimensions
     const getCurrentImageState = () => {
@@ -89,29 +104,44 @@ const DesignTemplate = () => {
     //     // Example usage: log the current state
     //     console.log(getCurrentImageState());
     // }, [rndRef.current]);
+    // useEffect(() => {
+    //     if (rndRef.current) {
+    //         // Update the state with the current image state
+    //         setImageState(getCurrentImageState());
+    //     }
+    // }, [rndRef.current]);
     useEffect(() => {
         if (arr) {
-            const formFieldData = arr?.formFieldWindowParameters;
-            const questionField = arr?.questionsWindowParameters;
-            const skewField = arr?.skewMarksWindowParameters;
-            const idField = arr?.idWindowParameters;
-            const coordinateOfFormData = formFieldData?.map((item) => item.Coordinate)
-            const coordinateOfquestionField = questionField?.map((item) => item.Coordinate)
-            const coordinateOfskewField = skewField?.map((item) => item.Coordinate)
-            const coordinateOfidField = idField?.map((item) => item.Coordinate)
-            const allCoordinates = [...coordinateOfFormData, ...coordinateOfquestionField, ...coordinateOfskewField, ...coordinateOfidField]
 
-            console.log(allCoordinates)
+            const formFieldData = arr[0]?.formFieldWindowParameters;
+            const questionField = arr[0]?.questionsWindowParameters;
+            const skewField = arr[0]?.skewMarksWindowParameters;
+            const idField = arr[0]?.layoutParameters;
+            const coordinateOfFormData = formFieldData?.map((item) => item.Coordinate) ?? [];
+            const coordinateOfquestionField = questionField?.map((item) => item.Coordinate) ?? [];
+            const coordinateOfskewField = skewField?.map((item) => item.Coordinate) ?? [];
+            const coordinateOfidField = idField.Coordinate ?? [];
+
+            const allCoordinates = [
+                ...coordinateOfFormData,
+                ...coordinateOfquestionField,
+                ...coordinateOfskewField,
+                coordinateOfidField
+            ];
+
+
             const newSelectedFields = allCoordinates?.map((item) => {
                 const { "Start Row": startRow, "Start Col": startCol, "End Row": endRow, "End Col": endCol, name } = item;
                 return { startRow, startCol, endRow, endCol, name }
             })
             setSelectedCoordinates(newSelectedFields)
-            console.log(coordinateOfFormData)
+            console.log(idField)
+            setPosition(idField?.imageStructureData);
         }
     }, [])
+    console.log(imageState)
     useEffect(() => {
-        switch (selectedBubble) {
+        switch (bubbleType) {
             case "rounded rectangle":
                 setSelectedClass("rounded-rectangle")
                 break;
@@ -133,18 +163,18 @@ const DesignTemplate = () => {
     }, [])
     useEffect(() => {
         // Create an array to hold the options
-        const options = Array.from({ length: +numberOfFrontSideColumn }, (v, i) => ({
+        const options = Array.from({ length: +totalColumns }, (v, i) => ({
             label: `Col ${i + 1}`, // Set the label as 'Col X' where X is the column number
             value: i               // Set the value as the index
         }));
 
         // Update the state with the new options array
         setOptions(options);
-    }, [numberOfFrontSideColumn]);
+    }, [totalColumns]);
 
     useEffect(() => {
         const value = selectedCol.map((item) => item.value);
-        const arr = Array(+numberOfFrontSideColumn).fill(0)
+        const arr = Array(+totalColumns).fill(0)
         for (let j = 0; j < value.length; j++) {
             arr[value[j]] = 1
         }
@@ -240,20 +270,15 @@ const DesignTemplate = () => {
         setSelection(null);
         setModalShow(false);
     };
+    console.log(dataCtx.allTemplates[templateIndex])
     const handleSave = () => {
 
         // if (!name || !windowNgOption || !noInRow || !noOfStepInRow || !noInCol || !noOfStepInCol || !minimumMark) {
         //     return
         // }
         let newData = {}
-
         if (selectedFieldType === "idField") {
             newData = {
-                "sensitivity": sensitivity,
-                "difference": difference,
-                "barcodeCount": barCount,
-                "isReject": reject,
-                "windowName": name,
                 "Coordinate": {
                     "Start Row": selection?.startRow + 1,
                     "Start Col": selection?.startCol,
@@ -261,29 +286,31 @@ const DesignTemplate = () => {
                     "End Col": selection?.endCol,
                     "name": "Id Field"
                 },
-                "iDirection": readingDirectionOption,
-                "rowStart": selection?.startRow + 1,
-                "timingMarks": numRows,
-                "windowNG": windowNgOption,
-                "totalNoInRow": noInRow,
-                "totalStepInRow": noOfStepInRow,
-                "columnStart": selection?.startCol,
-                "totalNoInColumn": noInCol,
-                "totalStepInColumn": noOfStepInCol,
-                "minimumMark": minimumMark,
-                "maximumMark": maximumMark,
-                "skewMark": skewoption,
-                "type": type,
-                "option": option,
-                "face": face
+                "imageStructureData": position,
+                "columnStart": + selection?.startCol,
+                "columnNumber": +noInCol,
+                "columnStep": +noOfStepInCol,
+                "rowStart": +selection?.startRow + 1,
+                "rowNumber": +noInRow,
+                "rowStep": +noOfStepInRow,
+                "iDirection": +readingDirectionOption,
+                "idMarksPattern": idNumber.toString(),
             }
 
         } else if (selectedFieldType === "skewMarkField") {
             newData = {
-                "sensitivity": sensitivity,
-                "difference": difference,
-                "barcodeCount": barCount,
-                "isReject": reject,
+                "iFace": +iFace,
+                "columnStart": +selection?.startCol,
+                "columnNumber": +noInCol,
+                "columnStep": +noOfStepInCol,
+                "rowStart": +selection?.startRow + 1,
+                "rowNumber": +noInRow,
+                "rowStep": +noOfStepInRow,
+                "iSensitivity": +iSensitivity,
+                "iDifference": +iDifference,
+                "iOption": +option,
+                "iReject": +iReject,
+                "iDirection": +readingDirectionOption,
                 "windowName": name,
                 "Coordinate": {
                     "Start Row": selection?.startRow + 1,
@@ -292,31 +319,32 @@ const DesignTemplate = () => {
                     "End Col": selection?.endCol,
                     "name": name
                 },
-                "readingDirection": readingDirectionOption,
-                "rowStart": selection?.startRow + 1,
-                "timingMarks": numRows,
-                "windowNG": windowNgOption,
-                "totalNoInRow": noInRow,
-                "totalStepInRow": noOfStepInRow,
-                "columnStart": selection?.startCol,
-                "totalNoInColumn": noInCol,
-                "totalStepInColumn": noOfStepInCol,
-                "minimumMark": minimumMark,
-                "maximumMark": maximumMark,
-                "skewMark": skewoption,
-                "type": type,
-                "option": option,
-                "face": face
+                "ngAction": windowNgOption,
+                "iMinimumMark": +minimumMark,
+                "iMaximumMark": +maximumMark,
+                "skewMark": +skewoption,
+                "iType": type,
             };
 
 
         } else {
             newData = {
-                "sensitivity": sensitivity,
-                "difference": difference,
-                "barcodeCount": barCount,
-                "isReject": reject,
+                "iFace": +iFace,
                 "windowName": name,
+                "columnStart": +selection?.startCol,
+                "columnNumber": +noInCol,
+                "columnStep": +noOfStepInCol,
+                "rowStart": +selection?.startRow + 1,
+                "rowNumber": +noInRow,
+                "rowStep": +noOfStepInRow,
+                "iDirection": +readingDirectionOption,
+                "iSensitivity": +iSensitivity,
+                "iDifference": +iDifference,
+                "iOption": +option,
+                "iMinimumMark": +minimumMark,
+                "iMaximumMark": +maximumMark,
+                "iType": type,
+                "ngAction": windowNgOption,
                 "Coordinate": {
                     "Start Row": selection?.startRow + 1,
                     "Start Col": selection?.startCol,
@@ -324,35 +352,19 @@ const DesignTemplate = () => {
                     "End Col": selection?.endCol,
                     "name": name
                 },
-                "readingDirection": readingDirectionOption,
-                "rowStart": selection?.startRow + 1,
-                "timingMarks": numRows,
-                "windowNG": windowNgOption,
-                "totalNoInRow": noInRow,
-                "totalStepInRow": noOfStepInRow,
-                "columnStart": selection?.startCol,
-                "totalNoInColumn": noInCol,
-                "totalStepInColumn": noOfStepInCol,
-                "minimumMark": minimumMark,
-                "maximumMark": maximumMark,
-                "skewMark": skewoption,
-                "type": type,
-                "option": option,
-                "face": face,
                 "totalNumberOfFields": numberOfField,
                 "numericOrAlphabets": fieldType
             };
 
         }
-        console.log(getCurrentImageState())
-
+        // console.log(getCurrentImageState())
         const newSelected = { ...selection, name: selectedFieldType !== "idField" ? name : "Id Field" }
         setSelectedCoordinates((prev) => [...prev, newSelected]);
         setSelection(null);
         setModalShow(false);
         dataCtx.modifyAllTemplate(templateIndex, newData, selectedFieldType);
+        console.log(getCurrentImageState());
     };
-
     const handleSkewMarkOptionChange = (event) => {
         setSkewOption(event.target.value);
     };
@@ -365,17 +377,19 @@ const DesignTemplate = () => {
 
 
     const handleEyeClick = (data) => {
-        console.log(data, templateIndex)
+        // console.log(data, templateIndex)
         const template = dataCtx.allTemplates[templateIndex]
-        console.log(data.name)
+        // console.log(template)
+        // console.log(data.name)
         if (data.name === "Id Field") {
-            const data = template.idWindowParameters[0]
-            // setSelectedFieldType("idField")
-            // setWindowNgOption(data?.windowNG);
-            // setMinimumMark(data?.minimumMark);
-            // setMaximumMark(data?.maximumMark);
-            // setNoInRow(data?.totalNoInRow);
-            // setNoInCol(data?.totalNoInColumn)
+            const data = template[0].layoutParameters;
+            console.log(data)
+            setSelectedFieldType("idField")
+            setWindowNgOption(data?.ngAction);
+            setMinimumMark(data?.minimumMark);
+            setMaximumMark(data?.maximumMark);
+            setNoInRow(data?.totalNoInRow);
+            setNoInCol(data?.totalNoInColumn)
             setModalShow(true);
         }
     };
@@ -388,13 +402,29 @@ const DesignTemplate = () => {
     const handleIconMouseUp = (event) => {
         event.stopPropagation();
     };
+    const sendHandler = async () => {
+        const template = dataCtx.allTemplates[templateIndex]
+        try {
+            const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', template, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log('Response:', response);
+            // alert(`Response : ${JSON.stringify(response.data.message)}`)
+        } catch (error) {
+            // alert(`Response : ${JSON.stringify(error.response.data)}`)
+            console.error('Error sending POST request:', error);
+        }
+    }
+    console.log(imageState)
     return (
         <>
-            <Button>Submit</Button>
-            <div className="container">
+            <Button onClick={sendHandler}>Submit</Button>
+            <div className="containers" >
+
                 <div id="imagecontainer" className={classes.img} >
                     <Rnd
-                        ref={rndRef}
                         default={{
                             x: 0,
                             y: 0,
@@ -403,6 +433,10 @@ const DesignTemplate = () => {
                         }}
                         minWidth={100}
                         minHeight={100}
+                        position={{ x: position.x, y: position.y }}
+                        size={{ width: position.width, height: position.height }}
+                        onDragStop={handleDragStop}
+                        onResizeStop={handleResizeStop}
                         bounds={null}
                         style={{
                             border: '1px solid #ddd',
@@ -444,7 +478,7 @@ const DesignTemplate = () => {
                                     <div key={rowIndex} className="row">
                                         <div className="left-num" sty><div className="timing-mark "></div></div>
                                         {Array.from({ length: numCols }).map((_, colIndex) => (
-                                            <div key={colIndex} className={`${selectedBubble} ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
+                                            <div key={colIndex} className={`${bubbleType} ${selected[`${rowIndex},${colIndex}`] ? 'selected' : ''}`}></div>
                                         ))}
 
                                     </div>
@@ -455,7 +489,7 @@ const DesignTemplate = () => {
                                         key={index}
                                         className="border-blue-900"
                                         style={{
-                                            border: "2px solid #007bff",
+                                            border: "3px solid #007bff",
                                             position: "absolute",
                                             left: `${(data.startCol * (imageRef.current.getBoundingClientRect().width / numCols)) - 4}px`,
                                             top: `${(data.startRow * (imageRef.current.getBoundingClientRect().height / numRows)) - 3}px`,
@@ -466,7 +500,7 @@ const DesignTemplate = () => {
                                         onClick={(e) => e.stopPropagation()}
                                     >
 
-                                        <div className="d-flex justify-content-between align-items-center bg-dark text-white p-1" style={{ opacity: 0.8, fontSize: '12px', zIndex: "999", position: 'relative' }}>
+                                        <div className="d-flex justify-content-between align-items-center bg-dark text-white p-1" style={{ opacity: 0.8, fontSize: '12px', position: 'relative' }}>
                                             <span className="user-select-none">
                                                 {data.name}
                                             </span>
@@ -606,24 +640,25 @@ const DesignTemplate = () => {
 
                         </div>
                     </Row>
-                    <Row >
-                        <label htmlFor="example-select-input" className="col-md-2" >
-                            Minimum Mark
-                        </label>
-                        <div className="col-md-4">
-                            <input type="number" className='form-control' placeholder="Enter the minimum mark" value={minimumMark}
-                                onChange={(e) => setMinimumMark(e.target.value)}
-                                required />
-                        </div>
-                        <label htmlFor="example-select-input" className="col-md-2 ">
-                            Maximum Mark
-                        </label>
-                        <div className="col-md-4">
-                            <input type="number" className='form-control' placeholder="Enter the maximum mark" value={maximumMark}
-                                onChange={(e) => setMaximumMark(e.target.value)}
-                                required />
-                        </div>
-                    </Row>
+                    {selectedFieldType !== "idField" &&
+                        <Row >
+                            <label htmlFor="example-select-input" className="col-md-2" >
+                                Minimum Mark
+                            </label>
+                            <div className="col-md-4">
+                                <input type="number" className='form-control' placeholder="Enter the minimum mark" value={minimumMark}
+                                    onChange={(e) => setMinimumMark(e.target.value)}
+                                    required />
+                            </div>
+                            <label htmlFor="example-select-input" className="col-md-2 ">
+                                Maximum Mark
+                            </label>
+                            <div className="col-md-4">
+                                <input type="number" className='form-control' placeholder="Enter the maximum mark" value={maximumMark}
+                                    onChange={(e) => setMaximumMark(e.target.value)}
+                                    required />
+                            </div>
+                        </Row>}
                     {selectedFieldType === "idField" && <Row className="mb-2">
                         <label className="col-md-2 " style={{}}>
                             Set Id Pattern

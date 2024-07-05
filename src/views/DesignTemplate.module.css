@@ -15,11 +15,13 @@
     position: absolute;
     z-index: 999;
     /* z-index: -1; */
-    width: 100%;
+    width: 95%;
     height: 200vh; 
      border: 1px dotted black;
     overflow: hidden;
-    /* padding: 10px; */
+    /* padding-left : 20px; */
+    padding: 10px;
+    
 }
 
 /* .object-contain {

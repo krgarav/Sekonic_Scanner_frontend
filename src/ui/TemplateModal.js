@@ -144,57 +144,66 @@ const TemplateModal = (props) => {
 
 
         const templateData = [{
-            "Template Name": name,
-            "Rows": numberOfLines,
-            "Cols": numberOfFrontSideColumn,
-            "Bubble Type": selectedBubble.name,
-            "Image": imageSrc,
-            "Timing Mark": numberOfLines,
-            "Bar Count": barCount,
-            "ngAction": windowNgOption.id,
-            "iReject": reject.name,
-            "iSensitivity": sensitivity,
-            "direction": direction.id,
-            "barcodeSide": 0,
-            "barcodeColor": 0,
-            "barcodeType": barcodeType.id,
-            "barcodeCheckDigit": checkDigit !== null ? checkDigit.id : 0,
-            "barcodeOption": option !== null ? option.id : 0,
-            "barcodeRightPos": barcodeRightPos,
-            "barcodeLeftPos": barcodeLeftPos,
-            "barcodeTopPos": barcodeTopPos,
-            "barcodeBottomPos": barcodeBottomPos,
-            "imageEnable": imageStatus.id,
-            "imageColor": +colorType.id,
-            "imageType": +encoding.id,
-            "imageParam": 0,
-            "imageRotation": +rotation.id,
-            "imageResoMode": 0,
-            "imageResolution": +resolution.id,
-            "printEnable": 0,
-            "printStartPos": 0,
-            "printDigit": 0,
-            "printStartNumber": 0,
-            "printOrientation": 0,
-            "printFontSize": 0,
-            "printFontSpace": 0,
-            "printMode": 0,
+            "layoutParameters": {
+                "layoutName": name,
+                "timingMarks": +numberOfLines,
+                "barcodeCount": +barCount,
+                "iFace": +face.id,
+                "totalColumns": +numberOfFrontSideColumn,
+                "bubbleType": selectedBubble.name,
+                "imagesrc": imageSrc,
+                "iSensitivity": +sensitivity,
+                "iDifference": +difference,
+                "ngAction": windowNgOption.id,
+                "dataReadDirection": direction.id,
+                "iReject": +reject.name,
+            },
+            "barcodeData": {
+                "barcodeSide": 0,
+                "barcodeColor": 0,
+                "barcodeType": barcodeType.id,
+                "barcodeCheckDigit": checkDigit !== null ? +checkDigit.id : 0,
+                "barcodeOption": option !== null ? +option.id : 0,
+                "barcodeRightPos": +barcodeRightPos,
+                "barcodeLeftPos": +barcodeLeftPos,
+                "barcodeTopPos": +barcodeTopPos,
+                "barcodeBottomPos": +barcodeBottomPos,
+            },
+            "imageData": {
+                "imageEnable": +imageStatus.id,
+                "imageColor": +colorType.id,
+                "imageType": +encoding.id,
+                "imageParam": 0,
+                "imageRotation": +rotation.id,
+                "imageResoMode": 0,
+                "imageResolution": +resolution.id,
+            },
+            "printingData": {
+                "printEnable": 0,
+                "printStartPos": 0,
+                "printDigit": 0,
+                "printStartNumber": 0,
+                "printOrientation": 0,
+                "printFontSize": 0,
+                "printFontSpace": 0,
+                "printMode": 0
+            },
         }];
         const index = dataCtx.setAllTemplates(templateData);
-
+        console.log(index);
         setModalShow(false);
         navigate("/admin/design-template", {
             state: {
                 templateIndex: index,
-                numberOfLines: numberOfLines,
-                numberOfFrontSideColumn: numberOfFrontSideColumn,
+                timingMarks: numberOfLines,
+                totalColumns: numberOfFrontSideColumn,
                 imgsrc: imageSrc,
-                selectedBubble: selectedBubble.name,
-                sensitivity: sensitivity,
-                difference: difference,
-                barCount: barCount,
-                reject: reject.id,
-                face: face.id
+                bubbleType: selectedBubble.name,
+                iSensitivity: sensitivity,
+                iDifference: difference,
+                barcodeCount: barCount,
+                iReject: reject.id,
+                iFace: face.id
             },
         });
     }
@@ -357,7 +366,7 @@ const TemplateModal = (props) => {
                                         </Col>
                                     </Row>
                                     <Row className='mb-3'>
-                                       
+
 
                                         <label
                                             htmlFor="example-text-input"

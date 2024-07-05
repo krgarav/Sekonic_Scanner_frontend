@@ -68,13 +68,13 @@ var routes = [
     component: <UserManagment />,
     layout: "/admin",
   },
-  {
-    path: "/24-page-booklet",
-    name: "24 page Booklet",
-    icon: "ni ni-book-bookmark text-orange",
-    component: <Booklet24Page />,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/24-page-booklet",
+  //   name: "24 page Booklet",
+  //   icon: "ni ni-book-bookmark text-orange",
+  //   component: <Booklet24Page />,
+  //   layout: "/admin",
+  // },
   {
     path: "/32-page-booklet",
     name: "32 page Booklet",

@@ -7,66 +7,18 @@ const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
   const [dataState, setDataState] = useState(() => {
     const savedData = localStorage.getItem("Template");
-    let updateData;
     if (savedData) {
       const parsedData = JSON.parse(savedData);
-     
-      updateData = parsedData.map((item) => {
-        const templateData = item.templateData;
-        const formFieldWindowParameters = item?.formFieldWindowParameters;
-        const questionsWindowParameters = item?.questionsWindowParameters;
-        const skewMarksWindowParameters = item?.skewMarksWindowParameters;
-        const idWindowParameters = item?.idWindowParameters;
-        return {
-          ...templateData,
-          formFieldWindowParameters,
-          questionsWindowParameters,
-          skewMarksWindowParameters,
-          idWindowParameters,
-        };
-      });
-      const data = updateData.map((item) => {
-        const arr = [];
-        const templateData = item[0];
-        const formFieldWindowParameters = item?.formFieldWindowParameters;
-        const questionsWindowParameters = item?.questionsWindowParameters;
-        const skewMarksWindowParameters = item?.skewMarksWindowParameters;
-        const idWindowParameters = item?.idWindowParameters;
-
-        arr.push(templateData);
-        arr.questionsWindowParameters = questionsWindowParameters;
-        arr.skewMarksWindowParameters = skewMarksWindowParameters;
-        arr.idWindowParameters = idWindowParameters;
-        arr.formFieldWindowParameters = formFieldWindowParameters;
-        return arr;
-      });
-
-      return { allTemplates: data };
+      return { allTemplates: parsedData };
     } else {
       return initialData;
     }
   });
 
-
   // Save dataState to localStorage whenever it changes
 
   useEffect(() => {
-
-    const mappedTemp = dataState.allTemplates.map((item) => {
-      const templateData = item;
-      const formFieldWindowParameters = item?.formFieldWindowParameters;
-      const questionsWindowParameters = item?.questionsWindowParameters;
-      const skewMarksWindowParameters = item?.skewMarksWindowParameters;
-      const idWindowParameters = item?.idWindowParameters;
-      return {
-        templateData,
-        formFieldWindowParameters,
-        questionsWindowParameters,
-        skewMarksWindowParameters,
-        idWindowParameters,
-      };
-    });
-    const stringifiedTemdata = JSON.stringify(mappedTemp);
+    const stringifiedTemdata = JSON.stringify(dataState.allTemplates);
     localStorage.setItem("Template", stringifiedTemdata);
   }, [dataState]);
 
@@ -89,28 +41,28 @@ const DataProvider = (props) => {
 
       switch (fieldType) {
         case "skewMarkField":
-          currentTemplate.skewMarksWindowParameters =
-            currentTemplate.skewMarksWindowParameters
-              ? [...currentTemplate.skewMarksWindowParameters, regionData]
-              : [regionData];
+          currentTemplate[0].skewMarksWindowParameters = currentTemplate[0]
+            .skewMarksWindowParameters
+            ? [...currentTemplate[0].skewMarksWindowParameters, regionData]
+            : [regionData];
           break;
         case "formField":
-          currentTemplate.formFieldWindowParameters =
-            currentTemplate.formFieldWindowParameters
-              ? [...currentTemplate.formFieldWindowParameters, regionData]
-              : [regionData];
+          currentTemplate[0].formFieldWindowParameters = currentTemplate[0]
+            .formFieldWindowParameters
+            ? [...currentTemplate[0].formFieldWindowParameters, regionData]
+            : [regionData];
           break;
         case "questionField":
-          currentTemplate.questionsWindowParameters =
-            currentTemplate.questionsWindowParameters
-              ? [...currentTemplate.questionsWindowParameters, regionData]
-              : [regionData];
+          currentTemplate[0].questionsWindowParameters = currentTemplate[0]
+            .questionsWindowParameters
+            ? [...currentTemplate[0].questionsWindowParameters, regionData]
+            : [regionData];
           break;
         default:
-          currentTemplate.idWindowParameters =
-            currentTemplate.idWindowParameters
-              ? [...currentTemplate.idWindowParameters, regionData]
-              : [regionData];
+          currentTemplate[0].layoutParameters = {
+            ...currentTemplate[0].layoutParameters,
+            ...regionData,
+          };
           break;
       }
 
