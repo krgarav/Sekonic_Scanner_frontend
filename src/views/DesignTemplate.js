@@ -51,6 +51,7 @@ const DesignTemplate = () => {
         width: 400,
         height: 400,
     });
+    const [loading, setLoading] = useState(false)
     const dataCtx = useContext(DataContext);
     const {
         totalColumns,
@@ -324,6 +325,7 @@ const DesignTemplate = () => {
                 "iMaximumMark": +maximumMark,
                 "skewMark": +skewoption,
                 "iType": type,
+                "windowName": name
             };
 
 
@@ -402,13 +404,224 @@ const DesignTemplate = () => {
     const handleIconMouseUp = (event) => {
         event.stopPropagation();
     };
+    // const sendHandler = async () => {
+    //     setLoading(true)
+    //     // const formdata = new FormData;
+    //     // formdata.append('LayoutParameters.LayoutName',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.File',BarcodeData.BarcodeSide);
+    //     // formdata.append('LayoutParameters.TimingMarks',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.BarcodeCount',BarcodeData.BarcodeSide);
+
+    //     // formdata.append('LayoutParameters.iFace',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.ColumnStart',BarcodeData.BarcodeSide);
+
+    //     // formdata.append('LayoutParameters.ColumnNumber',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.ColumnStep',BarcodeData.BarcodeSide);
+
+    //     // formdata.append('LayoutParameters.RowStart',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.RowNumber',BarcodeData.BarcodeSide);
+
+    //     // formdata.append('LayoutParameters.RowStep',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.iDirection',BarcodeData.BarcodeSide);
+
+    //     // formdata.append('LayoutParameters.iSensitivity',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.iDifference',BarcodeData.BarcodeSide);
+
+    //     // formdata.append('LayoutParameters.NgAction',layoutParameters.Coordinate)
+    //     // formdata.append('LayoutParameters.DataReadDirection',BarcodeData.BarcodeSide);
+
+
+
+
+
+    //     const template = dataCtx.allTemplates[templateIndex]
+    //     console.log(template);
+
+    //     const barcodeData = template[0].barcodeData
+
+    //     const imageData = template[0].imageData;
+    //     const layoutParameters = template[0].layoutParameters;
+    //     delete layoutParameters.Coordinate
+    //     delete layoutParameters.imagesrc
+    //     delete layoutParameters.imgFile
+    //     delete layoutParameters.imageStructureData
+    //     delete layoutParameters.bubbleType
+    //     delete layoutParameters.totalColumns
+    //     delete layoutParameters.imageStructureData
+    //     // layoutParameters.ngAction="0x00000001"
+    //     const printingData = template[0].printingData;
+    //     const questionsWindowParameters = template[0].questionsWindowParameters.map((item) => {
+    //         const { Coordinate, ...rest } = item;
+    //         return rest;
+    //     });
+    //     const skewMarksWindowParameters = template[0].skewMarksWindowParameters.map((item) => {
+    //         const { Coordinate, windowName, skewMark, ...rest } = item;
+    //         return rest;
+    //     });
+    //     const formFieldWindowParameters = template[0].formFieldWindowParameters.map((item) => {
+    //         const { Coordinate, ...rest } = item;
+    //         return rest;
+    //     });
+
+
+    //     const obj = { layoutParameters, barcodeData, imageData, printingData, questionsWindowParameters, skewMarksWindowParameters, formFieldWindowParameters }
+    //     console.log(obj)
+
+    //     // try {
+    //     //     const response = await axios.post('https://5xgh5v9z-5289.inc1.devtunnels.ms/LayoutSetting', obj, {
+    //     //         headers: {
+    //     //             'Content-Type': 'application/json'
+    //     //         }
+    //     //     });
+    //     //     console.log('Response:', response);
+    //     //     setLoading(false)
+    //     //     alert(`Response : ${JSON.stringify(response?.data?.message)}`)
+    //     // } catch (error) {
+    //     //     setLoading(false)
+
+    //     //     console.error('Error sending POST request:', error);
+    //     //     alert(`Response : ${JSON.stringify(error?.response?.data)}`)
+    //     }
+    // }
+
     const sendHandler = async () => {
         const template = dataCtx.allTemplates[templateIndex]
+        console.log(template);
+
+        const layoutParameters = template[0].layoutParameters;
+        const Coordinate = layoutParameters.Coordinate;
+        const layoutCoordinates = {
+            right: Coordinate["End Col"],
+            end: Coordinate["End Row"],
+            left: Coordinate["Start Col"],
+            start: Coordinate["Start Row"]
+        }
+        delete layoutCoordinates.Coordinate
+        const updatedLayout = { ...layoutParameters, layoutCoordinates };
+        delete updatedLayout.Coordinate
+        delete updatedLayout.imageStructureData
+
+
+        const BarcodeData = template[0].barcodeData
+        const imageData = template[0].imageData;
+        const printingData = template[0].printingData;
+        const questionsWindowParameters = template[0].questionsWindowParameters.map((item) => {
+            const { Coordinate, ...rest } = item;
+            console.log(Coordinate)
+            const questionWindowCoordinates = Coordinate ? {
+                right: Coordinate["End Col"],
+                end: Coordinate["End Row"],
+                left: Coordinate["Start Col"],
+                start: Coordinate["Start Row"]
+            } : {};
+            return { ...rest, questionWindowCoordinates }
+        })
+        const skewMarksWindowParameters = template[0].skewMarksWindowParameters.map((item) => {
+            const { Coordinate, ...rest } = item;
+            console.log(Coordinate)
+            const layoutWindowCoordinates = Coordinate ? {
+                right: Coordinate["End Col"],
+                end: Coordinate["End Row"],
+                left: Coordinate["Start Col"],
+                start: Coordinate["Start Row"]
+            } : {};
+            return { ...rest, layoutWindowCoordinates }
+        })
+        const formFieldWindowParameters = template[0].formFieldWindowParameters.map((item) => {
+            const { Coordinate, ...rest } = item;
+            console.log(Coordinate)
+            const formFieldCoordinates = Coordinate ? {
+                right: Coordinate["End Col"],
+                end: Coordinate["End Row"],
+                left: Coordinate["Start Col"],
+                start: Coordinate["Start Row"]
+            } : {};
+            return { ...rest, formFieldCoordinates }
+        })
+
+        // console.log(questionsWindowParameters)
+        const formdata = new FormData;
+        formdata.append('LayoutParameters.LayoutName', layoutParameters.layoutName)
+        formdata.append('LayoutParameters.File', layoutParameters.imageFile); // for image upload
+        formdata.append('LayoutParameters.TimingMarks', layoutParameters.timingMarks)
+        formdata.append('LayoutParameters.BarcodeCount', layoutParameters.barcodeCount);
+        formdata.append('LayoutParameters.iFace', layoutParameters.iFace)
+        formdata.append('LayoutParameters.ColumnStart', layoutParameters.columnStart);
+        formdata.append('LayoutParameters.ColumnNumber', layoutParameters.columnNumber)
+        formdata.append('LayoutParameters.ColumnStep', layoutParameters.columnStep);
+        formdata.append('LayoutParameters.RowStart', layoutParameters.rowStart)
+        formdata.append('LayoutParameters.RowNumber', layoutParameters.rowNumber);
+        formdata.append('LayoutParameters.RowStep', layoutParameters.rowStep)
+        formdata.append('LayoutParameters.iDirection', layoutParameters.iDirection);
+        formdata.append('LayoutParameters.iSensitivity', layoutParameters.iSensitivity)
+        formdata.append('LayoutParameters.iDifference', layoutParameters.iDifference);
+        formdata.append('LayoutParameters.DataReadDirection', layoutParameters.dataReadDirection);
+        formdata.append('LayoutParameters.iReject', layoutParameters.iReject)
+        formdata.append('LayoutParameters.IdMarksPattern', layoutParameters.idMarksPattern);
+        formdata.append('LayoutParameters.LayoutCoordinates.Start', layoutParameters.Coordinate?.["Start Row"]);
+        formdata.append('LayoutParameters.LayoutCoordinates.End', layoutParameters.Coordinate?.["End Row"]);
+        formdata.append('LayoutParameters.LayoutCoordinates.Left', layoutParameters.Coordinate?.["Start Col"]);
+        formdata.append('LayoutParameters.LayoutCoordinates.Right', layoutParameters.Coordinate?.["End Col"]);
+        formdata.append('LayoutParameters.NgAction', layoutParameters.ngAction)
+
+
+        formdata.append('BarcodeData.BarcodeSide', BarcodeData.barcodeSide)
+        formdata.append('BarcodeData.BarcodeType', BarcodeData.barcodeType);
+        formdata.append('BarcodeData.BarcodeCheckDigit', BarcodeData.barcodeCheckDigit)
+        formdata.append('BarcodeData.BarcodeOption', BarcodeData.barcodeOption);
+        formdata.append('BarcodeData.BarcodeRightPos', BarcodeData.barcodeRightPos)
+        formdata.append('BarcodeData.BarcodeLeftPos', BarcodeData.barcodeLeftPos);
+        formdata.append('BarcodeData.BarcodeTopPos', BarcodeData.barcodeTopPos)
+        formdata.append('BarcodeData.BarcodeBottomPos', BarcodeData.barcodeBottomPos);
+
+        formdata.append('ImageData.ImageEnable', imageData.imageEnable)
+        formdata.append('ImageData.ImageColor', imageData.imageColor);
+        formdata.append('ImageData.ImageType', imageData.imageType)
+        formdata.append('ImageData.ImageParam', imageData.imageParam);
+        formdata.append('ImageData.ImageRotation', imageData.imageRotation)
+        formdata.append('ImageData.ImageResoMode', imageData.imageResoMode);
+        formdata.append('ImageData.ImageResolution', imageData.imageResolution)
+
+        formdata.append('PrintingData.PrintEnable', printingData.printEnable);
+        formdata.append('PrintingData.PrintStartPos', printingData.printStartPos)
+        formdata.append('PrintingData.PrintDigit', printingData.printDigit);
+        formdata.append('PrintingData.PrintStartNumber', printingData.printStartNumber)
+        formdata.append('PrintingData.PrintOrientation', printingData.printOrientation);
+        formdata.append('PrintingData.PrintFontSize', printingData.printFontSize)
+        formdata.append('PrintingData.PrintFontSpace', printingData.printFontSpace);
+        formdata.append('PrintingData.PrintMode', printingData.printMode)
+
+        // formdata.append('SkewMarksWindowParameters', JSON.stringify(skewMarksWindowParameters));
+        // formdata.append('FormFieldWindowParameters', JSON.stringify(formFieldWindowParameters));
+        // formdata.append('QuestionsWindowParameters', JSON.stringify(questionsWindowParameters));
+
+        const requestData = {
+            layoutParameters,
+
+            SkewMarksWindowParameters: skewMarksWindowParameters,
+            FormFieldWindowParameters: formFieldWindowParameters,
+            QuestionsWindowParameters: questionsWindowParameters
+        }
+        const formDataObject = {};
+        for (let [key, value] of formdata.entries()) {
+            formDataObject[key] = value;
+        }
+
+        const fullRequestData = {
+            layoutParameters: updatedLayout,
+            barcodeData: BarcodeData,
+            imageData,
+            printingData,
+            questionsWindowParameters,
+            skewMarksWindowParameters,
+            formFieldWindowParameters
+        };
+        console.log(fullRequestData)
         try {
-            const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', template, {
+            const response = await axios.post('https://5xgh5v9z-5289.inc1.devtunnels.ms/LayoutSetting', fullRequestData, {
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
             });
             console.log('Response:', response);
             // alert(`Response : ${JSON.stringify(response.data.message)}`)
@@ -419,7 +632,7 @@ const DesignTemplate = () => {
     }
     return (
         <>
-            <Button onClick={sendHandler}>Submit</Button>
+            <Button onClick={sendHandler}> {!loading ? "Save" : "Saving"}</Button>
             <div className="containers" >
 
                 <div id="imagecontainer" className={classes.img} >
@@ -616,29 +829,30 @@ const DesignTemplate = () => {
 
                         </div>
                     </Row>}
-                    <Row className="mb-2">
-                        <label
-                            htmlFor="example-text-input"
-                            className="col-md-2 col-form-label"
-                        >
-                            Window NG
-                        </label>
-                        <div className="col-md-10">
-                            <select
-                                className="form-control"
-                                value={windowNgOption}
-                                onChange={handleWindowNgOptionChange}
-                                defaultValue={""}
+                    {selectedFieldType !== "idField" &&
+                        <Row className="mb-2">
+                            <label
+                                htmlFor="example-text-input"
+                                className="col-md-2 col-form-label"
                             >
-                                <option value="">Select an option</option>
-                                <option value="0x00000001">Paper ejection to select stacker</option>
-                                <option value="0x00000002">Stop reading</option>
-                                <option value="0x00000004">Do not print</option>
+                                Window NG
+                            </label>
+                            <div className="col-md-10">
+                                <select
+                                    className="form-control"
+                                    value={windowNgOption}
+                                    onChange={handleWindowNgOptionChange}
+                                    defaultValue={""}
+                                >
+                                    <option value="">Select an option</option>
+                                    <option value="0x00000001">Paper ejection to select stacker</option>
+                                    <option value="0x00000002">Stop reading</option>
+                                    <option value="0x00000004">Do not print</option>
 
-                            </select>
+                                </select>
 
-                        </div>
-                    </Row>
+                            </div>
+                        </Row>}
                     {selectedFieldType !== "idField" &&
                         <Row >
                             <label htmlFor="example-select-input" className="col-md-2" >
@@ -810,44 +1024,45 @@ const DesignTemplate = () => {
                         </div>
                     </Row>
 
-                    <Row className="mb-2">
-                        <label
-                            htmlFor="example-text-input"
-                            className="col-md-2  col-form-label"
-                        >
-                            Type :
-                        </label>
-                        <div className="col-md-5">
-                            <select
-                                className="form-control"
-                                value={type}
-                                onChange={(e) => { setType(e.target.value) }}
-                                defaultValue={""}
+                    {selectedFieldType !== "idField" &&
+                        <Row className="mb-2">
+                            <label
+                                htmlFor="example-text-input"
+                                className="col-md-2  col-form-label"
                             >
-                                <option value="">Select reading direction... </option>
-                                <option value="0x01">Mask (at the time set window) about a mark </option>
-                                <option value="0x02">Fixed mark </option>
-                                <option value="0x03">Checkdigits </option>
-                                <option value="0x04">Range checking (ascending order)</option>
-                                <option value="0x05">Range checking (descending order)</option>
-                                <option value="0x06">Range checking (not order) </option>
-                                <option value="0x07">Mask setting(common to partition)
-                                </option>
-                            </select>
-                        </div>
-                        <label
-                            htmlFor="example-text-input"
-                            className="col-md-2 col-form-label "
-                        >
-                            Option :
-                        </label>
-                        <div className="col-3 ">
-                            <input type="number" className="form-control"
-                                value={option}
-                                onChange={(e) => setOption(e.target.value)}
-                                required />
-                        </div>
-                    </Row>
+                                Type :
+                            </label>
+                            <div className="col-md-5">
+                                <select
+                                    className="form-control"
+                                    value={type}
+                                    onChange={(e) => { setType(e.target.value) }}
+                                    defaultValue={""}
+                                >
+                                    <option value="">Select reading direction... </option>
+                                    <option value="0x01">Mask (at the time set window) about a mark </option>
+                                    <option value="0x02">Fixed mark </option>
+                                    <option value="0x03">Checkdigits </option>
+                                    <option value="0x04">Range checking (ascending order)</option>
+                                    <option value="0x05">Range checking (descending order)</option>
+                                    <option value="0x06">Range checking (not order) </option>
+                                    <option value="0x07">Mask setting(common to partition)
+                                    </option>
+                                </select>
+                            </div>
+                            <label
+                                htmlFor="example-text-input"
+                                className="col-md-2 col-form-label "
+                            >
+                                Option :
+                            </label>
+                            <div className="col-3 ">
+                                <input type="number" className="form-control"
+                                    value={option}
+                                    onChange={(e) => setOption(e.target.value)}
+                                    required />
+                            </div>
+                        </Row>}
                     {(selectedFieldType === "questionField" || selectedFieldType === 'formField') && (<Row>
                         <label
                             htmlFor="example-text-input"

@@ -33,15 +33,11 @@ const Booklet32Page = () => {
     const [data, setData] = useState([
         { OrderID: 10248, CustomerID: 'VINET' },
         { OrderID: 10249, CustomerID: 'TOMSP' }]);
-
     const [scanning, setScanning] = useState(false);
     const [headData, setHeadData] = useState(["OrderID"]);
     const filterSettings = { type: 'Excel' };
     const toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
-    const customeridRule = { required: true, minLength: 5 };
-    const orderidRules = { required: true, number: true };
-    const freightRules = { required: true, min: 0 };
     const [items, setItems] = useState([]);
     // useEffect(() => {
     //     const interval = setInterval(() => {

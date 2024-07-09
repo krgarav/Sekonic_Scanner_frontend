@@ -81,6 +81,7 @@ const TemplateModal = (props) => {
     const [options, setOptions] = useState([]);
     const [colIdPattern, setColIdPattern] = useState();
     const [idNumber, setIdNumber] = useState("");
+    const [imageFile, setImageFile] = useState();
 
     const handleColumnChange = (event) => {
         const columnIndex = event.value - 1;
@@ -119,12 +120,8 @@ const TemplateModal = (props) => {
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                setImageSrc(event.target.result);
-
-            };
-            reader.readAsDataURL(file);
+            setImageSrc(URL.createObjectURL(file)); // Display image
+            setImageFile(file);
         }
     }
 
@@ -157,6 +154,7 @@ const TemplateModal = (props) => {
                 "ngAction": windowNgOption.id,
                 "dataReadDirection": direction.id,
                 "iReject": +reject.name,
+                "imgFile": imageFile
             },
             "barcodeData": {
                 "barcodeSide": 0,
@@ -189,6 +187,7 @@ const TemplateModal = (props) => {
                 "printMode": 0
             },
         }];
+        // console.log(templateData)
         const index = dataCtx.setAllTemplates(templateData);
         console.log(index);
         setModalShow(false);

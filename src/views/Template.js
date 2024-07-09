@@ -63,6 +63,7 @@ const Template = () => {
 
   const sendToBackendHandler = async (index) => {
     const template = dataCtx.allTemplates[index];
+    console.log(template);
     try {
       const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', template[0], {
         headers: {
