@@ -46,6 +46,10 @@ import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
 import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
 import '../node_modules/@syncfusion/ej2-notifications/styles/material.css';
 import "../node_modules/@syncfusion/ej2-react-grids/styles/material.css";
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from './amplifyconfiguration.json';
+
+Amplify.configure(amplifyconfig);
 
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NCaF5cXmZCeUx0TXxbf1x0ZFFMYFpbQXNPMyBoS35RckVlW3dedHRdQ2FaWUF2');

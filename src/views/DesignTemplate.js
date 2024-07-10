@@ -9,7 +9,9 @@ import { Rnd } from 'react-rnd';
 import DataContext from "store/DataContext";
 import { MultiSelect } from "react-multi-select-component";
 import axios from 'axios';
-
+// import { Storage } from 'aws-amplify';
+import { getProperties } from 'aws-amplify/storage';
+import { uploadData } from 'aws-amplify/storage';
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
     const [selection, setSelection] = useState(null);
@@ -489,146 +491,173 @@ const DesignTemplate = () => {
         console.log(template);
 
         const layoutParameters = template[0].layoutParameters;
-        const Coordinate = layoutParameters.Coordinate;
-        const layoutCoordinates = {
-            right: Coordinate["End Col"],
-            end: Coordinate["End Row"],
-            left: Coordinate["Start Col"],
-            start: Coordinate["Start Row"]
-        }
-        delete layoutCoordinates.Coordinate
-        const updatedLayout = { ...layoutParameters, layoutCoordinates };
-        delete updatedLayout.Coordinate
-        delete updatedLayout.imageStructureData
+        // const Coordinate = layoutParameters.Coordinate;
+        // const layoutCoordinates = {
+        //     right: Coordinate["End Col"],
+        //     end: Coordinate["End Row"],
+        //     left: Coordinate["Start Col"],
+        //     start: Coordinate["Start Row"]
+        // }
+        // delete layoutCoordinates.Coordinate
+        // const updatedLayout = { ...layoutParameters, layoutCoordinates };
+        // delete updatedLayout.Coordinate
+        // delete updatedLayout.imageStructureData
 
 
-        const BarcodeData = template[0].barcodeData
-        const imageData = template[0].imageData;
-        const printingData = template[0].printingData;
-        const questionsWindowParameters = template[0].questionsWindowParameters.map((item) => {
-            const { Coordinate, ...rest } = item;
-            console.log(Coordinate)
-            const questionWindowCoordinates = Coordinate ? {
-                right: Coordinate["End Col"],
-                end: Coordinate["End Row"],
-                left: Coordinate["Start Col"],
-                start: Coordinate["Start Row"]
-            } : {};
-            return { ...rest, questionWindowCoordinates }
-        })
-        const skewMarksWindowParameters = template[0].skewMarksWindowParameters.map((item) => {
-            const { Coordinate, ...rest } = item;
-            console.log(Coordinate)
-            const layoutWindowCoordinates = Coordinate ? {
-                right: Coordinate["End Col"],
-                end: Coordinate["End Row"],
-                left: Coordinate["Start Col"],
-                start: Coordinate["Start Row"]
-            } : {};
-            return { ...rest, layoutWindowCoordinates }
-        })
-        const formFieldWindowParameters = template[0].formFieldWindowParameters.map((item) => {
-            const { Coordinate, ...rest } = item;
-            console.log(Coordinate)
-            const formFieldCoordinates = Coordinate ? {
-                right: Coordinate["End Col"],
-                end: Coordinate["End Row"],
-                left: Coordinate["Start Col"],
-                start: Coordinate["Start Row"]
-            } : {};
-            return { ...rest, formFieldCoordinates }
-        })
+        // const BarcodeData = template[0].barcodeData
+        // const imageData = template[0].imageData;
+        // const printingData = template[0].printingData;
+        // const questionsWindowParameters = template[0].questionsWindowParameters.map((item) => {
+        //     const { Coordinate, ...rest } = item;
+        //     console.log(Coordinate)
+        //     const questionWindowCoordinates = Coordinate ? {
+        //         right: Coordinate["End Col"],
+        //         end: Coordinate["End Row"],
+        //         left: Coordinate["Start Col"],
+        //         start: Coordinate["Start Row"]
+        //     } : {};
+        //     return { ...rest, questionWindowCoordinates }
+        // })
+        // const skewMarksWindowParameters = template[0].skewMarksWindowParameters.map((item) => {
+        //     const { Coordinate, ...rest } = item;
+        //     console.log(Coordinate)
+        //     const layoutWindowCoordinates = Coordinate ? {
+        //         right: Coordinate["End Col"],
+        //         end: Coordinate["End Row"],
+        //         left: Coordinate["Start Col"],
+        //         start: Coordinate["Start Row"]
+        //     } : {};
+        //     return { ...rest, layoutWindowCoordinates }
+        // })
+        // const formFieldWindowParameters = template[0].formFieldWindowParameters.map((item) => {
+        //     const { Coordinate, ...rest } = item;
+        //     console.log(Coordinate)
+        //     const formFieldCoordinates = Coordinate ? {
+        //         right: Coordinate["End Col"],
+        //         end: Coordinate["End Row"],
+        //         left: Coordinate["Start Col"],
+        //         start: Coordinate["Start Row"]
+        //     } : {};
+        //     return { ...rest, formFieldCoordinates }
+        // })
 
-        // console.log(questionsWindowParameters)
-        const formdata = new FormData;
-        formdata.append('LayoutParameters.LayoutName', layoutParameters.layoutName)
-        formdata.append('LayoutParameters.File', layoutParameters.imageFile); // for image upload
-        formdata.append('LayoutParameters.TimingMarks', layoutParameters.timingMarks)
-        formdata.append('LayoutParameters.BarcodeCount', layoutParameters.barcodeCount);
-        formdata.append('LayoutParameters.iFace', layoutParameters.iFace)
-        formdata.append('LayoutParameters.ColumnStart', layoutParameters.columnStart);
-        formdata.append('LayoutParameters.ColumnNumber', layoutParameters.columnNumber)
-        formdata.append('LayoutParameters.ColumnStep', layoutParameters.columnStep);
-        formdata.append('LayoutParameters.RowStart', layoutParameters.rowStart)
-        formdata.append('LayoutParameters.RowNumber', layoutParameters.rowNumber);
-        formdata.append('LayoutParameters.RowStep', layoutParameters.rowStep)
-        formdata.append('LayoutParameters.iDirection', layoutParameters.iDirection);
-        formdata.append('LayoutParameters.iSensitivity', layoutParameters.iSensitivity)
-        formdata.append('LayoutParameters.iDifference', layoutParameters.iDifference);
-        formdata.append('LayoutParameters.DataReadDirection', layoutParameters.dataReadDirection);
-        formdata.append('LayoutParameters.iReject', layoutParameters.iReject)
-        formdata.append('LayoutParameters.IdMarksPattern', layoutParameters.idMarksPattern);
-        formdata.append('LayoutParameters.LayoutCoordinates.Start', layoutParameters.Coordinate?.["Start Row"]);
-        formdata.append('LayoutParameters.LayoutCoordinates.End', layoutParameters.Coordinate?.["End Row"]);
-        formdata.append('LayoutParameters.LayoutCoordinates.Left', layoutParameters.Coordinate?.["Start Col"]);
-        formdata.append('LayoutParameters.LayoutCoordinates.Right', layoutParameters.Coordinate?.["End Col"]);
-        formdata.append('LayoutParameters.NgAction', layoutParameters.ngAction)
+        // // console.log(questionsWindowParameters)
+        // const formdata = new FormData;
+        // formdata.append('LayoutParameters.LayoutName', layoutParameters.layoutName)
+        // formdata.append('LayoutParameters.File', layoutParameters.imageFile); // for image upload
+        // formdata.append('LayoutParameters.TimingMarks', layoutParameters.timingMarks)
+        // formdata.append('LayoutParameters.BarcodeCount', layoutParameters.barcodeCount);
+        // formdata.append('LayoutParameters.iFace', layoutParameters.iFace)
+        // formdata.append('LayoutParameters.ColumnStart', layoutParameters.columnStart);
+        // formdata.append('LayoutParameters.ColumnNumber', layoutParameters.columnNumber)
+        // formdata.append('LayoutParameters.ColumnStep', layoutParameters.columnStep);
+        // formdata.append('LayoutParameters.RowStart', layoutParameters.rowStart)
+        // formdata.append('LayoutParameters.RowNumber', layoutParameters.rowNumber);
+        // formdata.append('LayoutParameters.RowStep', layoutParameters.rowStep)
+        // formdata.append('LayoutParameters.iDirection', layoutParameters.iDirection);
+        // formdata.append('LayoutParameters.iSensitivity', layoutParameters.iSensitivity)
+        // formdata.append('LayoutParameters.iDifference', layoutParameters.iDifference);
+        // formdata.append('LayoutParameters.DataReadDirection', layoutParameters.dataReadDirection);
+        // formdata.append('LayoutParameters.iReject', layoutParameters.iReject)
+        // formdata.append('LayoutParameters.IdMarksPattern', layoutParameters.idMarksPattern);
+        // formdata.append('LayoutParameters.LayoutCoordinates.Start', layoutParameters.Coordinate?.["Start Row"]);
+        // formdata.append('LayoutParameters.LayoutCoordinates.End', layoutParameters.Coordinate?.["End Row"]);
+        // formdata.append('LayoutParameters.LayoutCoordinates.Left', layoutParameters.Coordinate?.["Start Col"]);
+        // formdata.append('LayoutParameters.LayoutCoordinates.Right', layoutParameters.Coordinate?.["End Col"]);
+        // formdata.append('LayoutParameters.NgAction', layoutParameters.ngAction)
 
 
-        formdata.append('BarcodeData.BarcodeSide', BarcodeData.barcodeSide)
-        formdata.append('BarcodeData.BarcodeType', BarcodeData.barcodeType);
-        formdata.append('BarcodeData.BarcodeCheckDigit', BarcodeData.barcodeCheckDigit)
-        formdata.append('BarcodeData.BarcodeOption', BarcodeData.barcodeOption);
-        formdata.append('BarcodeData.BarcodeRightPos', BarcodeData.barcodeRightPos)
-        formdata.append('BarcodeData.BarcodeLeftPos', BarcodeData.barcodeLeftPos);
-        formdata.append('BarcodeData.BarcodeTopPos', BarcodeData.barcodeTopPos)
-        formdata.append('BarcodeData.BarcodeBottomPos', BarcodeData.barcodeBottomPos);
+        // formdata.append('BarcodeData.BarcodeSide', BarcodeData.barcodeSide)
+        // formdata.append('BarcodeData.BarcodeType', BarcodeData.barcodeType);
+        // formdata.append('BarcodeData.BarcodeCheckDigit', BarcodeData.barcodeCheckDigit)
+        // formdata.append('BarcodeData.BarcodeOption', BarcodeData.barcodeOption);
+        // formdata.append('BarcodeData.BarcodeRightPos', BarcodeData.barcodeRightPos)
+        // formdata.append('BarcodeData.BarcodeLeftPos', BarcodeData.barcodeLeftPos);
+        // formdata.append('BarcodeData.BarcodeTopPos', BarcodeData.barcodeTopPos)
+        // formdata.append('BarcodeData.BarcodeBottomPos', BarcodeData.barcodeBottomPos);
 
-        formdata.append('ImageData.ImageEnable', imageData.imageEnable)
-        formdata.append('ImageData.ImageColor', imageData.imageColor);
-        formdata.append('ImageData.ImageType', imageData.imageType)
-        formdata.append('ImageData.ImageParam', imageData.imageParam);
-        formdata.append('ImageData.ImageRotation', imageData.imageRotation)
-        formdata.append('ImageData.ImageResoMode', imageData.imageResoMode);
-        formdata.append('ImageData.ImageResolution', imageData.imageResolution)
+        // formdata.append('ImageData.ImageEnable', imageData.imageEnable)
+        // formdata.append('ImageData.ImageColor', imageData.imageColor);
+        // formdata.append('ImageData.ImageType', imageData.imageType)
+        // formdata.append('ImageData.ImageParam', imageData.imageParam);
+        // formdata.append('ImageData.ImageRotation', imageData.imageRotation)
+        // formdata.append('ImageData.ImageResoMode', imageData.imageResoMode);
+        // formdata.append('ImageData.ImageResolution', imageData.imageResolution)
 
-        formdata.append('PrintingData.PrintEnable', printingData.printEnable);
-        formdata.append('PrintingData.PrintStartPos', printingData.printStartPos)
-        formdata.append('PrintingData.PrintDigit', printingData.printDigit);
-        formdata.append('PrintingData.PrintStartNumber', printingData.printStartNumber)
-        formdata.append('PrintingData.PrintOrientation', printingData.printOrientation);
-        formdata.append('PrintingData.PrintFontSize', printingData.printFontSize)
-        formdata.append('PrintingData.PrintFontSpace', printingData.printFontSpace);
-        formdata.append('PrintingData.PrintMode', printingData.printMode)
+        // formdata.append('PrintingData.PrintEnable', printingData.printEnable);
+        // formdata.append('PrintingData.PrintStartPos', printingData.printStartPos)
+        // formdata.append('PrintingData.PrintDigit', printingData.printDigit);
+        // formdata.append('PrintingData.PrintStartNumber', printingData.printStartNumber)
+        // formdata.append('PrintingData.PrintOrientation', printingData.printOrientation);
+        // formdata.append('PrintingData.PrintFontSize', printingData.printFontSize)
+        // formdata.append('PrintingData.PrintFontSpace', printingData.printFontSpace);
+        // formdata.append('PrintingData.PrintMode', printingData.printMode)
 
-        // formdata.append('SkewMarksWindowParameters', JSON.stringify(skewMarksWindowParameters));
-        // formdata.append('FormFieldWindowParameters', JSON.stringify(formFieldWindowParameters));
-        // formdata.append('QuestionsWindowParameters', JSON.stringify(questionsWindowParameters));
+        // // formdata.append('SkewMarksWindowParameters', JSON.stringify(skewMarksWindowParameters));
+        // // formdata.append('FormFieldWindowParameters', JSON.stringify(formFieldWindowParameters));
+        // // formdata.append('QuestionsWindowParameters', JSON.stringify(questionsWindowParameters));
 
-        const requestData = {
-            layoutParameters,
+        // const requestData = {
+        //     layoutParameters,
 
-            SkewMarksWindowParameters: skewMarksWindowParameters,
-            FormFieldWindowParameters: formFieldWindowParameters,
-            QuestionsWindowParameters: questionsWindowParameters
-        }
-        const formDataObject = {};
-        for (let [key, value] of formdata.entries()) {
-            formDataObject[key] = value;
-        }
+        //     SkewMarksWindowParameters: skewMarksWindowParameters,
+        //     FormFieldWindowParameters: formFieldWindowParameters,
+        //     QuestionsWindowParameters: questionsWindowParameters
+        // }
+        // const formDataObject = {};
+        // for (let [key, value] of formdata.entries()) {
+        //     formDataObject[key] = value;
+        // }
 
-        const fullRequestData = {
-            layoutParameters: updatedLayout,
-            barcodeData: BarcodeData,
-            imageData,
-            printingData,
-            questionsWindowParameters,
-            skewMarksWindowParameters,
-            formFieldWindowParameters
-        };
-        console.log(fullRequestData)
+        // const fullRequestData = {
+        //     layoutParameters: updatedLayout,
+        //     barcodeData: BarcodeData,
+        //     imageData,
+        //     printingData,
+        //     questionsWindowParameters,
+        //     skewMarksWindowParameters,
+        //     formFieldWindowParameters
+        // };
+        // console.log(fullRequestData)
+        // try {
+        //     const response = await axios.post('https://5xgh5v9z-5289.inc1.devtunnels.ms/LayoutSetting', fullRequestData, {
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //     });
+        //     console.log('Response:', response);
+        //     // alert(`Response : ${JSON.stringify(response.data.message)}`)
+        // } catch (error) {
+        //     // alert(`Response : ${JSON.stringify(error.response.data)}`)
+        //     console.error('Error sending POST request:', error);
+        // }
+        const imgFiles = layoutParameters.imgFile; // Assuming imgFile is a File object from an input element
+        console.log(imgFiles)
+        const formData = new FormData();
+        formData.append('file', imgFiles);
+        formData.append('upload_preset', 'Sekonic'); // Replace with your Cloudinary upload preset
+
         try {
-            const response = await axios.post('https://5xgh5v9z-5289.inc1.devtunnels.ms/LayoutSetting', fullRequestData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-            console.log('Response:', response);
-            // alert(`Response : ${JSON.stringify(response.data.message)}`)
+            const response = await axios.post(
+                'https://api.cloudinary.com/v1_1/dje269eh5/image/upload',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                        // Add authorization header if required (depending on your Cloudinary setup)
+                        // 'Authorization': 'Bearer YOUR_CLOUDINARY_API_KEY_AND_SECRET'
+                    }
+                }
+            );
+            console.log('File Properties ', response.data.secure_url); // Assuming you want to log the uploaded image properties
         } catch (error) {
-            // alert(`Response : ${JSON.stringify(error.response.data)}`)
-            console.error('Error sending POST request:', error);
+            console.error('Error uploading file: ', error);
         }
+        // const result = await Storage.put(imgFile.name, imgFile, {
+        //     contentType: imgFile.type // This helps browsers handle the file correctly
+        // });
+        // const url = await Storage.get(result.key);
+        // console.log(url)
     }
     return (
         <>

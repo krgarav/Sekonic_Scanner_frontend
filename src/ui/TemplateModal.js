@@ -38,6 +38,7 @@ import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import '@syncfusion/ej2-base/styles/material.css';
 import '@syncfusion/ej2-react-dropdowns/styles/material.css';
 import { MultiSelect } from "react-multi-select-component";
+import axios from "axios";
 const TemplateModal = (props) => {
     const [modalShow, setModalShow] = useState(false);
     const [name, setName] = useState("");
@@ -125,7 +126,7 @@ const TemplateModal = (props) => {
         }
     }
 
-    const createTemplateHandler = () => {
+    const createTemplateHandler = async () => {
 
         if (!name || !numberOfLines || !numberOfFrontSideColumn || !barCount) {
             settoggle((prevData) => ({
@@ -140,71 +141,97 @@ const TemplateModal = (props) => {
         }
 
 
-        const templateData = [{
-            "layoutParameters": {
-                "layoutName": name,
-                "timingMarks": +numberOfLines,
-                "barcodeCount": +barCount,
-                "iFace": +face.id,
-                "totalColumns": +numberOfFrontSideColumn,
-                "bubbleType": selectedBubble.name,
-                "imagesrc": imageSrc,
-                "iSensitivity": +sensitivity,
-                "iDifference": +difference,
-                "ngAction": windowNgOption.id,
-                "dataReadDirection": direction.id,
-                "iReject": +reject.name,
-                "imgFile": imageFile
-            },
-            "barcodeData": {
-                "barcodeSide": 0,
-                "barcodeColor": 0,
-                "barcodeType": barcodeType.id,
-                "barcodeCheckDigit": checkDigit !== null ? +checkDigit.id : 0,
-                "barcodeOption": option !== null ? +option.id : 0,
-                "barcodeRightPos": +barcodeRightPos,
-                "barcodeLeftPos": +barcodeLeftPos,
-                "barcodeTopPos": +barcodeTopPos,
-                "barcodeBottomPos": +barcodeBottomPos,
-            },
-            "imageData": {
-                "imageEnable": +imageStatus.id,
-                "imageColor": +colorType.id,
-                "imageType": +encoding.id,
-                "imageParam": 0,
-                "imageRotation": +rotation.id,
-                "imageResoMode": 0,
-                "imageResolution": +resolution.id,
-            },
-            "printingData": {
-                "printEnable": 0,
-                "printStartPos": 0,
-                "printDigit": 0,
-                "printStartNumber": 0,
-                "printOrientation": 0,
-                "printFontSize": 0,
-                "printFontSpace": 0,
-                "printMode": 0
-            },
-        }];
-        // console.log(templateData)
-        const index = dataCtx.setAllTemplates(templateData);
-        console.log(index);
-        setModalShow(false);
-        navigate("/admin/design-template", {
-            state: {
-                templateIndex: index,
-                timingMarks: numberOfLines,
-                totalColumns: numberOfFrontSideColumn,
-                imgsrc: imageSrc,
-                bubbleType: selectedBubble.name,
-                iSensitivity: sensitivity,
-                iDifference: difference,
-                barcodeCount: barCount,
-                iReject: reject.id,
-                iFace: face.id
-            },
-        });
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('upload_preset', 'Sekonic'); // Replace with your Cloudinary upload preset
+
+        try {
+            const response = await axios.post(
+                'https://api.cloudinary.com/v1_1/dje269eh5/image/upload',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                        // Add authorization header if required (depending on your Cloudinary setup)
+                        // 'Authorization': 'Bearer YOUR_CLOUDINARY_API_KEY_AND_SECRET'
+                    }
+                }
+            );
+
+            console.log('File Properties ', response.data.secure_url);
+            const imgUrl = response.data.secure_url;
+
+            // Assuming you want to log the uploaded image properties
+
+            const templateData = [{
+                "layoutParameters": {
+                    "layoutName": name,
+                    "timingMarks": +numberOfLines,
+                    "barcodeCount": +barCount,
+                    "iFace": +face.id,
+                    "totalColumns": +numberOfFrontSideColumn,
+                    "bubbleType": selectedBubble.name,
+                    "imagesrc": imgUrl,
+                    "iSensitivity": +sensitivity,
+                    "iDifference": +difference,
+                    "ngAction": windowNgOption.id,
+                    "dataReadDirection": direction.id,
+                    "iReject": +reject.name,
+                    "imgFile": imageFile
+                },
+                "barcodeData": {
+                    "barcodeSide": 0,
+                    "barcodeColor": 0,
+                    "barcodeType": barcodeType.id,
+                    "barcodeCheckDigit": checkDigit !== null ? +checkDigit.id : 0,
+                    "barcodeOption": option !== null ? +option.id : 0,
+                    "barcodeRightPos": +barcodeRightPos,
+                    "barcodeLeftPos": +barcodeLeftPos,
+                    "barcodeTopPos": +barcodeTopPos,
+                    "barcodeBottomPos": +barcodeBottomPos,
+                },
+                "imageData": {
+                    "imageEnable": +imageStatus.id,
+                    "imageColor": +colorType.id,
+                    "imageType": +encoding.id,
+                    "imageParam": 0,
+                    "imageRotation": +rotation.id,
+                    "imageResoMode": 0,
+                    "imageResolution": +resolution.id,
+                },
+                "printingData": {
+                    "printEnable": 0,
+                    "printStartPos": 0,
+                    "printDigit": 0,
+                    "printStartNumber": 0,
+                    "printOrientation": 0,
+                    "printFontSize": 0,
+                    "printFontSpace": 0,
+                    "printMode": 0
+                },
+            }];
+            // console.log(templateData)
+            const index = dataCtx.setAllTemplates(templateData);
+            console.log(index);
+            setModalShow(false);
+            navigate("/admin/design-template", {
+                state: {
+                    templateIndex: index,
+                    timingMarks: numberOfLines,
+                    totalColumns: numberOfFrontSideColumn,
+                    imgsrc: imageSrc,
+                    bubbleType: selectedBubble.name,
+                    iSensitivity: sensitivity,
+                    iDifference: difference,
+                    barcodeCount: barCount,
+                    iReject: reject.id,
+                    iFace: face.id
+                },
+            });
+
+        } catch (error) {
+            console.error('Error uploading file: ', error);
+        }
     }
     return (
         <Modal
