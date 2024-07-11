@@ -51,7 +51,6 @@
     "@syncfusion/ej2-base": "^26.1.37",
     "@syncfusion/ej2-react-dropdowns": "^26.1.40",
     "@syncfusion/ej2-react-grids": "^26.1.40",
-    "aws-amplify": "^6.4.0",
     "axios": "^1.7.2",
     "bootstrap": "4.6.2",
     "chart.js": "2.9.4",

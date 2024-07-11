@@ -140,12 +140,12 @@ const TemplateModal = (props) => {
             return;
         }
 
-
-        const formData = new FormData();
-        formData.append('file', imageFile);
-        formData.append('upload_preset', 'Sekonic'); // Replace with your Cloudinary upload preset
-
         try {
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            formData.append('upload_preset', 'Sekonic'); // Replace with your Cloudinary upload preset
+
+
             const response = await axios.post(
                 'https://api.cloudinary.com/v1_1/dje269eh5/image/upload',
                 formData,
@@ -158,10 +158,7 @@ const TemplateModal = (props) => {
                 }
             );
 
-            console.log('File Properties ', response.data.secure_url);
             const imgUrl = response.data.secure_url;
-
-            // Assuming you want to log the uploaded image properties
 
             const templateData = [{
                 "layoutParameters": {
@@ -177,7 +174,6 @@ const TemplateModal = (props) => {
                     "ngAction": windowNgOption.id,
                     "dataReadDirection": direction.id,
                     "iReject": +reject.name,
-                    "imgFile": imageFile
                 },
                 "barcodeData": {
                     "barcodeSide": 0,
@@ -191,13 +187,13 @@ const TemplateModal = (props) => {
                     "barcodeBottomPos": +barcodeBottomPos,
                 },
                 "imageData": {
-                    "imageEnable": +imageStatus.id,
-                    "imageColor": +colorType.id,
-                    "imageType": +encoding.id,
+                    "imageEnable": imageStatus ? +imageStatus.id : 0,
+                    "imageColor": colorType ? +colorType.id : "",
+                    "imageType": encoding ? +encoding.id : "",
                     "imageParam": 0,
-                    "imageRotation": +rotation.id,
+                    "imageRotation": rotation ? +rotation.id : 0,
                     "imageResoMode": 0,
-                    "imageResolution": +resolution.id,
+                    "imageResolution": resolution ? +resolution.id : 0,
                 },
                 "printingData": {
                     "printEnable": 0,
@@ -210,16 +206,14 @@ const TemplateModal = (props) => {
                     "printMode": 0
                 },
             }];
-            // console.log(templateData)
             const index = dataCtx.setAllTemplates(templateData);
-            console.log(index);
             setModalShow(false);
             navigate("/admin/design-template", {
                 state: {
                     templateIndex: index,
                     timingMarks: numberOfLines,
                     totalColumns: numberOfFrontSideColumn,
-                    imgsrc: imageSrc,
+                    imgsrc: imgUrl,
                     bubbleType: selectedBubble.name,
                     iSensitivity: sensitivity,
                     iDifference: difference,
