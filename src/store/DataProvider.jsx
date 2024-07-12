@@ -5,15 +5,7 @@ const initialData = { allTemplates: [] }; // Initial data if localStorage is emp
 
 const DataProvider = (props) => {
   // Initialize dataState from localStorage if it exists, otherwise use initialData
-  const [dataState, setDataState] = useState(() => {
-    const savedData = localStorage.getItem("Template");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      return { allTemplates: parsedData };
-    } else {
-      return initialData;
-    }
-  });
+  const [dataState, setDataState] = useState(initialData);
 
   // Save dataState to localStorage whenever it changes
 
@@ -89,12 +81,21 @@ const DataProvider = (props) => {
       });
     }
   };
+  const addToAllTemplateHandler = (template) => {
+    setDataState((prevState) => {
+      return {
+        ...prevState,
+        allTemplates: template,
+      };
+    });
+  };
 
   const dataContext = {
     allTemplates: dataState.allTemplates,
     setAllTemplates: templateHandler,
     modifyAllTemplate: modifyTemplateHandler,
     deleteTemplate: deleteTemplateHandler,
+    addToAllTemplate: addToAllTemplateHandler,
   };
 
   return (

@@ -1,9 +1,10 @@
 import React from "react";
 const DataContext = React.createContext({
   allTemplates: [],
+  addToAllTemplate: () => {},
   setAllTemplates: () => {},
   modifyAllTemplate: () => {},
-  deleteTemplate:()=>{}
+  deleteTemplate: () => {},
 });
 
 export default DataContext;

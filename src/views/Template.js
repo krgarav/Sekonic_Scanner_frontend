@@ -27,6 +27,8 @@ import DataContext from "store/DataContext";
 import axios from 'axios';
 import pako from 'pako';
 import TemplateModal from "../ui/TemplateModal";
+
+
 const Template = () => {
   const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
@@ -34,7 +36,21 @@ const Template = () => {
   const [templateDatail, setTemplateDetail] = useState([])
 
   const dataCtx = useContext(DataContext);
+  useEffect(() => {
+    const fetchAllTemplate = async () => {
+      const response = await axios.get("https://rb5xhrfq-5289.inc1.devtunnels.ms/GetAllLayout");
+      // response.data
 
+      const mpObj = response.data.map((item) => {
+        return [{ layoutParameters: item }]
+
+      })
+      console.log(mpObj)
+      dataCtx.addToAllTemplate(mpObj)
+      console.log(response.data)
+    }
+    fetchAllTemplate();
+  }, []);
   const showHandler = (arr) => {
     setShowDetailModal(true);
     setTemplateDetail(arr)
@@ -59,7 +75,7 @@ const Template = () => {
 
     });
   };
-
+  console.log(dataCtx.allTemplates)
 
   const sendToBackendHandler = async (index) => {
     const template = dataCtx.allTemplates[index];
@@ -116,7 +132,6 @@ const Template = () => {
                 </thead>
                 <tbody style={{ minHeight: "100rem" }}>
                   {dataCtx.allTemplates?.map((d, i) => (
-
                     <tr key={i}>
                       <td>{i + 1}</td>
                       <td>{d[0].layoutParameters.layoutName}</td>
