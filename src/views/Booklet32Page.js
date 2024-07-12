@@ -13,6 +13,7 @@ import { refreshScanner } from "helper/Booklet32Page_helper";
 import { scanFiles } from "helper/Booklet32Page_helper";
 // import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, Page, Filter, Edit } from '@syncfusion/ej2-react-grids';
 import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, ExcelExport, PdfExport, ToolbarItems, Page, FilterSettingsModel, EditSettingsModel, Filter, Edit } from '@syncfusion/ej2-react-grids';
+import axios from "axios";
 // import Select, { components } from "react-select";
 const dataSet = [
     { OrderID: 10248, CustomerName: 'Paul Henriot', OrderDate: new Date(2020, 5, 20), Freight: 32.38, ShippedDate: new Date(2020, 5, 23), ShipCountry: 'France' },
@@ -39,6 +40,8 @@ const Booklet32Page = () => {
     const toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
     const [items, setItems] = useState([]);
+    const [templateOptions, setTemplateOptions] = useState([]);
+    const [selectedValue, setSelectedValue] = useState(null)
     // useEffect(() => {
     //     const interval = setInterval(() => {
     //         setItems(prevItems => {
@@ -67,7 +70,23 @@ const Booklet32Page = () => {
             setScanning(false);
         }
     };
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get("https://rb5xhrfq-5289.inc1.devtunnels.ms/GetAllLayout");
+            console.log(response)
+            const options = response?.data
+            console.log(options)
+            const optionObject = options?.map((item) => {
+                return { id: item.id, value: item.layoutName }
+            }
+            )
+            console.log(optionObject)
+            setTemplateOptions(optionObject)
+        }
+        fetchData();
 
+
+    }, [])
     // useEffect(() => {
     //     const intervalId = setInterval(() => {
     //         if (scanning) {
@@ -79,9 +98,13 @@ const Booklet32Page = () => {
     // }, [scanning]);
 
     const handleStart = async () => {
+        if (!selectedValue) {
+            alert("Choose Template");
+            return
+        }
         try {
             setScanning(true);
-            const result = await fetchProcessData(1009);
+            const result = await fetchProcessData(selectedValue.id);
             console.log(result.result.data)
             const newData = Object.keys(result.result.data[0])
             setHeadData(newData);
@@ -128,25 +151,21 @@ const Booklet32Page = () => {
             </ColumnDirective>)
     })
 
-    console.log(data)
-    console.log(items)
-
     return (
         <>
             <NormalHeader />
 
             <Container className="mt--7" fluid>
                 <div className="d-flex">
-
                     <h2 style={{ color: "white", zIndex: 999 }}>Choose Template : </h2>
                     <Select
-                        // value={windowNgOption}
-                        // onChange={(selectedValue) => setWindowNgOption(selectedValue)}
-                        // options={windowNgData}
-                        // getOptionLabel={(option) => option?.showName || ""}
-                        // getOptionValue={(option) =>
-                        //     option?.id?.toString() || ""
-                        // }
+                        value={selectedValue}
+                        onChange={(selectedValue) => setSelectedValue(selectedValue)}
+                        options={templateOptions}
+                        getOptionLabel={(option) => option?.value || ""}
+                        getOptionValue={(option) =>
+                            option?.id?.toString() || ""
+                        }
                         placeholder="Select Template"
                     />
                 </div>
