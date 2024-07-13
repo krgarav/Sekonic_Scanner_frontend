@@ -57,6 +57,7 @@ const Template = () => {
 
   }
   const editHandler = (arr, index) => {
+    console.log(arr, index);
     const tempdata = arr[0].layoutParameters;
 
     navigate("/admin/design-template", {
@@ -64,13 +65,14 @@ const Template = () => {
         templateIndex: index,
         timingMarks: +tempdata.timingMarks,
         totalColumns: +tempdata.totalColumns,
-        imgsrc: tempdata.imagesrc,
+        templateImagePath: tempdata.imagesrc,
         bubbleType: tempdata.bubbleType,
         iSensitivity: +tempdata.iSensitivity,
         iDifference: +tempdata.iDifference,
         iReject: tempdata.iReject,
         iFace: +tempdata.iFace,
-        arr: arr
+        arr: arr,
+        templateId: tempdata.id
       }
 
     });

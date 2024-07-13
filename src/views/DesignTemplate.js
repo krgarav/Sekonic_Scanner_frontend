@@ -56,14 +56,15 @@ const DesignTemplate = () => {
     const {
         totalColumns,
         timingMarks,
-        imgsrc,
+        templateImagePath,
         bubbleType,
         templateIndex,
         iSensitivity,
         iDifference,
         iReject,
         iFace,
-        arr
+        arr,
+        templateId
     } = useLocation().state;
     const [selectedCol, setSelectedCol] = useState([]);
     const [options, setOptions] = useState([]);
@@ -72,6 +73,7 @@ const DesignTemplate = () => {
 
     const numRows = timingMarks;
     const numCols = totalColumns;
+
     const handleDragStop = (e, d) => {
         setPosition((prev) => ({ ...prev, x: d.x, y: d.y }));
     };
@@ -101,16 +103,6 @@ const DesignTemplate = () => {
         }
         return null;
     };
-    // useEffect(() => {
-    //     // Example usage: log the current state
-    //     console.log(getCurrentImageState());
-    // }, [rndRef.current]);
-    // useEffect(() => {
-    //     if (rndRef.current) {
-    //         // Update the state with the current image state
-    //         setImageState(getCurrentImageState());
-    //     }
-    // }, [rndRef.current]);
     useEffect(() => {
         if (arr) {
 
@@ -139,6 +131,15 @@ const DesignTemplate = () => {
             console.log(idField)
             setPosition(idField?.imageStructureData);
         }
+    }, [])
+
+
+    useEffect(() => {
+        const fetchDetails = async () => {
+            const response = await axios.get(`https://rb5xhrfq-5289.inc1.devtunnels.ms/GetLayoutDataById?Id=${templateId}`);
+            console.log(response);
+        }
+        fetchDetails();
     }, [])
     useEffect(() => {
         switch (bubbleType) {
@@ -173,12 +174,15 @@ const DesignTemplate = () => {
     }, [totalColumns]);
 
     useEffect(() => {
-        const value = selectedCol.map((item) => item.value);
-        const arr = Array(+totalColumns).fill(0)
-        for (let j = 0; j < value.length; j++) {
-            arr[value[j]] = 1
+        if (selectedCol.length > 0) {
+            const value = selectedCol.map((item) => item.value);
+            const arr = Array(+totalColumns).fill(0)
+            for (let j = 0; j < value.length; j++) {
+                arr[value[j]] = 1
+            }
+            setIdNumber(arr.join("").toString())
         }
-        setIdNumber(arr.join("").toString())
+
     }, [options, selectedCol]);
     {/* useEffect for toggling image overlapping over coordinate selection area*/ }
     useEffect(() => {
@@ -499,8 +503,8 @@ const DesignTemplate = () => {
                         }}
                         minWidth={100}
                         minHeight={100}
-                        position={{ x: position.x, y: position.y }}
-                        size={{ width: position.width, height: position.height }}
+                        position={{ x: position?.x, y: position?.y }}
+                        size={{ width: position?.width, height: position?.height }}
                         onDragStop={handleDragStop}
                         onResizeStop={handleResizeStop}
                         bounds={null}
@@ -510,7 +514,7 @@ const DesignTemplate = () => {
 
                     >
                         <img
-                            src={imgsrc}
+                            src={templateImagePath}
                             className={`${classes["object-contain"]} ${classes["draggable-resizable-image"]} rounded`}
                             alt="omr sheet"
 
