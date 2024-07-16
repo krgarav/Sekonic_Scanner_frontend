@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Modal, Button, Col } from "react-bootstrap";
 import { Row } from "reactstrap";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import classes from "./DesignTemplate.module.css";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from 'react-draggable';
@@ -72,7 +72,7 @@ const DesignTemplate = () => {
     const [options, setOptions] = useState([]);
     const [idNumber, setIdNumber] = useState("");
     const rndRef = useRef();
-
+    const navigate = useNavigate();
     const numRows = timingMarks;
     const numCols = totalColumns;
 
@@ -171,7 +171,7 @@ const DesignTemplate = () => {
                         const { start: startRow, left: startCol, end: endRow, right: endCol, name } = item;
                         return { startRow, startCol, endRow, endCol, name }
                     });
-                    
+
                     setSelectedCoordinates(newSelectedFields)
                     setPosition(idField?.imageStructureData);
                 }
@@ -522,7 +522,9 @@ const DesignTemplate = () => {
         console.log(fullRequestData)
         try {
             const res = await createTemplate(fullRequestData);
-            alert(`Response : ${JSON.stringify(res.message)}`)
+            console.log(res)
+            alert(`Response : ${JSON.stringify(res.message)}`);
+            navigate("/admin/template", { replace: true })
         } catch (error) {
             alert(`Error creating template`)
             console.error('Error sending POST request:', error);
