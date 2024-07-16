@@ -47,13 +47,13 @@ var routes = [
     component: <Jobs />,
     layout: "/admin",
   },
-  {
-    path: "/column-generation",
-    name: "Column Generation",
-    icon: "ni ni-briefcase-24 text-blue",
-    component: <ImageGrid />,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/column-generation",
+  //   name: "Column Generation",
+  //   icon: "ni ni-briefcase-24 text-blue",
+  //   component: <ImageGrid />,
+  //   layout: "/admin",
+  // },
   {
     path: "/template",
     name: "Template",
@@ -77,7 +77,7 @@ var routes = [
   // },
   {
     path: "/32-page-booklet",
-    name: "32 page Booklet",
+    name: "Scan Template",
     icon: "ni ni-books text-success",
     component: <Booklet32Page />,
     layout: "/admin",

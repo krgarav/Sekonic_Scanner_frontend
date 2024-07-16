@@ -1,5 +1,4 @@
 
-
 // core components
 import Header from "components/Headers/Header.js";
 import NormalHeader from "components/Headers/NormalHeader";
@@ -14,6 +13,7 @@ import { scanFiles } from "helper/Booklet32Page_helper";
 // import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, Page, Filter, Edit } from '@syncfusion/ej2-react-grids';
 import { GridComponent, ColumnsDirective, ColumnDirective, Sort, Inject, Toolbar, ExcelExport, PdfExport, ToolbarItems, Page, FilterSettingsModel, EditSettingsModel, Filter, Edit } from '@syncfusion/ej2-react-grids';
 import axios from "axios";
+import { fetchAllTemplate } from "helper/TemplateHelper";
 // import Select, { components } from "react-select";
 const dataSet = [
     { OrderID: 10248, CustomerName: 'Paul Henriot', OrderDate: new Date(2020, 5, 20), Freight: 32.38, ShippedDate: new Date(2020, 5, 23), ShipCountry: 'France' },
@@ -72,20 +72,14 @@ const Booklet32Page = () => {
     };
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get("https://rb5xhrfq-5289.inc1.devtunnels.ms/GetAllLayout");
-            console.log(response)
-            const options = response?.data
-            console.log(options)
-            const optionObject = options?.map((item) => {
+            const template = await fetchAllTemplate()
+            const optionObject = template?.map((item) => {
                 return { id: item.id, value: item.layoutName }
             }
-            )
-            console.log(optionObject)
+            );
             setTemplateOptions(optionObject)
         }
         fetchData();
-
-
     }, [])
     // useEffect(() => {
     //     const intervalId = setInterval(() => {

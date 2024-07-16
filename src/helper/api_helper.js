@@ -61,7 +61,7 @@ export async function put(url, data, config = {}) {
         });
 }
 
-export async function del(url, config = {}) {
+export async function del(url,id, config = {}) {
     console.log("from the del --->", url)
     return await axiosApi
         .delete(url, { ...config })

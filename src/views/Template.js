@@ -17,39 +17,54 @@ import {
   Button,
   Row,
   Col,
-  NavDropdown,
 } from "react-bootstrap";
 import { useContext, useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 import DataContext from "store/DataContext";
-
 import axios from 'axios';
-import pako from 'pako';
 import TemplateModal from "../ui/TemplateModal";
-
+import { fetchAllTemplate } from "helper/TemplateHelper";
+import { deleteTemplate } from "helper/TemplateHelper";
+const URL = process.env.REACT_APP_BACKEND_URL;
 
 const Template = () => {
-  const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false)
-  const [templateDatail, setTemplateDetail] = useState([])
-
+  const [templateDatail, setTemplateDetail] = useState([]);
+  const navigate = useNavigate();
   const dataCtx = useContext(DataContext);
+
   useEffect(() => {
-    const fetchAllTemplate = async () => {
-      const response = await axios.get("https://rb5xhrfq-5289.inc1.devtunnels.ms/GetAllLayout");
-      // response.data
+    // const fetchAllTemplate = async () => {
+    //   try {
+    //     const response = await axios.get(`${URL}GetAllLayout`);
 
-      const mpObj = response.data.map((item) => {
+    //     if (response.data) {
+    //       const mpObj = response.data.map((item) => {
+    //         return [{ layoutParameters: item }]
+
+    //       })
+
+    //       dataCtx.addToAllTemplate(mpObj)
+
+    //     }
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
+    // fetchAllTemplate()
+    const fetchData = async () => {
+      const templates = await fetchAllTemplate();
+      const mpObj = templates.map((item) => {
         return [{ layoutParameters: item }]
-
       })
-      console.log(mpObj)
       dataCtx.addToAllTemplate(mpObj)
-      console.log(response.data)
+
+
+
     }
-    fetchAllTemplate();
+    fetchData()
+
   }, []);
   const showHandler = (arr) => {
     setShowDetailModal(true);
@@ -65,7 +80,7 @@ const Template = () => {
         templateIndex: index,
         timingMarks: +tempdata.timingMarks,
         totalColumns: +tempdata.totalColumns,
-        templateImagePath: tempdata.imagesrc,
+        templateImagePath: tempdata.templateImagePath,
         bubbleType: tempdata.bubbleType,
         iSensitivity: +tempdata.iSensitivity,
         iDifference: +tempdata.iDifference,
@@ -77,26 +92,17 @@ const Template = () => {
 
     });
   };
-  console.log(dataCtx.allTemplates)
 
-  const sendToBackendHandler = async (index) => {
-    const template = dataCtx.allTemplates[index];
-    console.log(template);
-    try {
-      const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', template[0], {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('Response:', response);
-      // alert(`Response : ${JSON.stringify(response.data.message)}`)
-    } catch (error) {
-      // alert(`Response : ${JSON.stringify(error.response.data)}`)
-      console.error('Error sending POST request:', error);
-    }
-  };
-  const deleteHandler = (arr, index) => {
-    dataCtx.deleteTemplate(index)
+  const deleteHandler = async (arr, index) => {
+    const result = window.confirm("Are you sure you want ot delete template ?");
+    if (result) {
+      const id= arr[0].layoutParameters.id
+      console.log(arr[0].layoutParameters.id)
+      const res = await deleteTemplate(id)
+      console.log(res)
+      // dataCtx.deleteTemplate(index)
+    } else { return }
+
   }
   return (
     <>
@@ -155,8 +161,8 @@ const Template = () => {
                           <DropdownMenu className="dropdown-menu-arrow" right>
                             <DropdownItem onClick={() => showHandler(d)}>Show</DropdownItem>
                             <DropdownItem onClick={() => editHandler(d, i)}>Edit</DropdownItem>
-                            <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data</DropdownItem>
-                            <DropdownItem onClick={() => deleteHandler(d, i)}>Delete</DropdownItem>
+                            {/* <DropdownItem onClick={() => sendToBackendHandler(d, i)}>Send Data</DropdownItem> */}
+                            <DropdownItem style={{ color: "red" }} onClick={() => deleteHandler(d, i)}>Delete</DropdownItem>
                           </DropdownMenu>
                         </UncontrolledDropdown>
                       </td>

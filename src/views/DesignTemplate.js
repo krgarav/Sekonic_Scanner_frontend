@@ -9,7 +9,9 @@ import { Rnd } from 'react-rnd';
 import DataContext from "store/DataContext";
 import { MultiSelect } from "react-multi-select-component";
 import axios from 'axios';
-
+import { createTemplate } from "helper/TemplateHelper";
+import { getLayoutDataById } from "helper/TemplateHelper";
+const URL = process.env.REACT_APP_BACKEND_URL;
 const DesignTemplate = () => {
     const [selected, setSelected] = useState({});
     const [selection, setSelection] = useState(null);
@@ -105,7 +107,6 @@ const DesignTemplate = () => {
     };
     useEffect(() => {
         if (arr) {
-
             const formFieldData = arr[0]?.formFieldWindowParameters;
             const questionField = arr[0]?.questionsWindowParameters;
             const skewField = arr[0]?.skewMarksWindowParameters;
@@ -128,7 +129,6 @@ const DesignTemplate = () => {
                 return { startRow, startCol, endRow, endCol, name }
             })
             setSelectedCoordinates(newSelectedFields)
-            console.log(idField)
             setPosition(idField?.imageStructureData);
         }
     }, [])
@@ -136,8 +136,50 @@ const DesignTemplate = () => {
 
     useEffect(() => {
         const fetchDetails = async () => {
-            const response = await axios.get(`https://rb5xhrfq-5289.inc1.devtunnels.ms/GetLayoutDataById?Id=${templateId}`);
-            console.log(response);
+            console.log(templateId)
+            try {
+                const response = await getLayoutDataById(templateId);
+                console.log(response);
+                if (response) {
+
+                    const formFieldData = response?.formFieldWindowParameters;
+                    const questionField = response?.questionsWindowParameters;
+                    const skewField = response?.skewMarksWindowParameters;
+                    const idField = response?.layoutParameters;
+                    const coordinateOfFormData = formFieldData?.map((item) => {
+                        return { ...item.formFieldCoordinates, name: item.windowName }
+                    }
+
+                    ) ?? [];
+
+                    const coordinateOfquestionField = questionField?.map((item) => {
+                        return { ...item.questionWindowCoordinates, name: item.windowName }
+                    }) ?? [];
+                    const coordinateOfskewField = skewField?.map((item) => {
+                        return { ...item.layoutWindowCoordinates, name: item.windowName }
+                    }) ?? [];
+                    const coordinateOfidField = idField.layoutCoordinates ?? [];
+
+                    const allCoordinates = [
+                        ...coordinateOfFormData,
+                        ...coordinateOfquestionField,
+                        ...coordinateOfskewField,
+                        coordinateOfidField
+                    ];
+
+                    const newSelectedFields = allCoordinates?.map((item) => {
+                        const { start: startRow, left: startCol, end: endRow, right: endCol, name } = item;
+                        return { startRow, startCol, endRow, endCol, name }
+                    });
+                    
+                    setSelectedCoordinates(newSelectedFields)
+                    setPosition(idField?.imageStructureData);
+                }
+                console.log(response);
+            } catch (error) {
+                console.log(error)
+            }
+
         }
         fetchDetails();
     }, [])
@@ -382,10 +424,9 @@ const DesignTemplate = () => {
 
 
     const handleEyeClick = (data) => {
-        // console.log(data, templateIndex)
+
         const template = dataCtx.allTemplates[templateIndex]
-        // console.log(template)
-        // console.log(data.name)
+
         if (data.name === "Id Field") {
             const data = template[0].layoutParameters;
             console.log(data)
@@ -421,8 +462,15 @@ const DesignTemplate = () => {
             left: Coordinate["Start Col"],
             start: Coordinate["Start Row"]
         }
-        delete layoutCoordinates.Coordinate
-        const updatedLayout = { ...layoutParameters, layoutCoordinates };
+        const imageStructureData = layoutParameters.imageStructureData;
+        const imageCoordinates = {
+            height: imageStructureData.height,
+            x: imageStructureData.x,
+            y: imageStructureData.y,
+            width: imageStructureData.width
+        }
+        delete layoutCoordinates.Coordinate;
+        const updatedLayout = { ...layoutParameters, layoutCoordinates, imageCoordinates };
         delete updatedLayout.Coordinate
         delete updatedLayout.imageStructureData
 
@@ -430,7 +478,7 @@ const DesignTemplate = () => {
         const BarcodeData = template[0].barcodeData
         const imageData = template[0].imageData;
         const printingData = template[0].printingData;
-        const questionsWindowParameters = template[0].questionsWindowParameters.map((item) => {
+        const questionsWindowParameters = template[0].questionsWindowParameters?.map((item) => {
             const { Coordinate, ...rest } = item;
             const questionWindowCoordinates = Coordinate ? {
                 right: Coordinate["End Col"],
@@ -440,9 +488,8 @@ const DesignTemplate = () => {
             } : {};
             return { ...rest, questionWindowCoordinates }
         })
-        const skewMarksWindowParameters = template[0].skewMarksWindowParameters.map((item) => {
+        const skewMarksWindowParameters = template[0].skewMarksWindowParameters?.map((item) => {
             const { Coordinate, ...rest } = item;
-            console.log(Coordinate)
             const layoutWindowCoordinates = Coordinate ? {
                 right: Coordinate["End Col"],
                 end: Coordinate["End Row"],
@@ -451,7 +498,7 @@ const DesignTemplate = () => {
             } : {};
             return { ...rest, layoutWindowCoordinates }
         })
-        const formFieldWindowParameters = template[0].formFieldWindowParameters.map((item) => {
+        const formFieldWindowParameters = template[0].formFieldWindowParameters?.map((item) => {
             const { Coordinate, ...rest } = item;
             console.log(Coordinate)
             const formFieldCoordinates = Coordinate ? {
@@ -474,15 +521,10 @@ const DesignTemplate = () => {
         };
         console.log(fullRequestData)
         try {
-            const response = await axios.post('https://rb5xhrfq-5289.inc1.devtunnels.ms/LayoutSetting', fullRequestData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-            console.log('Response:', response);
-            alert(`Response : ${JSON.stringify(response.data.message)}`)
+            const res = await createTemplate(fullRequestData);
+            alert(`Response : ${JSON.stringify(res.message)}`)
         } catch (error) {
-            alert(`Response : ${JSON.stringify(error.response.data)}`)
+            alert(`Error creating template`)
             console.error('Error sending POST request:', error);
         }
 
