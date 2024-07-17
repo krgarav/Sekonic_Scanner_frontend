@@ -107,82 +107,97 @@ const DesignTemplate = () => {
     };
     useEffect(() => {
         if (arr) {
+            // Extract parameters from the first element of the array (if it exists)
             const formFieldData = arr[0]?.formFieldWindowParameters;
             const questionField = arr[0]?.questionsWindowParameters;
             const skewField = arr[0]?.skewMarksWindowParameters;
             const idField = arr[0]?.layoutParameters;
-            const coordinateOfFormData = formFieldData?.map((item) => item.Coordinate) ?? [];
-            const coordinateOfquestionField = questionField?.map((item) => item.Coordinate) ?? [];
-            const coordinateOfskewField = skewField?.map((item) => item.Coordinate) ?? [];
-            const coordinateOfidField = idField.Coordinate ?? [];
 
+            // Map each set of parameters to their coordinates or default to an empty array
+            const coordinateOfFormData = formFieldData?.map(item => item.Coordinate) ?? [];
+            const coordinateOfQuestionField = questionField?.map(item => item.Coordinate) ?? [];
+            const coordinateOfSkewField = skewField?.map(item => item.Coordinate) ?? [];
+            const coordinateOfIdField = idField?.Coordinate ?? [];
+
+            // Combine all coordinates into a single array
             const allCoordinates = [
                 ...coordinateOfFormData,
-                ...coordinateOfquestionField,
-                ...coordinateOfskewField,
-                coordinateOfidField
+                ...coordinateOfQuestionField,
+                ...coordinateOfSkewField,
+                coordinateOfIdField
             ];
 
-
-            const newSelectedFields = allCoordinates?.map((item) => {
+            // Map each coordinate to a new format
+            const newSelectedFields = allCoordinates?.map(item => {
                 const { "Start Row": startRow, "Start Col": startCol, "End Row": endRow, "End Col": endCol, name } = item;
-                return { startRow, startCol, endRow, endCol, name }
-            })
-            setSelectedCoordinates(newSelectedFields)
+                return { startRow, startCol, endRow, endCol, name };
+            });
+
+            // Update the state with the new coordinates and image structure data
+            setSelectedCoordinates(newSelectedFields);
             setPosition(idField?.imageStructureData);
         }
-    }, [])
+    }, []); // Run only once on component mount
+
 
 
     useEffect(() => {
         const fetchDetails = async () => {
-            console.log(templateId)
+            console.log(templateId);
             try {
+                // Fetch layout data by template ID
                 const response = await getLayoutDataById(templateId);
                 console.log(response);
+
                 if (response) {
+                    // Extract data from the response
+                    const formFieldData = response?.formFieldWindowParameters ?? [];
+                    const questionField = response?.questionsWindowParameters ?? [];
+                    const skewField = response?.skewMarksWindowParameters ?? [];
+                    const idField = response?.layoutParameters ?? {};
 
-                    const formFieldData = response?.formFieldWindowParameters;
-                    const questionField = response?.questionsWindowParameters;
-                    const skewField = response?.skewMarksWindowParameters;
-                    const idField = response?.layoutParameters;
-                    const coordinateOfFormData = formFieldData?.map((item) => {
-                        return { ...item.formFieldCoordinates, name: item.windowName }
-                    }
+                    // Map and restructure data for coordinates
+                    const coordinateOfFormData = formFieldData.map(item => ({
+                        ...item.formFieldCoordinates, name: item.windowName
+                    }));
 
-                    ) ?? [];
+                    const coordinateOfQuestionField = questionField.map(item => ({
+                        ...item.questionWindowCoordinates, name: item.windowName
+                    }));
 
-                    const coordinateOfquestionField = questionField?.map((item) => {
-                        return { ...item.questionWindowCoordinates, name: item.windowName }
-                    }) ?? [];
-                    const coordinateOfskewField = skewField?.map((item) => {
-                        return { ...item.layoutWindowCoordinates, name: item.windowName }
-                    }) ?? [];
-                    const coordinateOfidField = idField.layoutCoordinates ?? [];
+                    const coordinateOfSkewField = skewField.map(item => ({
+                        ...item.layoutWindowCoordinates, name: item.windowName
+                    }));
 
+                    const coordinateOfIdField = idField.layoutCoordinates ?? [];
+
+                    // Combine all coordinates into a single array
                     const allCoordinates = [
                         ...coordinateOfFormData,
-                        ...coordinateOfquestionField,
-                        ...coordinateOfskewField,
-                        coordinateOfidField
+                        ...coordinateOfQuestionField,
+                        ...coordinateOfSkewField,
+                        coordinateOfIdField
                     ];
 
-                    const newSelectedFields = allCoordinates?.map((item) => {
+                    // Format the coordinates for the state update
+                    const newSelectedFields = allCoordinates.map(item => {
                         const { start: startRow, left: startCol, end: endRow, right: endCol, name } = item;
-                        return { startRow, startCol, endRow, endCol, name }
+                        return { startRow, startCol, endRow, endCol, name };
                     });
 
-                    setSelectedCoordinates(newSelectedFields)
-                    setPosition(idField?.imageStructureData);
+                    // Update state with the formatted coordinates and image data
+                    setSelectedCoordinates(newSelectedFields);
+                    setPosition(idField?.imageCoordinates);
                 }
-                console.log(response);
             } catch (error) {
-                console.log(error)
+                console.error('Error fetching layout data:', error);
             }
+        };
 
-        }
+        // Call the fetch details function
         fetchDetails();
-    }, [])
+    }, [templateId]);
+
     useEffect(() => {
         switch (bubbleType) {
             case "rounded rectangle":
@@ -203,7 +218,8 @@ const DesignTemplate = () => {
                 setSelectedClass("circle")
                 break;
         }
-    }, [])
+    }, []);
+
     useEffect(() => {
         // Create an array to hold the options
         const options = Array.from({ length: +totalColumns }, (v, i) => ({
@@ -226,7 +242,7 @@ const DesignTemplate = () => {
         }
 
     }, [options, selectedCol]);
-    {/* useEffect for toggling image overlapping over coordinate selection area*/ }
+
     useEffect(() => {
         const handleKeyPress = (event) => {
             if (modalShow) return; // Ignore keyboard events when modal is shown
@@ -243,12 +259,7 @@ const DesignTemplate = () => {
             window.removeEventListener("keydown", handleKeyPress);
         };
     }, [modalShow]);
-    // const handleMouseDown = (e) => {
-    //     const boundingRect = imageRef.current.getBoundingClientRect();
-    //     const col = Math.floor((e.clientX - boundingRect.left) / (boundingRect.width / numCols));
-    //     const row = Math.floor((e.clientY - boundingRect.top) / (boundingRect.height / numRows));
-    //     setDragStart({ row, col });
-    // };
+
     const handleMouseDown = (e) => {
         const boundingRect = imageRef.current.getBoundingClientRect();
         const col = Math.floor(
@@ -316,7 +327,7 @@ const DesignTemplate = () => {
         setSelection(null);
         setModalShow(false);
     };
-    console.log(dataCtx.allTemplates[templateIndex])
+
     const handleSave = () => {
 
         // if (!name || !windowNgOption || !noInRow || !noOfStepInRow || !noInCol || !noOfStepInCol || !minimumMark) {
@@ -370,7 +381,7 @@ const DesignTemplate = () => {
                 "iMaximumMark": +maximumMark,
                 "skewMark": +skewoption,
                 "iType": type,
-                "windowName": name
+
             };
 
 
@@ -404,7 +415,6 @@ const DesignTemplate = () => {
             };
 
         }
-        // console.log(getCurrentImageState())
         const newSelected = { ...selection, name: selectedFieldType !== "idField" ? name : "Id Field" }
         setSelectedCoordinates((prev) => [...prev, newSelected]);
         setSelection(null);
@@ -449,35 +459,47 @@ const DesignTemplate = () => {
         event.stopPropagation();
     };
 
-
     const sendHandler = async () => {
-        const template = dataCtx.allTemplates[templateIndex]
+        // Retrieve the selected template
+        const template = dataCtx.allTemplates[templateIndex];
         console.log(template);
 
+        // Extract layout parameters and its coordinates
         const layoutParameters = template[0].layoutParameters;
         const Coordinate = layoutParameters.Coordinate;
+
+        // Transform layout coordinates into the required format
         const layoutCoordinates = {
             right: Coordinate["End Col"],
             end: Coordinate["End Row"],
             left: Coordinate["Start Col"],
             start: Coordinate["Start Row"]
-        }
+        };
+
+        // Extract and format image structure data
         const imageStructureData = layoutParameters.imageStructureData;
         const imageCoordinates = {
             height: imageStructureData.height,
             x: imageStructureData.x,
             y: imageStructureData.y,
             width: imageStructureData.width
-        }
-        delete layoutCoordinates.Coordinate;
-        const updatedLayout = { ...layoutParameters, layoutCoordinates, imageCoordinates };
-        delete updatedLayout.Coordinate
-        delete updatedLayout.imageStructureData
+        };
 
+        // Update layout parameters, removing original Coordinate and imageStructureData
+        const updatedLayout = {
+            ...layoutParameters,
+            layoutCoordinates,
+            imageCoordinates
+        };
+        delete updatedLayout.Coordinate;
+        delete updatedLayout.imageStructureData;
 
-        const BarcodeData = template[0].barcodeData
+        // Extract and format barcode, image, and printing data
+        const barcodeData = template[0].barcodeData;
         const imageData = template[0].imageData;
         const printingData = template[0].printingData;
+
+        // Transform question window parameters into the required format
         const questionsWindowParameters = template[0].questionsWindowParameters?.map((item) => {
             const { Coordinate, ...rest } = item;
             const questionWindowCoordinates = Coordinate ? {
@@ -486,8 +508,10 @@ const DesignTemplate = () => {
                 left: Coordinate["Start Col"],
                 start: Coordinate["Start Row"]
             } : {};
-            return { ...rest, questionWindowCoordinates }
-        })
+            return { ...rest, questionWindowCoordinates };
+        });
+
+        // Transform skew marks window parameters into the required format
         const skewMarksWindowParameters = template[0].skewMarksWindowParameters?.map((item) => {
             const { Coordinate, ...rest } = item;
             const layoutWindowCoordinates = Coordinate ? {
@@ -496,42 +520,45 @@ const DesignTemplate = () => {
                 left: Coordinate["Start Col"],
                 start: Coordinate["Start Row"]
             } : {};
-            return { ...rest, layoutWindowCoordinates }
-        })
+            return { ...rest, layoutWindowCoordinates };
+        });
+
+        // Transform form field window parameters into the required format
         const formFieldWindowParameters = template[0].formFieldWindowParameters?.map((item) => {
             const { Coordinate, ...rest } = item;
-            console.log(Coordinate)
             const formFieldCoordinates = Coordinate ? {
                 right: Coordinate["End Col"],
                 end: Coordinate["End Row"],
                 left: Coordinate["Start Col"],
                 start: Coordinate["Start Row"]
             } : {};
-            return { ...rest, formFieldCoordinates }
+            return { ...rest, formFieldCoordinates };
         });
 
+        // Assemble the full request data
         const fullRequestData = {
             layoutParameters: updatedLayout,
-            barcodeData: BarcodeData,
+            barcodeData,
             imageData,
             printingData,
             questionsWindowParameters,
             skewMarksWindowParameters,
             formFieldWindowParameters
         };
-        console.log(fullRequestData)
+        console.log(fullRequestData);
+
+        // Send the request and handle the response
         try {
             const res = await createTemplate(fullRequestData);
-            console.log(res)
+            console.log(res);
             alert(`Response : ${JSON.stringify(res.message)}`);
-            navigate("/admin/template", { replace: true })
+            navigate("/admin/template", { replace: true });
         } catch (error) {
-            alert(`Error creating template`)
+            alert(`Error creating template`);
             console.error('Error sending POST request:', error);
         }
+    };
 
-
-    }
     return (
         <>
             <Button onClick={sendHandler}> {!loading ? "Save" : "Saving"}</Button>
