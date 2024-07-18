@@ -25,3 +25,4 @@ export const GET_AllTEMPLATE = url + "GetAllLayout";
 export const GET_LAYOUT_DATA = url + "GetLayoutDataById"
 export const CREATE_TEMPLATE = url + "LayoutSetting";
 export const DELETE_TEMPLATE = url + "DeleteLayout";
+export const SCAN_IMAGE = url + "GetScannedImage";

@@ -118,37 +118,6 @@ const Booklet32Page = () => {
         if (response) {
             setScanning(false)
         }
-
-
-
-        // try {
-        //     setScanning(true);
-        //     const result = await fetchProcessData(selectedValue.id);
-        //     console.log(result.result.data)
-        //     const newData = Object.keys(result.result.data[0])
-        //     setHeadData(newData);
-        //     setData(result.result.data);
-        //     const interval = setInterval(() => {
-        //         if (items.length === result.result.data.length) {
-        //             setScanning(false)
-        //         }
-        //         setItems(prevItems => {
-        //             const nextIndex = prevItems.length;
-        //             if (nextIndex < result.result.data.length) {
-        //                 return [...prevItems, result.result.data[nextIndex]];
-        //             } else {
-        //                 clearInterval(interval);
-        //                 return prevItems;
-        //             }
-        //         });
-        //     }, 1000);
-
-        // } catch (error) {
-        //     console.log(error);
-        //     toast.error("Error in starting");
-        // } finally {
-        //     // setScanning(false);
-        // }
     };
 
     const handleSave = (args) => {

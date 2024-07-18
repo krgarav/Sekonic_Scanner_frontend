@@ -673,7 +673,6 @@ const DesignTemplate = () => {
                 </div>
             </div>
 
-
             <Modal
                 show={modalShow}
                 size="lg"
@@ -682,67 +681,70 @@ const DesignTemplate = () => {
             >
                 <Modal.Header >
                     <Modal.Title id="contained-modal-title-vcenter" style={{ width: "100vw" }} >
-                        <h2 className="text-center">DEFINE REGION</h2>
+                        <h2 className="text-center">Choose field type</h2>
+                        <br />
+                        <Row className="mb-2">
+                            <label htmlFor="example-text-input" className="col-md-2 col-form-label">
+
+                            </label>
+                            <Col md={2} className="d-flex align-items-center">
+                                <label htmlFor="formField" className="mr-2 mb-0 field-label" >Form : </label>
+                                <input
+                                    id="formField"
+                                    type="radio"
+                                    name="fieldType"
+                                    value="formField"
+                                    checked={selectedFieldType === 'formField'}
+                                    onChange={handleRadioChange}
+                                    className=" field-label"
+                                />
+                            </Col>
+                            <Col md={2} className="d-flex align-items-center">
+                                <label htmlFor="fieldType" className="mr-2 mb-0 field-label" >Question : </label>
+                                <input
+                                    id="fieldType"
+                                    type="radio"
+                                    name="fieldType"
+                                    value="questionField"
+                                    checked={selectedFieldType === 'questionField'}
+                                    onChange={handleRadioChange}
+                                    className=" field-label"
+                                />
+                            </Col>
+                            <Col md={3} className="d-flex align-items-center">
+                                <label htmlFor="skewMarkField" className="mr-2 mb-0 field-label">Skew Mark:</label>
+                                <input
+                                    id="skewMarkField"
+                                    type="radio"
+                                    name="fieldType"
+                                    value="skewMarkField"
+                                    checked={selectedFieldType === 'skewMarkField'}
+                                    onChange={handleRadioChange}
+                                    className=" field-label"
+                                />
+                            </Col>
+                            <Col md={2} className="d-flex align-items-center  ">
+                                <label htmlFor="idField" className="mr-2 mb-0 field-label">ID Mark :</label>
+                                <input
+                                    id="idField"
+                                    type="radio"
+                                    name="fieldType"
+                                    value="idField"
+                                    checked={selectedFieldType === 'idField'}
+                                    onChange={handleRadioChange}
+                                    className=" field-label"
+                                />
+                            </Col>
+                        </Row>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ height: "70vh" }}>
-                    <Row className="mb-2">
-                        <label htmlFor="example-text-input" className="col-md-2 col-form-label">
-                            Field Type
-                        </label>
-                        <Col md={2} className="d-flex align-items-center">
-                            <label htmlFor="formField" className="mr-2 mb-0 field-label" >Form : </label>
-                            <input
-                                id="formField"
-                                type="radio"
-                                name="fieldType"
-                                value="formField"
-                                checked={selectedFieldType === 'formField'}
-                                onChange={handleRadioChange}
-                                className=" field-label"
-                            />
-                        </Col>
-                        <Col md={2} className="d-flex align-items-center">
-                            <label htmlFor="fieldType" className="mr-2 mb-0 field-label" >Question : </label>
-                            <input
-                                id="fieldType"
-                                type="radio"
-                                name="fieldType"
-                                value="questionField"
-                                checked={selectedFieldType === 'questionField'}
-                                onChange={handleRadioChange}
-                                className=" field-label"
-                            />
-                        </Col>
-                        <Col md={3} className="d-flex align-items-center">
-                            <label htmlFor="skewMarkField" className="mr-2 mb-0 field-label">Skew Mark:</label>
-                            <input
-                                id="skewMarkField"
-                                type="radio"
-                                name="fieldType"
-                                value="skewMarkField"
-                                checked={selectedFieldType === 'skewMarkField'}
-                                onChange={handleRadioChange}
-                                className=" field-label"
-                            />
-                        </Col>
-                        <Col md={2} className="d-flex align-items-center  ">
-                            <label htmlFor="idField" className="mr-2 mb-0 field-label">ID Mark :</label>
-                            <input
-                                id="idField"
-                                type="radio"
-                                name="fieldType"
-                                value="idField"
-                                checked={selectedFieldType === 'idField'}
-                                onChange={handleRadioChange}
-                                className=" field-label"
-                            />
-                        </Col>
-                    </Row>
-                    {selectedFieldType !== 'idField' && <Row >
+                <Modal.Body style={{ height: "70vh", overflowX: "auto" }}>
+
+                    {selectedFieldType !== 'idField' && <Row className="mb-2" >
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-2 "
+                            className="col-md-2 col-form-label "
+                            style={{ fontSize: "0.9rem" }}
                         >
                             Window Name
                         </label>
@@ -753,11 +755,79 @@ const DesignTemplate = () => {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
+                                style={{ color: "black" }}
                             />
                             {!name && <span style={{ color: "red", display: spanDisplay }}>This feild is required</span>}
 
                         </div>
                     </Row>}
+                    <Row className="mb-2">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                        >
+                            Multiple
+                        </label>
+                        <div className="col-md-4">
+                            <select
+                                className="form-control"
+                                // value={windowNgOption}
+                                // onChange={handleWindowNgOptionChange}
+                                defaultValue={""}
+                            >
+                                <option value="">Select an option</option>
+                                <option value="0x00000001">Allow All</option>
+                                <option value="0x00000002">Allow None</option>
+
+                            </select>
+
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                        >
+
+                            Blanks
+                        </label>
+                        <div className="col-md-4">
+                            <select
+                                className="form-control"
+                                // value={windowNgOption}
+                                // onChange={handleWindowNgOptionChange}
+                                defaultValue={""}
+                            >
+                                <option value="">Select an option</option>
+                                <option value="0x00000001">Allow All</option>
+                                <option value="0x00000002">Allow None</option>
+
+                            </select>
+
+                        </div>
+                    </Row>
+                    <Row>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 "
+                        >
+                            Multiple Value
+                        </label>
+                        <div className="col-md-4">
+                            <input type="number" className='form-control' placeholder="Character of Multiple" value={maximumMark}
+                                onChange={(e) => setMaximumMark(e.target.value)}
+                                required />
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                        >
+                            Blank Value
+                        </label>
+                        <div className="col-md-4">
+                            <input type="number" className='form-control' placeholder="Character of Blank" value={maximumMark}
+                                onChange={(e) => setMaximumMark(e.target.value)}
+                                required />
+                        </div>
+                    </Row>
                     {selectedFieldType !== "idField" &&
                         <Row className="mb-2">
                             <label
@@ -776,7 +846,6 @@ const DesignTemplate = () => {
                                     <option value="">Select an option</option>
                                     <option value="0x00000001">Paper ejection to select stacker</option>
                                     <option value="0x00000002">Stop reading</option>
-                                    <option value="0x00000004">Do not print</option>
 
                                 </select>
 

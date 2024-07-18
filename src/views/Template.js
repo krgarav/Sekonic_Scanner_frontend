@@ -55,7 +55,7 @@ const Template = () => {
     // fetchAllTemplate()
     const fetchData = async () => {
       const templates = await fetchAllTemplate();
-      const mpObj = templates.map((item) => {
+      const mpObj = templates?.map((item) => {
         return [{ layoutParameters: item }]
       })
       dataCtx.addToAllTemplate(mpObj)
