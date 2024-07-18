@@ -17,42 +17,95 @@
 */
 // reactstrap components
 import {
-    Badge,
-    Card,
-    CardHeader,
-    CardFooter,
-    DropdownMenu,
-    DropdownItem,
-    UncontrolledDropdown,
-    DropdownToggle,
-    Media,
-    Pagination,
-    PaginationItem,
-    PaginationLink,
-    Progress,
-    Table,
-    Container,
-    Row,
-    UncontrolledTooltip,
-    Button,
+  Badge,
+  Card,
+  CardHeader,
+  CardFooter,
+  DropdownMenu,
+  DropdownItem,
+  UncontrolledDropdown,
+  DropdownToggle,
+  Media,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  Progress,
+  Table,
+  Container,
+  Row,
+  UncontrolledTooltip,
+  Button,
+  Col,
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
 import NormalHeader from "components/Headers/NormalHeader";
 import { Modal } from "react-bootstrap";
 import { useState } from "react";
-import Select from "react-select"
+import Select from "react-select";
+import Jobcard from "ui/Jobcard.js";
 
 const Jobs = () => {
+  return (
+    <>
+      <NormalHeader />
+      {/* Page content */}
 
+      <Container className="mt--7" fluid>
+        {/* <Row>
+          <Col>
+            <Jobcard text="Add Job" />
+          </Col>
+          <Col>
+            <Jobcard text="Add Job" />
+          </Col>
+          <Col>
+            <Jobcard text="Add Job" />
+          </Col>
+          <Col>
+            <Jobcard text="Add Job" />
+          </Col>
+        </Row> */}
 
-    return (
-        <>
-            <NormalHeader />
-            {/* Page content */}
+        <Row>
+          <Card className="shadow">
+            <CardHeader className="border-0">
+              <div className="d-flex justify-content-between">
+                <h3 className="mt-2">All Templates</h3>
 
-        </>
-    );
+                <Button
+                  className=""
+                  color="primary"
+                  type="button"
+                  //   onClick={() => setModalShow(true)}
+                >
+                  Create Template
+                </Button>
+              </div>
+            </CardHeader>
+            <Row>
+              <Col>
+                <Jobcard text="Add Job" />
+              </Col>
+              <Col>
+                <Jobcard text="Add Job" />
+              </Col>
+              <Col>
+                <Jobcard text="Add Job" />
+              </Col>
+              <Col>
+                <Jobcard text="Add Job" />
+              </Col>
+            </Row>
+            {/* <Button>Add Job</Button>
+            <Button>Edit Job</Button>
+            <Button>Delete Job</Button>
+            <Button>Job Queue</Button> */}
+          </Card>
+        </Row>
+      </Container>
+    </>
+  );
 };
 
 export default Jobs;

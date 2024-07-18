@@ -42,7 +42,7 @@ var routes = [
   },
   {
     path: "/",
-    name: "Jobs",
+    name: "Job Management",
     icon: "ni ni-briefcase-24 text-yellow",
     component: <Jobs />,
     layout: "/admin",
@@ -56,7 +56,7 @@ var routes = [
   // },
   {
     path: "/template",
-    name: "Template",
+    name: "Layout Management",
     icon: "ni ni-collection text-red",
     component: <Template />,
     layout: "/admin",
@@ -89,10 +89,6 @@ var routes = [
     component: <Settings />,
     layout: "/admin",
   },
-
-
-
-
 
   // {
   //   path: "/icons",
