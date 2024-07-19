@@ -89,6 +89,7 @@ const TemplateModal = (props) => {
     const [imageFile, setImageFile] = useState();
     const [imageModal, setImageModal] = useState();
     const [image, setImage] = useState();
+    const [imageTempFile, setTempImageFile] = useState();
     const imageModalHandler = () => {
         setImageModal(true);
     }
@@ -131,7 +132,7 @@ const TemplateModal = (props) => {
         if (file) {
             setImageSrc(URL.createObjectURL(file)); // Display image
             setImage(URL.createObjectURL(file))
-            setImageFile(file);
+            setTempImageFile(file);
         }
     }
 
@@ -245,7 +246,10 @@ const TemplateModal = (props) => {
             // const arrayBuffer = await response.arrayBuffer();
             const blob = new Blob([response?.data], { type: 'image/jpeg' });
             const imageURL = URL.createObjectURL(blob);
-
+            // Save the file format (for example, you can derive it from the MIME type)
+            const file = new File([blob], 'downloaded_image.jpeg', { type: 'image/jpeg' });
+            setTempImageFile(file);
+            // Set the image URL to be used in the component
             setImage(imageURL);
         } catch (error) {
             console.log(error)
@@ -256,7 +260,20 @@ const TemplateModal = (props) => {
     }
     const systemHandler = () => {
         document.getElementById('formFile').click();
+
+
     };
+    const saveHandler = () => {
+
+        if (imageTempFile) {
+            setImageFile(imageTempFile);
+            setImageModal(false)
+        } else {
+            alert("Please select image");
+        }
+
+    }
+    console.log(imageFile)
     return (
         <>
             <Modal
@@ -1221,7 +1238,15 @@ const TemplateModal = (props) => {
                         <input class="form-control" type="file" id="formFile" onChange={handleImageUpload} accept="image/*" />
                     </div> */}
                         <div>
-                            <Button onClick={imageModalHandler}>Select Image</Button>
+                            {/* {imageFile?.name}  */}
+                            {!imageFile && <Button onClick={imageModalHandler}>Select Image</Button>}
+
+                            {imageFile &&
+                                <div >
+                                    <Button variant='info' onClick={imageModalHandler}>Choose another</Button>
+                                    <img src={image} alt="Fetched Thumbnail" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -1293,7 +1318,7 @@ const TemplateModal = (props) => {
                                 </div>
                             </Col>
                             <Col lg={6} md={6} className="mb-4">
-                                <div onClick={scannerHandler} className="upload-box">
+                                <div onClick={scannerHandler} className="upload-box p-4 text-center border rounded">
                                     <h1>Upload From Scanner</h1>
                                 </div>
                             </Col>
@@ -1302,6 +1327,7 @@ const TemplateModal = (props) => {
                     </div>
                     <Row className="d-flex justify-content-center mt-4">
                         {image && <img src={image} alt="Scanned" width={500} height={400} />}
+                        {!image && <p>Please select the image</p>}
                     </Row>
 
 
@@ -1311,7 +1337,7 @@ const TemplateModal = (props) => {
                         Close
                     </Button>
                     <Button variant="success"
-
+                        onClick={saveHandler}
                     >
                         Save
                     </Button>

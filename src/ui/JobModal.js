@@ -21,6 +21,7 @@ import { getScannedImage } from 'helper/TemplateHelper';
 import { toast } from 'react-toastify';
 import { fetchAllTemplate } from 'helper/TemplateHelper';
 import Select, { components } from "react-select";
+import Imageswitch from './Imageswitch';
 const JobModal = (props) => {
     const [modalShow, setModalShow] = useState(false);
     const [allTemplateOptions, setAllTemplateOptions] = useState([]);
@@ -105,12 +106,22 @@ const JobModal = (props) => {
                         >
                             Data Path:
                         </label>
-                        <div className="col-md-9">
+                        <div className="col-md-3">
+                            <input type='text' className="form-control" placeholder='Enter the data path' />
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-3  col-form-label"
+                            style={{ fontSize: ".9rem" }}
+                        >
+                            Data Type:
+                        </label>
+                        <div className="col-md-3">
                             <input type='text' className="form-control" placeholder='Enter the data path' />
                         </div>
                     </Row>
                     <Row className='mb-3'>
-                                
+
                     </Row>
 
                     <Row className="mb-3">
@@ -119,9 +130,10 @@ const JobModal = (props) => {
                             className="col-md-3 "
                             style={{ fontSize: ".9rem" }}
                         >
-                            Select Template:
+                            Image :
                         </label>
                         <div className="col-md-9">
+                            <Imageswitch />
                             {/* <Select
                                 value={colorType}
                                 onChange={(selectedValue) =>
