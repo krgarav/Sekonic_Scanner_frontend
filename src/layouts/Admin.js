@@ -26,6 +26,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
 import DesignTemplate from "views/DesignTemplate";
+import FolderStructure from "views/FolderStructure";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -73,14 +74,16 @@ const Admin = (props) => {
         }}
       />
       <div className="main-content" ref={mainContent}>
-        <AdminNavbar
+        {/* <AdminNavbar
           {...props}
           brandText={getBrandText(props?.location?.pathname)}
-        />
+        /> */}
         <Routes>
           {getRoutes(routes)}
           <Route path="*" element={<Navigate to="/admin/index" replace />} />
           <Route path="/design-template" element={<DesignTemplate />} />
+          <Route path="/server-folder" element={<FolderStructure />} />
+
         </Routes>
         {/* <Container fluid>
           <AdminFooter />

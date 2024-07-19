@@ -31,6 +31,7 @@ import DesignTemplate from "views/DesignTemplate";
 import Booklet32Page from "views/Booklet32Page";
 import Booklet24Page from "views/Booklet24Page";
 import ImageGrid from "views/Imagegrid";
+import FolderStructure from "views/FolderStructure";
 
 var routes = [
   {
@@ -87,6 +88,13 @@ var routes = [
     name: "Settings",
     icon: "ni ni-settings-gear-65 text-primary",
     component: <Settings />,
+    layout: "/admin",
+  },
+  {
+    path: "/server-folder",
+    name: "Folder data",
+    icon: "ni ni-settings-gear-65 text-primary",
+    component: <FolderStructure />,
     layout: "/admin",
   },
 

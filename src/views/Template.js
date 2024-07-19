@@ -96,7 +96,7 @@ const Template = () => {
   const deleteHandler = async (arr, index) => {
     const result = window.confirm("Are you sure you want ot delete template ?");
     if (result) {
-      const id= arr[0].layoutParameters.id
+      const id = arr[0].layoutParameters.id
       console.log(arr[0].layoutParameters.id)
       const res = await deleteTemplate(id)
       console.log(res)
