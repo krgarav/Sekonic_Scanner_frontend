@@ -273,7 +273,6 @@ const TemplateModal = (props) => {
         }
 
     }
-    console.log(imageFile)
     return (
         <>
             <Modal

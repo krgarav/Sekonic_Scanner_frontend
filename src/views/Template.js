@@ -25,6 +25,8 @@ import axios from 'axios';
 import TemplateModal from "../ui/TemplateModal";
 import { fetchAllTemplate } from "helper/TemplateHelper";
 import { deleteTemplate } from "helper/TemplateHelper";
+import CryptoJS from 'crypto-js';
+
 const URL = process.env.REACT_APP_BACKEND_URL;
 
 const Template = () => {
@@ -33,7 +35,7 @@ const Template = () => {
   const [templateDatail, setTemplateDetail] = useState([]);
   const navigate = useNavigate();
   const dataCtx = useContext(DataContext);
-
+  // console.log(process.env.REACT_APP_CLOUD_NAME)
   useEffect(() => {
     // const fetchAllTemplate = async () => {
     //   try {
@@ -92,14 +94,99 @@ const Template = () => {
 
     });
   };
+  // const deleteImage = async (imageUrl) => {
+  //   const cloudName = 'dje269eh5'; // Your Cloudinary cloud name
+  //   const apiKey = '971669377151177'; // Your Cloudinary API key
+  //   const apiSecret = '-IqCm6flDTtNFYN5pY5JKbtWYSE'; // Your Cloudinary API secret
+
+  //   // Extract public ID from URL
+  //   const publicId = imageUrl.split('/').pop().split('.')[0];
+
+  //   // Create the timestamp and signature
+  //   const timestamp = Math.floor(new Date().getTime() / 1000);
+  //   const stringToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
+  //   const signature = crypto.createHash('sha1').update(stringToSign).digest('hex');
+
+  //   // Form data for the request
+  //   const formData = new FormData();
+  //   formData.append('public_id', publicId);
+  //   formData.append('timestamp', timestamp);
+  //   formData.append('api_key', apiKey);
+  //   formData.append('signature', signature);
+
+  //   // Make the API request to delete the image
+  //   const response = await axios.post(
+  //     `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+  //     formData,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data'
+  //       }
+  //     }
+  //   );
+
+  //   console.log(response.data);
+  // };
+
+
+
+  const deleteImage = async (imageUrl) => {
+
+    const cloudName = process.env.REACT_APP_CLOUD_NAME// Your Cloudinary cloud name
+    const apiKey = process.env.REACT_APP_API_KEY; // Your Cloudinary API key
+    const apiSecret = process.env.REACT_APP_API_SECRET; // Your Cloudinary API secret
+
+    // Extract public ID from URL
+    const urlParts = imageUrl.split('/');
+    const versionIndex = urlParts.findIndex(part => part.startsWith('v'));
+    const publicIdWithFormat = urlParts.slice(versionIndex + 1).join('/'); // omrimages/dj7va6r3farwpblq6txv.jpg
+    const publicId = publicIdWithFormat.split('.')[0]; // omrimages/dj7va6r3farwpblq6txv
+
+    console.log('Extracted public ID:', publicId); // Debugging: Log the public ID
+
+    // Create the timestamp and signature
+    const timestamp = Math.floor(new Date().getTime() / 1000);
+    const stringToSign = `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`;
+    const signature = CryptoJS.SHA1(stringToSign).toString();
+
+    // Form data for the request
+    const formData = new FormData();
+    formData.append('public_id', publicId);
+    formData.append('timestamp', timestamp);
+    formData.append('api_key', apiKey);
+    formData.append('signature', signature);
+
+    try {
+      // Make the API request to delete the image
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      console.log(response.data); // Debugging: Log the response data
+
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting image:', error); // Debugging: Log any error
+      throw error;
+    }
+  };
+
 
   const deleteHandler = async (arr, index) => {
-    const result = window.confirm("Are you sure you want ot delete template ?");
+    const result = window.confirm("Are you sure you want to delete template ?");
     if (result) {
       const id = arr[0].layoutParameters.id
-      console.log(arr[0].layoutParameters.id)
+      const imageUrl = arr[0].layoutParameters.templateImagePath;
+      const result = await deleteImage(imageUrl);
       const res = await deleteTemplate(id)
       console.log(res)
+
       // dataCtx.deleteTemplate(index)
     } else { return }
 

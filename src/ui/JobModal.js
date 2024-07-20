@@ -22,18 +22,26 @@ import { toast } from 'react-toastify';
 import { fetchAllTemplate } from 'helper/TemplateHelper';
 import Select, { components } from "react-select";
 import Imageswitch from './Imageswitch';
+import { change } from '@syncfusion/ej2-react-grids';
+import { fetchAllUsers } from 'helper/userManagment_helper';
+import { fileType, imageTypeData, imageColorTypeData } from "data/helperData";
 const JobModal = (props) => {
     const [modalShow, setModalShow] = useState(false);
     const [allTemplateOptions, setAllTemplateOptions] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState()
     const [fileNames, setFileNames] = useState([]);
-
+    const [imageEnable, setImageEnable] = useState(false);
+    const [allOperators, setAllOperators] = useState([]);
+    const [selectedOperator, setSelectedOperator] = useState("");
     const handleFileChange = (event) => {
         const files = event.target.files;
         const fileArray = Array.from(files).map(file => file.webkitRelativePath || file.name);
         setFileNames(fileArray);
     };
-
+    const changeHandler = (val) => {
+        console.log(val)
+        setImageEnable(val)
+    }
     useEffect(() => {
         if (props.show) {
             setModalShow(true);
@@ -45,11 +53,31 @@ const JobModal = (props) => {
     useEffect(() => {
         const getTemplates = async () => {
             const template = await fetchAllTemplate();
-            const structuredTemplate = template.map((item) => ({ id: item.id, name: item.layoutName }))
+            const structuredTemplate = template?.map((item) => ({ id: item.id, name: item.layoutName }))
             console.log(structuredTemplate)
             setAllTemplateOptions(structuredTemplate);
         };
         getTemplates();
+    }, []);
+    console.log(allOperators)
+    useEffect(() => {
+        const getUsers = async () => {
+            const data = await fetchAllUsers();
+            console.log(data)
+            if (data?.success) {
+                const structuredOperators = data.result.map((item) => {
+                    if (item.userRoleList[0]?.roleName === "Operator") {
+                        return { id: item.email, name: item.email }
+                    }
+                    return null
+                }).filter((item) => item !== null);
+                setAllOperators(structuredOperators);
+            }
+            // const structuredTemplate = template.map((item) => ({ id: item.id, name: item.layoutName }))
+            // console.log(structuredTemplate)
+            // setAllTemplateOptions(structuredTemplate);
+        };
+        getUsers();
     }, []);
 
     const createTemplateHandler = async () => {
@@ -93,7 +121,32 @@ const JobModal = (props) => {
                                 getOptionValue={(option) =>
                                     option?.id?.toString() || ""
                                 }
-                                placeholder="Select color type..."
+                                placeholder="Select template..."
+                            />
+
+                        </div>
+                    </Row>
+
+                    <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 "
+                            style={{ fontSize: ".9rem" }}
+                        >
+                            Choose Operator:
+                        </label>
+                        <div className="col-md-9">
+                            <Select
+                                value={selectedOperator}
+                                onChange={(selectedValue) =>
+                                    setSelectedOperator(selectedValue)
+                                }
+                                options={allOperators}
+                                getOptionLabel={(option) => option?.name || ""}
+                                getOptionValue={(option) =>
+                                    option?.id?.toString() || ""
+                                }
+                                placeholder="Select operator..."
                             />
 
                         </div>
@@ -111,19 +164,26 @@ const JobModal = (props) => {
                         </div>
                         <label
                             htmlFor="example-text-input"
-                            className="col-md-3  col-form-label"
+                            className="col-md-2  col-form-label"
                             style={{ fontSize: ".9rem" }}
                         >
                             Data Type:
                         </label>
-                        <div className="col-md-3">
-                            <input type='text' className="form-control" placeholder='Enter the data path' />
+                        <div className="col-md-4">
+                            <Select
+                                value={selectedOperator}
+                                onChange={(selectedValue) =>
+                                    setSelectedOperator(selectedValue)
+                                }
+                                options={fileType}
+                                getOptionLabel={(option) => option?.name || ""}
+                                getOptionValue={(option) =>
+                                    option?.id?.toString() || ""
+                                }
+                                placeholder="Select file type..."
+                            />
                         </div>
                     </Row>
-                    <Row className='mb-3'>
-
-                    </Row>
-
                     <Row className="mb-3">
                         <label
                             htmlFor="example-text-input"
@@ -133,7 +193,7 @@ const JobModal = (props) => {
                             Image :
                         </label>
                         <div className="col-md-9">
-                            <Imageswitch />
+                            <Imageswitch onChange={(val) => changeHandler(val)} />
                             {/* <Select
                                 value={colorType}
                                 onChange={(selectedValue) =>
@@ -149,30 +209,76 @@ const JobModal = (props) => {
 
                         </div>
                     </Row>
-                    <Row className="mb-3">
+
+                    {imageEnable && <Row className="mb-3">
                         <label
                             htmlFor="example-text-input"
                             className="col-md-3 "
                             style={{ fontSize: ".9rem" }}
                         >
-                            Choose Operator:
+                            Image Path:
                         </label>
-                        <div className="col-md-9">
-                            {/* <Select
-                                value={colorType}
+
+                        <div className="col-md-3">
+                            <input type='text' className="form-control" placeholder='Enter the data path' />
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2  col-form-label"
+                            style={{ fontSize: ".9rem" }}
+                        >
+                            Image Type:
+                        </label>
+                        <div className="col-md-4">
+                            <Select
+                                value={selectedOperator}
                                 onChange={(selectedValue) =>
-                                    setColorType(selectedValue)
+                                    setSelectedOperator(selectedValue)
                                 }
-                                options={colorTypeData}
+                                options={imageTypeData}
                                 getOptionLabel={(option) => option?.name || ""}
                                 getOptionValue={(option) =>
                                     option?.id?.toString() || ""
                                 }
-                                placeholder="Select color type..."
-                            /> */}
-
+                                placeholder="Select file type..."
+                            />
                         </div>
-                    </Row>
+                    </Row>}
+                    {imageEnable && <Row className="mb-3">
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-3 "
+                            style={{ fontSize: ".9rem" }}
+                        >
+                            Image DPI:
+                        </label>
+
+                        <div className="col-md-3">
+                            <input type='text' className="form-control" placeholder='Enter the data path' />
+                        </div>
+                        <label
+                            htmlFor="example-text-input"
+                            className="col-md-2  col-form-label"
+                            style={{ fontSize: ".9rem" }}
+                        >
+                            Image Color:
+                        </label>
+                        <div className="col-md-4">
+                            <Select
+                                value={selectedOperator}
+                                onChange={(selectedValue) =>
+                                    setSelectedOperator(selectedValue)
+                                }
+                                options={imageColorTypeData}
+                                getOptionLabel={(option) => option?.name || ""}
+                                getOptionValue={(option) =>
+                                    option?.id?.toString() || ""
+                                }
+                                placeholder="Select file type..."
+                            />
+                        </div>
+                    </Row>}
+                  
                 </Modal.Body>
                 <Modal.Footer>
                     <div style={{ width: "50%" }}>

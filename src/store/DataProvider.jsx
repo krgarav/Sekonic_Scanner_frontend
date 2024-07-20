@@ -35,7 +35,7 @@ const DataProvider = (props) => {
         case "skewMarkField":
           currentTemplate[0].skewMarksWindowParameters = currentTemplate[0]
             .skewMarksWindowParameters
-            ? [...currentTemplate[0].skewMarksWindowParameters, regionData]
+            ? [...currentTemplate[0]?.skewMarksWindowParameters, regionData]
             : [regionData];
           break;
         case "formField":

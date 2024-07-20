@@ -154,3 +154,22 @@ export const barcodeRejectData = [
     { id: "0", name: "Reject" },
     { id: "1", name: "Not Reject" },
 ];
+
+export const fileType = [
+    { id: "CSV", name: "CSV" },
+    { id: "TXT", name: "TXT" },
+    { id: "SQL", name: "SQL" },
+    { id: "MOB", name: "MOB" },
+    { id: "MOB", name: "ODBC" },
+];
+export const imageTypeData = [
+    { id: "JPG", name: "JPG" },
+    { id: "BMP", name: "BMP" },
+    { id: "PDF", name: "PDF" },
+    { id: "TIFF", name: "TIFF " },
+];
+export const imageColorTypeData = [
+    { id: "color", name: "Color (Full Color)" },
+    { id: "grayscale", name: "Grayscale (Monochrome)" },
+    { id: "blackandwhite", name: "Black and White (Binary)" },
+]

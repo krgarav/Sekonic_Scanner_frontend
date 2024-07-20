@@ -419,8 +419,8 @@ const DesignTemplate = () => {
         setSelectedCoordinates((prev) => [...prev, newSelected]);
         setSelection(null);
         setModalShow(false);
+        console.log(newData)
         dataCtx.modifyAllTemplate(templateIndex, newData, selectedFieldType);
-        console.log(getCurrentImageState());
     };
     const handleSkewMarkOptionChange = (event) => {
         setSkewOption(event.target.value);
@@ -548,15 +548,15 @@ const DesignTemplate = () => {
         console.log(fullRequestData);
 
         // Send the request and handle the response
-        try {
-            const res = await createTemplate(fullRequestData);
-            console.log(res);
-            alert(`Response : ${JSON.stringify(res.message)}`);
-            navigate("/admin/template", { replace: true });
-        } catch (error) {
-            alert(`Error creating template`);
-            console.error('Error sending POST request:', error);
-        }
+        // try {
+        //     const res = await createTemplate(fullRequestData);
+        //     console.log(res);
+        //     alert(`Response : ${JSON.stringify(res.message)}`);
+        //     navigate("/admin/template", { replace: true });
+        // } catch (error) {
+        //     alert(`Error creating template`);
+        //     console.error('Error sending POST request:', error);
+        // }
     };
 
     return (
@@ -1038,13 +1038,13 @@ const DesignTemplate = () => {
                                     defaultValue={""}
                                 >
                                     <option value="">Select reading direction... </option>
-                                    <option value="0x01">Mask (at the time set window) about a mark </option>
-                                    <option value="0x02">Fixed mark </option>
-                                    <option value="0x03">Checkdigits </option>
-                                    <option value="0x04">Range checking (ascending order)</option>
-                                    <option value="0x05">Range checking (descending order)</option>
-                                    <option value="0x06">Range checking (not order) </option>
-                                    <option value="0x07">Mask setting(common to partition)
+                                    <option value="1">Mask (at the time set window) about a mark </option>
+                                    <option value="2">Fixed mark </option>
+                                    <option value="3">Checkdigits </option>
+                                    <option value="4">Range checking (ascending order)</option>
+                                    <option value="5">Range checking (descending order)</option>
+                                    <option value="6">Range checking (not order) </option>
+                                    <option value="7">Mask setting(common to partition)
                                     </option>
                                 </select>
                             </div>
