@@ -71,6 +71,7 @@ const DesignTemplate = () => {
     const [selectedCol, setSelectedCol] = useState([]);
     const [options, setOptions] = useState([]);
     const [idNumber, setIdNumber] = useState("");
+    const [layoutFieldData, setLayoutFieldData] = useState();
     const rndRef = useRef();
     const navigate = useNavigate();
     const numRows = timingMarks;
@@ -140,7 +141,6 @@ const DesignTemplate = () => {
     }, []); // Run only once on component mount
 
 
-
     useEffect(() => {
         const fetchDetails = async () => {
             console.log(templateId);
@@ -148,7 +148,7 @@ const DesignTemplate = () => {
                 // Fetch layout data by template ID
                 const response = await getLayoutDataById(templateId);
                 console.log(response);
-
+                setLayoutFieldData(response)
                 if (response) {
                     // Extract data from the response
                     const formFieldData = response?.formFieldWindowParameters ?? [];
@@ -197,7 +197,14 @@ const DesignTemplate = () => {
         // Call the fetch details function
         fetchDetails();
     }, [templateId]);
-
+    useEffect(() => {
+        console.log(templateIndex)
+        console.log(layoutFieldData)
+        if (layoutFieldData) {
+            dataCtx.addFieldToTemplate(layoutFieldData, templateIndex)
+            console.log("called")
+        }
+    }, [layoutFieldData])
     useEffect(() => {
         switch (bubbleType) {
             case "rounded rectangle":

@@ -89,13 +89,119 @@ const DataProvider = (props) => {
       };
     });
   };
+  const addFieldToTemplateHandler = (regionData, index) => {
+    const {
+      formFieldWindowParameters,
+      imageData,
+      printingData,
+      questionsWindowParameters,
+      skewMarksWindowParameters,
+      barcodeData,
+      layoutParameters,
+    } = regionData;
 
+    const imageCoordinates = layoutParameters.imageCoordinates;
+    const imageStructureData = {
+      height: imageCoordinates.height,
+      x: imageCoordinates.x,
+      y: imageCoordinates.y,
+      width: imageCoordinates.width,
+    };
+
+    const layoutCoordinates = layoutParameters.layoutCoordinates;
+    console.log(layoutCoordinates);
+    const Coordinate = {
+      "End Col": layoutCoordinates["right"],
+      "End Row": layoutCoordinates["end"],
+      "Start Col": layoutCoordinates["left"],
+      "Start Row": layoutCoordinates["start"],
+    };
+
+    const updatedLayoutParameter = {
+      ...layoutParameters,
+      Coordinate,
+      imageStructureData,
+    };
+    delete updatedLayoutParameter.imageCoordinates;
+    delete updatedLayoutParameter.layoutCoordinates;
+
+    //   console.log(formFieldWindowParameters);
+
+    const updatedFormField = formFieldWindowParameters?.map((item) => {
+      const { formFieldCoordinates, ...rest } = item;
+      const questionWindowCoordinates = formFieldCoordinates
+        ? {
+            "End Col": formFieldCoordinates["right"],
+            "End Row": formFieldCoordinates["end"],
+            "Start Col": formFieldCoordinates["left"],
+            "Start Row": formFieldCoordinates["start"],
+          }
+        : {};
+      return { ...rest, questionWindowCoordinates };
+    });
+    const updatedSkewField = skewMarksWindowParameters?.map((item) => {
+      const { formFieldCoordinates, ...rest } = item;
+      const questionWindowCoordinates = formFieldCoordinates
+        ? {
+            "End Col": formFieldCoordinates["right"],
+            "End Row": formFieldCoordinates["end"],
+            "Start Col": formFieldCoordinates["left"],
+            "Start Row": formFieldCoordinates["start"],
+          }
+        : {};
+      return { ...rest, questionWindowCoordinates };
+    });
+    const updatedQuestionField = questionsWindowParameters?.map((item) => {
+      const { formFieldCoordinates, ...rest } = item;
+      const questionWindowCoordinates = formFieldCoordinates
+        ? {
+            "End Col": formFieldCoordinates["right"],
+            "End Row": formFieldCoordinates["end"],
+            "Start Col": formFieldCoordinates["left"],
+            "Start Row": formFieldCoordinates["start"],
+          }
+        : {};
+      return { ...rest, questionWindowCoordinates };
+    });
+    // const Coordinate = {
+    //   "End Col": layoutCoordinates["right"],
+    //   "End Row": layoutCoordinates["end"],
+    //   "Start Col": layoutCoordinates["left"],
+    //   "Start Row": layoutCoordinates["start"],
+    // };
+
+    // const updatedLayoutParameter = {
+    //   ...layoutParameters,
+    //   Coordinate,
+    //   imageStructureData,
+    // };
+    // delete updatedLayoutParameter.imageCoordinates;
+    // delete updatedLayoutParameter.layoutCoordinates;
+
+    setDataState((prevState) => {
+      const copiedData = [...prevState.allTemplates];
+      const currentTemplate = copiedData[index];
+      currentTemplate[0].skewMarksWindowParameters = updatedSkewField;
+      currentTemplate[0].formFieldWindowParameters = updatedFormField;
+      currentTemplate[0].questionsWindowParameters = updatedQuestionField;
+      currentTemplate[0].imageData = imageData;
+      currentTemplate[0].printingData = printingData;
+      currentTemplate[0].barcodeData = barcodeData;
+      currentTemplate[0].layoutParameters = updatedLayoutParameter;
+
+      return {
+        ...prevState,
+        allTemplates: copiedData,
+      };
+    });
+  };
   const dataContext = {
     allTemplates: dataState.allTemplates,
     setAllTemplates: templateHandler,
     modifyAllTemplate: modifyTemplateHandler,
     deleteTemplate: deleteTemplateHandler,
     addToAllTemplate: addToAllTemplateHandler,
+    addFieldToTemplate: addFieldToTemplateHandler,
   };
 
   return (
