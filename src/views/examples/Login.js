@@ -41,9 +41,21 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(email)
-    console.log(password)
+    console.log(email);
+    console.log(password);
   }, [email, password]);
+  const signInHandler = () => {
+    try {
+      const obj = {
+        email,
+        password,
+      };
+      console.log(obj);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Col lg="5" md="7">
@@ -57,7 +69,6 @@ const Login = () => {
           </div>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-
               <h1>Sign in </h1>
             </div>
             <Form role="form">
@@ -73,7 +84,7 @@ const Login = () => {
                     type="email"
                     autoComplete="new-email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </InputGroup>
               </FormGroup>
@@ -89,12 +100,17 @@ const Login = () => {
                     type="password"
                     autoComplete="new-password"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </InputGroup>
               </FormGroup>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button" onClick={() => { navigate("/") }}>
+                <Button
+                  className="my-4"
+                  color="primary"
+                  type="button"
+                  onClick={signInHandler}
+                >
                   Sign in
                 </Button>
               </div>
