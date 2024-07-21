@@ -51,7 +51,7 @@ const Login = () => {
         password,
       };
       console.log(obj);
-      navigate("/");
+      // navigate("/");
     } catch (error) {
       console.log(error);
     }
