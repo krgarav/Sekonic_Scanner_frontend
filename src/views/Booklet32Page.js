@@ -3,7 +3,7 @@
 import Header from "components/Headers/Header.js";
 import NormalHeader from "components/Headers/NormalHeader";
 import { Modal } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Select from "react-select"
 import { fetchProcessData } from "helper/Booklet32Page_helper";
 import { toast } from "react-toastify";
@@ -24,11 +24,12 @@ const Booklet32Page = () => {
     const [scanning, setScanning] = useState(false);
     const [headData, setHeadData] = useState(["OrderID"]);
     const filterSettings = { type: 'Excel' };
-    const toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
+    const toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel', 'ExcelExport', 'CsvExport'];
     const editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
     const [items, setItems] = useState([]);
     const [templateOptions, setTemplateOptions] = useState([]);
-    const [selectedValue, setSelectedValue] = useState(null)
+    const [selectedValue, setSelectedValue] = useState(null);
+    const gridRef = useRef();
     // useEffect(() => {
     //     const interval = setInterval(() => {
     //         setItems(prevItems => {
@@ -54,17 +55,22 @@ const Booklet32Page = () => {
             // Check if the data fetch was successful
             if (data?.result?.success) {
                 // Extract keys from the first item in the data array
-                const newData = Object.keys(data.result.data[0]);
-                const updatedData = [...processedData, ...data.result.data]
-                // Set headData with the new keys
-                setHeadData(newData);
-                console.log(updatedData)
+                const newDataKeys = Object.keys(data.result.data[0]);
+
+                // Add a serial number to each entry
+                let num = processedData.length + 1;
+                const updatedData = [...processedData, ...data.result.data.map(item => ({ "Serial No": num++, ...item }))];
+
+                // Set headData with the new keys, ensuring "Serial No" is included as a heading
+                setHeadData(["Serial No", ...newDataKeys]);
+                console.log(updatedData);
+
                 // Update the data state with the fetched data
                 setProcessedData(updatedData);
             }
         } catch (error) {
             console.error(error);
-            toast.error("something went wrong");
+            toast.error("Something went wrong");
 
             // Set scanning to false in case of error
             setScanning(false);
@@ -108,22 +114,43 @@ const Booklet32Page = () => {
     }
 
     const handleStart = async () => {
+
         if (!selectedValue) {
             alert("Choose Template");
             return
         }
-        setScanning(true)
+        if (scanning) {
+            setScanning(false);
+            return;
+        } else {
+            setScanning(true)
+        }
+
         const response = await scanFiles(selectedValue.id);
-        console.log(response)
         if (response) {
             setScanning(false)
         }
     };
 
+
     const handleSave = (args) => {
-        // const updatedData = data.map((item) => (item.id === args.rowData.id ? args.rowData : item));
-        // setData([]);
+      
+        console.log(args.data)
+        if (args.data) {
+            const updatedData = [...processedData];
+            console.log(updatedData)
+            const index = updatedData.findIndex(item => item["Serial No"] == args.data["Serial No"]);
+            if (index > -1) {
+                updatedData[index] = args.data;
+                console.log(updatedData)
+                setProcessedData(updatedData);
+            }
+
+         
+        }
+
     };
+console.log(processedData)
     const handleRefresh = () => {
         try {
             refreshScanner();
@@ -133,6 +160,20 @@ const Booklet32Page = () => {
         }
     }
 
+    const handleToolbarClick = (args) => {
+        if (args.item.id.includes('excelexport')) {
+            gridRef.current.refresh();  // Ensure the grid data is refreshed
+            gridRef.current.excelExport();
+        }
+        if (args.item.id.includes('pdfexport')) {
+            gridRef.current.refresh();  // Ensure the grid data is refreshed
+            gridRef.current.pdfExport();
+        }
+        if (args.item.id.includes('csvexport')) {
+            gridRef.current.refresh();  // Ensure the grid data is refreshed
+            gridRef.current.csvExport();
+        }
+    };
     const columnsDirective = headData.map((item, index) => {
         return (
             <ColumnDirective field={item} key={index}
@@ -164,11 +205,14 @@ const Booklet32Page = () => {
                 <br />
                 <div className='control-pane'>
                     <div className='control-section'>
-                        <GridComponent actionComplete={handleSave} dataSource={processedData} height='350' allowSorting={false} editSettings={editSettings} allowFiltering={false} filterSettings={filterSettings} toolbar={toolbar}>
+                        <GridComponent
+                            ref={gridRef}
+                            actionComplete={handleSave} dataSource={processedData} height='350' allowSorting={false} editSettings={editSettings} allowFiltering={false} filterSettings={filterSettings} toolbar={toolbar}
+                            toolbarClick={handleToolbarClick} allowExcelExport={true} allowPdfExport={true} >
                             <ColumnsDirective>
                                 {columnsDirective}
                             </ColumnsDirective>
-                            <Inject services={[Sort, Toolbar, Filter, Edit]} />
+                            <Inject services={[Sort, Toolbar, ExcelExport, Filter, Edit]} />
 
                         </GridComponent>
                         <div className="m-2" style={{ float: "right" }}>
