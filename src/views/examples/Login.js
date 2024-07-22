@@ -17,6 +17,8 @@
 */
 
 // reactstrap components
+import { fetchAllUsers } from "helper/userManagment_helper";
+import { login } from "helper/userManagment_helper";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -44,14 +46,36 @@ const Login = () => {
     console.log(email);
     console.log(password);
   }, [email, password]);
-  const signInHandler = () => {
+  const signInHandler = async (e) => {
+    e.preventDefault()
+    if (!email) {
+      alert("Email cannot be blank.");
+      return
+    }
+    if (!password) {
+      alert("Password cannot be blank.");
+      return
+    }
     try {
       const obj = {
         email,
         password,
       };
       console.log(obj);
-      navigate("/");
+      const res = await login(obj);
+      if (!res.success) {
+        alert(res.message);
+        return;
+      }
+      const allUsers = await fetchAllUsers();
+      const userInfo = allUsers.result.filter(item => item.email === email)
+      console.log(userInfo)
+      if (userInfo) {
+        localStorage.setItem("user", JSON.stringify(userInfo[0]))
+        navigate("/admin/index");
+      }
+
+
     } catch (error) {
       console.log(error);
     }
@@ -108,7 +132,7 @@ const Login = () => {
                 <Button
                   className="my-4"
                   color="primary"
-                  type="button"
+                  type="submit"
                   onClick={signInHandler}
                 >
                   Sign in

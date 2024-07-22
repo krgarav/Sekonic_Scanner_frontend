@@ -83,7 +83,12 @@ const JobModal = (props) => {
     const createTemplateHandler = async () => {
 
     }
-
+    const handleFileChange2 = (event) => {
+        const files = Array.from(event.target.files);
+        // setSelectedFiles(files);
+        // For demonstration, log file names
+        files.forEach(file => console.log('Selected File:', file.name));
+    };
 
     return (
         <>
@@ -98,7 +103,7 @@ const JobModal = (props) => {
                 keyboard={false}
             >
                 <Modal.Header>
-                    <Modal.Title id="modal-custom-navbar">Assign Job</Modal.Title>
+                    <Modal.Title id="modal-custom-navbar">Create Job</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body style={{ height: '65dvh' }}>
@@ -127,7 +132,7 @@ const JobModal = (props) => {
                         </div>
                     </Row>
 
-                    <Row className="mb-3">
+                    {/* <Row className="mb-3">
                         <label
                             htmlFor="example-text-input"
                             className="col-md-3 "
@@ -150,7 +155,7 @@ const JobModal = (props) => {
                             />
 
                         </div>
-                    </Row>
+                    </Row> */}
                     <Row className="mb-3">
                         <label
                             htmlFor="example-text-input"
@@ -161,6 +166,7 @@ const JobModal = (props) => {
                         </label>
                         <div className="col-md-3">
                             <input type='text' className="form-control" placeholder='Enter the data path' />
+
                         </div>
                         <label
                             htmlFor="example-text-input"
@@ -278,7 +284,7 @@ const JobModal = (props) => {
                             />
                         </div>
                     </Row>}
-                  
+
                 </Modal.Body>
                 <Modal.Footer>
                     <div style={{ width: "50%" }}>
@@ -300,7 +306,7 @@ const JobModal = (props) => {
                         onClick={createTemplateHandler}
                     >
 
-                        Assign Job
+                        Add Job
                     </Button>
                 </Modal.Footer>
             </Modal >

@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // reactstrap components
 import {
@@ -35,10 +36,17 @@ import {
 } from "reactstrap";
 
 const AdminNavbar = (props) => {
-
+  const [name, setName] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userName = JSON.parse(localStorage.getItem("user"));
+    console.log(userName.email.split("@")[0])
+    setName(userName.email.split("@")[0])
+    // console.log(userName.)
+  }, [])
   const handleLogout = () => {
+    localStorage.clear();
     navigate("/auth/login");
   };
   return (
@@ -64,7 +72,7 @@ const AdminNavbar = (props) => {
                   {/* </span> */}
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                      Username
+                      {name}
                     </span>
                   </Media>
                 </Media>
